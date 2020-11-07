@@ -1,0 +1,6 @@
+# GostCrypt .gitignore
+
+# output directories
+bin
+obj
+
