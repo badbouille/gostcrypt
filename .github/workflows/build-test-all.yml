@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: 'Install libfuse-dev'
+        run: sudo apt install libfuse-dev
       - name: 'Building whole project'
         run: make
       - name: 'Upload test binary'
