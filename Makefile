@@ -10,7 +10,9 @@ DEBUG?=yes
 
 # flags to use for compilation
 INCFLAGS?=-Iince -Iinci
-CFLAGS?=
+CFLAGS += -D_FILE_OFFSET_BITS=64
+CFLAGS += -std=c++17
+CFLAGS += -DFUSE_USE_VERSION=26
 
 # list of files to compile for any static or dynamic target
 CFILES?=

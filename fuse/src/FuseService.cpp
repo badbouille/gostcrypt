@@ -2,7 +2,9 @@
 // Created by badbouille on 08/05/2020.
 //
 
-#include "../inci/FuseService.h"
+#include "FuseService.h"
+
+fuse_operations fuse_service_oper;
 
 GostCrypt::Volume * mountedVolume;
 GostCrypt::FuseFileSystem * interface;
@@ -59,6 +61,18 @@ void start_fuse(char * mountpoint, GostCrypt::Volume * l_volume, GostCrypt::Fuse
     {
         args[i] = params[i];
     }
+
+    /* Setting up fuse_service callbacks */
+    // note: it could be a constant, but in c++xx>11 C like structures can't be easily initialised
+    fuse_service_oper.getattr = fuse_service_getattr;
+    fuse_service_oper.open = fuse_service_open;
+    fuse_service_oper.read = fuse_service_read;
+    fuse_service_oper.write = fuse_service_write;
+    fuse_service_oper.opendir = fuse_service_opendir;
+    fuse_service_oper.readdir = fuse_service_readdir;
+    fuse_service_oper.init = fuse_service_init;
+    fuse_service_oper.destroy = fuse_service_destroy;
+    fuse_service_oper.access = fuse_service_access;
 
     fuse_main(4, args, &fuse_service_oper, nullptr);
 }

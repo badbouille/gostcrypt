@@ -1,7 +1,7 @@
 # sub Makefile
 
 # inclusions
-INCFLAGS:= -Iince -Iinci -I../common/ince
+INCFLAGS:= -Iince -Iinci -I../common/ince -I../volume/ince
 
 # Objects needed
 CFILES:= $(shell find src -name '*.cpp')

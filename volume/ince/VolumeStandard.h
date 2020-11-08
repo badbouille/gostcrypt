@@ -11,11 +11,11 @@
 #include "VolumeStandardHeader.h"
 #include "../../crypto/ince/DiskEncryptionAlgorithm.h"
 
-//        ------ VOLUME DESCRIPTION ------
+//         ------ VOLUME DESCRIPTION ------
 //  _______________________________________________
-// |               STANDARD HEADER                 |
+// |               STANDARD HEADER                 |
 // |________________  192 Bytes  __________________|
-// |           UNUSED SPACE (RANDOM BYTES)         |
+// |           UNUSED SPACE (RANDOM BYTES)         |
 // |__  192 Bytes (Hypothetical Hidden header) ____|
 // |                                               |
 // |                                               |
@@ -25,9 +25,9 @@
 // |                                               |
 // |                                               |
 // |_______________________________________________|
-// |           UNUSED SPACE (RANDOM BYTES)         |
+// |           UNUSED SPACE (RANDOM BYTES)         |
 // |___  192 Bytes (Hypothetical Hidden backup) ___|
-// |           STANDARD BACKUP HEADER              |
+// |           STANDARD BACKUP HEADER              |
 // |________________  192 Bytes  __________________|
 
 #define STANDARD_VOLUME_FILL_SIZE 1024
@@ -36,7 +36,7 @@
 
 namespace GostCrypt
 {
-    class VolumeStandard : Volume
+    class VolumeStandard : public Volume
     {
     public:
 

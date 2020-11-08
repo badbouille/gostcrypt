@@ -10,6 +10,7 @@
 #include <memory>
 #include <Buffer.h>
 #include <fstream>
+#include <unistd.h>
 #include <fuse.h>
 
 namespace GostCrypt

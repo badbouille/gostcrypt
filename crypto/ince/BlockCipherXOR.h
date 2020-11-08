@@ -11,7 +11,7 @@
 
 namespace GostCrypt
 {
-    class BlockCipherXOR : BlockCipher
+    class BlockCipherXOR : public BlockCipher
     {
     public:
         BlockCipherXOR() : ctx(keySize) {};

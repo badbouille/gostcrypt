@@ -17,7 +17,7 @@ namespace GostCrypt
      *
      */
     template<class T>
-    class DiskEncryptionAlgorithmECB : DiskEncryptionAlgorithm
+    class DiskEncryptionAlgorithmECB : public DiskEncryptionAlgorithm
     {
     public:
 

@@ -2,26 +2,26 @@
 // Created by badbouille on 06/05/2020.
 //
 
-#include "../ince/Core.h"
-#include "../../fuse/inci/FuseService.h"
+#include "Core.h"
+#include "FuseService.h"
 
-DiskEncryptionAlgorithmList GostCrypt::Core::GetEncryptionAlgorithms()
+GostCrypt::DiskEncryptionAlgorithmList GostCrypt::Core::GetEncryptionAlgorithms()
 {
     return GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
 }
 
-DiskEncryptionAlgorithmList GostCrypt::Core::GetDerivationFunctions()
+GostCrypt::DiskEncryptionAlgorithmList GostCrypt::Core::GetDerivationFunctions()
 {
     // TODO
     return GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
 }
 
-VolumeList GostCrypt::Core::GetVolumeTypes()
+GostCrypt::VolumeList GostCrypt::Core::GetVolumeTypes()
 {
     return GostCrypt::Volume::GetAvailableVolumeTypes();
 }
 
-DFuseFileSystemList GostCrypt::Core::GetFileSystems()
+GostCrypt::FuseFileSystemList GostCrypt::Core::GetFileSystems()
 {
     return GostCrypt::FuseFileSystem::GetFileSystems();
 }
@@ -43,7 +43,7 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
         if (volumeIterator->open(p->volumePath, p->password)) {
             // Worked! Header was successfully decrypted
             // TODO : must make a copy of this shite
-            volume = volumeIterator;
+            //volume = volumeIterator;
             volumeOpened = true;
             break;
         }
@@ -59,7 +59,7 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
     // Volume has been opened successfully
     // Starting fuse
 
-    start_fuse(p->mountPoint, )
+    //start_fuse(p->mountPoint, )
 
 }
 

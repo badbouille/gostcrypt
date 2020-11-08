@@ -7,8 +7,8 @@
 
 
 #include <Volume.h>
-#include "../../crypto/ince/DiskEncryptionAlgorithm.h"
-#include "../../fuse/ince/FuseFileSystem.h"
+#include "DiskEncryptionAlgorithm.h"
+#include "FuseService.h"
 
 namespace GostCrypt
 {
