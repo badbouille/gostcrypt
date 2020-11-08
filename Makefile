@@ -59,7 +59,7 @@ UNIT_TESTS:=ut_common
 # Objects needed, computed from given sources
 OBJS:= $(addprefix $(OD)/, $(subst .cpp,.o,$(CFILES)))
 
-all: clean $(COMPONENTS) $(UNIT_TESTS)
+all: $(COMPONENTS) $(UNIT_TESTS)
 
 .SUFFIXES: .cpp .o .
 
