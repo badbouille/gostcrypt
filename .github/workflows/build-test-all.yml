@@ -33,8 +33,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ut_common
+      - name: 'Giving execution rights to binary'
+        run: sudo chmod a+x ./ut_common
       - name: 'Running test'
-        run: ut_common > ut_common_report.txt
+        run: ./ut_common > ut_common_report.txt
       - name: 'Upload Result report'
         uses: actions/upload-artifact@v2
         with:
