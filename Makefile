@@ -54,7 +54,7 @@ UNITY_DIR:=ut/unity/
 
 # Components that can be built (folders)
 COMPONENTS:=common core crypto fuse volume
-UNIT_TESTS:=ut_common
+UNIT_TESTS:=ut_common ut_crypto
 
 # Objects needed, computed from given sources
 OBJS:= $(addprefix $(OD)/, $(subst .cpp,.o,$(CFILES)))
@@ -97,7 +97,7 @@ $(COMPONENTS):
 	$(MAKE) -C $@ OD=../$(OD)/$@ ../$(BD)/$@.a
 
 # unit testing
-$(UNIT_TESTS): ut_% : % $(UNITY_STATIC_LIB)
+$(UNIT_TESTS): ut_% : common % $(UNITY_STATIC_LIB)
 	@echo "-------- Building Unit testing program $@ --------"
 	$(MAKE) -C ut/$* OD=../../$(OD)/$@ BINARY=../../$(BDUT)/$@ ../../$(BDUT)/$@
 

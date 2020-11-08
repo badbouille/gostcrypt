@@ -17,11 +17,17 @@ jobs:
         run: sudo apt install libfuse-dev
       - name: 'Building whole project'
         run: make
-      - name: 'Upload test binary'
+      - name: 'Upload common test binary'
         uses: actions/upload-artifact@v2
         with:
           name: ut_common
           path: bin/ut/ut_common
+          retention-days: 1
+      - name: 'Upload crypto test binary'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ut_crypto
+          path: bin/ut/ut_crypto
           retention-days: 1
   ut:
     name: 'Unit tests'
@@ -29,16 +35,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 'Getting built binary'
+      - name: 'Getting common built binary'
         uses: actions/download-artifact@v2
         with:
           name: ut_common
-      - name: 'Giving execution rights to binary'
-        run: sudo chmod a+x ./ut_common
-      - name: 'Running test'
+      - name: 'Getting crypto built binary'
+        uses: actions/download-artifact@v2
+        with:
+          name: ut_crypto
+      - name: 'Giving execution rights to binaries'
+        run: sudo chmod a+x ./ut_*
+      - name: 'Running common test'
         run: ./ut_common > ut_common_report.txt
-      - name: 'Upload Result report'
+      - name: 'Running crypto test'
+        run: ./ut_crypto > ut_crypto_report.txt
+      - name: 'Upload common result report'
         uses: actions/upload-artifact@v2
         with:
           name: ut_common_report.txt
           path: ut_common_report.txt
+      - name: 'Upload crypto result report'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ut_crypto_report.txt
+          path: ut_crypto_report.txt
