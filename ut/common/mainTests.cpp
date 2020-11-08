@@ -22,5 +22,6 @@ int main(int argc, char **argv) {
     RUN_TEST(test_bufferptr_swap);
     RUN_TEST(test_bufferptr_illegalinit);
     RUN_TEST(test_bufferptr_range);
+    RUN_TEST(test_securebufferptr_compare);
     return UNITY_END();
 }
