@@ -1,0 +1,40 @@
+name: Build and test all targets
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: 'Build'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Building whole project'
+        run: make
+      - name: 'Upload test binary'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ut_common
+          path: bin/ut/ut_common
+          retention-days: 1
+  ut:
+    name: 'Unit tests'
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Getting built binary'
+        uses: actions/download-artifact@v2
+        with:
+          name: ut_common
+      - name: 'Running test'
+        run: ut_common > ut_common_report.txt
+      - name: 'Upload Result report'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ut_common_report.txt
+          path: ut_common_report.txt
