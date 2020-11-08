@@ -46,16 +46,6 @@ jobs:
       - name: 'Giving execution rights to binaries'
         run: sudo chmod a+x ./ut_*
       - name: 'Running common test'
-        run: ./ut_common > ut_common_report.txt
+        run: ./ut_common
       - name: 'Running crypto test'
-        run: ./ut_crypto > ut_crypto_report.txt
-      - name: 'Upload common result report'
-        uses: actions/upload-artifact@v2
-        with:
-          name: ut_common_report.txt
-          path: ut_common_report.txt
-      - name: 'Upload crypto result report'
-        uses: actions/upload-artifact@v2
-        with:
-          name: ut_crypto_report.txt
-          path: ut_crypto_report.txt
+        run: ./ut_crypto
