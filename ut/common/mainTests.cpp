@@ -15,6 +15,7 @@ void tearDown(void) {
 
 int main(int argc, char **argv) {
     UNITY_BEGIN();
-    RUN_TEST(test_buffer_compare);
+    RUN_TEST(test_bufferptr_compare);
+    RUN_TEST(test_bufferptr_mutability);
     return UNITY_END();
 }

@@ -7,7 +7,7 @@
 
 /* Buffer tests */
 
-void test_buffer_compare();
-
+void test_bufferptr_compare();
+void test_bufferptr_mutability();
 
 #endif //_COMMON_TESTS_H
