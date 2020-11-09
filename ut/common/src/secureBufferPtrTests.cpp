@@ -12,7 +12,9 @@
 
 #define TAB_SIZE    1000000
 #define REPEAT_COPY 128
-#define PVALUE_LIM  0.6
+
+// degrees of freedom: 2*REPEAT_COPY-2
+#define PVALUE_LIM  2.0
 
 using namespace GostCrypt;
 
@@ -85,7 +87,7 @@ void test_securebufferptr_compare() {
     //printf("T1 | m:%f std:%f\n", T1_mean, T1_std);
 
     /* Checking if STDs are cloe enough */
-    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.75, 1.25, T0_std/T1_std, "Standard deviations are too different.");
+    TEST_ASSERT_FLOAT_WITHIN_MESSAGE((4.0-0.25)/2.0, (4.0+0.25)/2.0, T0_std/T1_std, "Standard deviations are too different.");
 
     /* Computing Pooled standard deviation */
     double sp = sqrt( (T0_std+T1_std)/2 );
