@@ -11,8 +11,8 @@
 #include <stdio.h>
 
 #define TAB_SIZE    1000000
-#define REPEAT_COPY 32
-#define STD_COEFF   1
+#define REPEAT_COPY 128
+#define PVALUE_LIM  0.6
 
 using namespace GostCrypt;
 
@@ -43,13 +43,13 @@ void test_securebufferptr_compare() {
     // to make it obvious, an epic worst case scenario where the first and last byte are different in a HUGE buffer is chosen
 
     for(int i=0; i<REPEAT_COPY; i++) {
+        /* T0 tests */
         T0_start = clock();
         bufptr1.isDataEqual(bufptr2);
         T0_end = clock();
         T0_measures[i] = T0_end - T0_start;
-    }
 
-    for(int i=0; i<REPEAT_COPY; i++) {
+        /* T1 tests */
         T1_start = clock();
         bufptr1.isDataEqual(bufptr3);
         T1_end = clock();
@@ -61,8 +61,8 @@ void test_securebufferptr_compare() {
      * We want to know if the dataset T1 has any differences with T0
      */
 
-    float T0_std=0, T1_std=0;
-    float T0_mean=0, T1_mean=0;
+    double T0_std=0, T1_std=0;
+    double T0_mean=0, T1_mean=0;
 
     // computing mean
     for(int i=0; i<REPEAT_COPY; i++) {
@@ -75,16 +75,28 @@ void test_securebufferptr_compare() {
         T0_std += ((T0_measures[i]-T0_mean)*(T0_measures[i]-T0_mean))/(REPEAT_COPY-1);
         T1_std += ((T1_measures[i]-T1_mean)*(T1_measures[i]-T1_mean))/(REPEAT_COPY-1);
     }
-    T0_std = sqrt(T0_std);
-    T1_std = sqrt(T1_std);
 
-    /* Checking if means and STDs are close enough */
+    /* using variance for now */
+    //T0_std = sqrt(T0_std);
+    //T1_std = sqrt(T1_std);
+
+    /* Computing Student t-test to compare branches */
     //printf("T0 | m:%f std:%f\n", T0_mean, T0_std);
     //printf("T1 | m:%f std:%f\n", T1_mean, T1_std);
 
-    // TODO : find a better final check : this one is garbage
+    /* Checking if STDs are cloe enough */
+    TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.75, 1.25, T0_std/T1_std, "Standard deviations are too different.");
 
-    // checking limits (there is a better way...)
-    //TEST_ASSERT_FLOAT_WITHIN_MESSAGE((T0_std+T1_std)*STD_COEFF, T0_mean, T1_mean, "T1 series is too different from T0. comparison is not secure.");
+    /* Computing Pooled standard deviation */
+    double sp = sqrt( (T0_std+T1_std)/2 );
+    //printf("std0:%f std1:%f stdp:%f\n", sqrt(T0_std), sqrt(T1_std), sp);
+
+    /* Computing P-value */
+    double pvalue = (T0_mean - T1_mean)/(sp*sqrt((double)2.0/REPEAT_COPY));
+
+    if (pvalue < 0) pvalue *= -1;
+
+    //printf("p-value:%f\n", pvalue);
+    TEST_ASSERT_TRUE_MESSAGE(pvalue < PVALUE_LIM,"p-value too high!");
 
 }
