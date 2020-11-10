@@ -97,7 +97,7 @@ $(COMPONENTS):
 	$(MAKE) -C $@ OD=../$(OD)/$@ ../$(BD)/$@.a
 
 # unit testing
-$(UNIT_TESTS): ut_% : common % $(UNITY_STATIC_LIB)
+$(UNIT_TESTS): ut_% : $(COMPONENTS) $(UNITY_STATIC_LIB)
 	@echo "-------- Building Unit testing program $@ --------"
 	$(MAKE) -C ut/$* OD=../../$(OD)/$@ BINARY=../../$(BDUT)/$@ ../../$(BDUT)/$@
 
