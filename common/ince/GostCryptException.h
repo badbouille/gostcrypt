@@ -60,7 +60,7 @@ namespace GostCrypt {
     #define BUFFERALREADYFREEDEXCEPTION() BufferAlreadyFreedException("Memory already freed", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(AlgorithmUnititializedException, GostCryptException);
-    #define ALGORITHMUNITITILIZEDEXCEPTION() BufferAlreadyFreedException("Algorithm has not been initialized", __FUNCTION__, __FILE__, __LINE__)
+    #define ALGORITHMUNITITILIZEDEXCEPTION() AlgorithmUnititializedException("Algorithm has not been initialized", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(ProgramTooOldException, GostCryptException);
     #define PROGRAMTOOOLDEXCEPTION() ProgramTooOldException("GostCrypt needs an update to perform this operation.", __FUNCTION__, __FILE__, __LINE__)
