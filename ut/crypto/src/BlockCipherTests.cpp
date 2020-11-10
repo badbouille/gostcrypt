@@ -10,7 +10,7 @@
 
 using namespace GostCrypt;
 
-void stdtest_blockcipher_basic(BlockCipher *b, size_t bs, size_t ks, size_t ctxs, std::string name, std::string id) {
+void stdtest_blockcipher_basic(BlockCipher *b, size_t bs, size_t ks, size_t ctxs, const std::string& name, const std::string& id) {
 
     TEST_ASSERT_EQUAL_UINT64_MESSAGE(b->GetBlockSize(), bs, "Given block size was not the one expected");
     TEST_ASSERT_EQUAL_UINT64_MESSAGE(b->GetKeySize(), ks, "Given key size was not the one expected");

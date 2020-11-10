@@ -13,7 +13,7 @@
 
 
 /* Standard tests */
-void stdtest_blockcipher_basic(GostCrypt::BlockCipher *b, size_t bs, size_t ks, size_t ctxs, std::string name, std::string id);
+void stdtest_blockcipher_basic(GostCrypt::BlockCipher *b, size_t bs, size_t ks, size_t ctxs, const std::string &name, const std::string &id);
 void stdtest_blockcipher_encrypt128(GostCrypt::BlockCipher *b, size_t test_num, const GostCrypt::BlockCipherTestData128 *testvector);
 void stdtest_blockcipher_decrypt128(GostCrypt::BlockCipher *b, size_t test_num, const GostCrypt::BlockCipherTestData128 *testvector);
 void stdtest_blockcipher_sizechecks(GostCrypt::BlockCipher *b, size_t wrongsize);
