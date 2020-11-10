@@ -59,3 +59,13 @@ void test_blockcipher_xor_decrypt() {
 
     delete b;
 }
+
+void test_blockcipher_xor_sizechecks() {
+
+    BlockCipher *b = new BlockCipherXOR();
+
+    // checking with an invalid size
+    stdtest_blockcipher_sizechecks(b, b->GetBlockSize()+b->GetKeySize());
+
+    delete b;
+}

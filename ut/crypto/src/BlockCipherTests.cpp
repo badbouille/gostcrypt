@@ -66,3 +66,57 @@ void stdtest_blockcipher_decrypt128(BlockCipher *b, size_t test_num, const Block
     }
 
 }
+
+void stdtest_blockcipher_sizechecks(BlockCipher *b, size_t wrongsize) {
+
+    SecureBuffer wbuf(wrongsize);           // buffer of the wrong size
+    SecureBuffer rbuf(b->GetBlockSize());   // buffer good for encryption
+    SecureBuffer kbuf(b->GetKeySize());     // buffer good as a key
+    SecureBufferPtr wbufptr(wbuf.get(), wbuf.size());
+    SecureBufferPtr rbufptr(rbuf.get(), rbuf.size());
+    SecureBufferPtr kbufptr(kbuf.get(), kbuf.size());
+
+    wbuf.erase();
+    rbuf.erase();
+    kbuf.erase();
+
+    /* Wrong key size test */
+    try {
+        b->SetKey(wbufptr);
+        TEST_FAIL_MESSAGE("Should not be able to set a key of the wrong size");
+    } catch (InvalidParameterException &e) {
+        // expected
+    }
+
+    /* Sequencing test (..crypt without key) */
+    try {
+        b->Encrypt(rbufptr); // good encryption
+        TEST_FAIL_MESSAGE("Should not be able to encrypt without setting a key first");
+    } catch (AlgorithmUnititializedException &e) {
+        // expected
+    }
+    try {
+        b->Decrypt(rbufptr); // good decryption
+        TEST_FAIL_MESSAGE("Should not be able to decrypt without setting a key first");
+    } catch (AlgorithmUnititializedException &e) {
+        // expected
+    }
+
+    /* Setting a key to allow ..cryption */
+    b->SetKey(kbufptr);
+
+    /* Wrong ..cryption buffer size */
+    try {
+        b->Encrypt(wbufptr);
+        TEST_FAIL_MESSAGE("Should not be able to encrypt a buffer of the wrong size");
+    } catch (InvalidParameterException &e) {
+        // expected
+    }
+    try {
+        b->Decrypt(wbufptr);
+        TEST_FAIL_MESSAGE("Should not be able to decrypt a buffer of the wrong size");
+    } catch (InvalidParameterException &e) {
+        // expected
+    }
+
+}

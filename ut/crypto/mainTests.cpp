@@ -19,5 +19,6 @@ int main(int argc, char **argv) {
     RUN_TEST(test_blockcipher_xor_basic);
     RUN_TEST(test_blockcipher_xor_encrypt);
     RUN_TEST(test_blockcipher_xor_decrypt);
+    RUN_TEST(test_blockcipher_xor_sizechecks);
     return UNITY_END();
 }
