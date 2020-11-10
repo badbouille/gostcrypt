@@ -57,5 +57,7 @@ namespace GostCrypt
 
 }
 
+/* Inclusion of all possible implementations of this template */
+#include "DiskEncryptionAlgorithmECBimpl.h"
 
 #endif //_ENCRYPTIONALGORITHMECB_H_
