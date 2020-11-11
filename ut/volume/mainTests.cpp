@@ -17,14 +17,10 @@ void tearDown(void) {
     stdtests_deletevolumes();
 }
 
-void test_ignore(void) {
-    TEST_IGNORE();
-}
-
 int main(int argc, char **argv) {
     UNITY_BEGIN();
 
-    RUN_TEST(test_ignore);
+    RUN_TEST(test_volume_standard_open);
 
     return UNITY_END();
 }
