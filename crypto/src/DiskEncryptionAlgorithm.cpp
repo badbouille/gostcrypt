@@ -31,7 +31,7 @@ void GostCrypt::DiskEncryptionAlgorithm::Decrypt(GostCrypt::SecureBufferPtr &dat
     }
 
     // Encrypting every sector separately
-    for(;i <= sectorCount; i++){
+    for(;i < sectorCount; i++){
         data.getRange(currentsector, i*sectorSize, sectorSize);
         this->Decrypt(currentsector, sectorIndex + i);
     }
@@ -52,7 +52,7 @@ void GostCrypt::DiskEncryptionAlgorithm::Encrypt(GostCrypt::SecureBufferPtr &dat
     }
 
     // Encrypting every sector separately
-    for(;i <= sectorCount; i++){
+    for(;i < sectorCount; i++){
         data.getRange(currentsector, i*sectorSize, sectorSize);
         this->Encrypt(currentsector, sectorIndex + i);
     }
