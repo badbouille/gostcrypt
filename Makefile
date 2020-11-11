@@ -54,7 +54,7 @@ UNITY_DIR:=ut/unity/
 
 # Components that can be built (folders)
 COMPONENTS:=common core crypto fuse volume
-UNIT_TESTS:=ut_common ut_crypto
+UNIT_TESTS:=ut_common ut_crypto ut_volume
 
 # Objects needed, computed from given sources
 OBJS:= $(addprefix $(OD)/, $(subst .cpp,.o,$(CFILES)))
