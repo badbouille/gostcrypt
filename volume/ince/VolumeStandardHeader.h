@@ -11,7 +11,7 @@
 
 // -- HEADER DESCRIPTION WITH DEFAULT CONSTANTS --
 
-// | 'G' | 'O' | 'S' | 'T' | Header Version 32bits |
+// | 'G' | 'O' | 'S' | 'T' | Header Version 32bits |
 // |_ Min program Version _|_  Header CRC 32bits  _|
 // |___        Sector Size       ( 64bits )     ___|
 // |___        Data Start Offset ( 64bits )     ___|
