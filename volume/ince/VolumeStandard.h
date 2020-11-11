@@ -105,11 +105,11 @@ namespace GostCrypt
                                                              "which encrypts the rest of the volume."; };
 
         // Core interface (display)
-        std::string getAlgorithmName() override;
-        std::string getAlgorithmID() override;
-        std::string getAlgorithmDescription() override;
+        std::string getAlgorithmName() const override;
+        std::string getAlgorithmID() const override;
+        std::string getAlgorithmDescription() const override;
 
-        size_t getSize() override;
+        size_t getSize() const override;
 
     protected:
 

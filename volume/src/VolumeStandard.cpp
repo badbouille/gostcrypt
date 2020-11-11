@@ -30,7 +30,7 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
     volumefile.read((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
 
     // Getting list of all available algorithms to open the volume
-    DiskEncryptionAlgorithmList algorithmList = DiskEncryptionAlgorithm::GetAvailableAlgorithms();
+    DiskEncryptionAlgorithmList algorithmList = GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
     for (auto & algorithmIterator : algorithmList) {
         tempDecryptedHeaderPtr.copyFrom(encryptedHeaderPtr);
         algorithm = algorithmIterator;
@@ -84,7 +84,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
     volumefile.open(file, std::ios::binary | std::ios::in | std::ios::out);
 
     //  ---------------  FINDING ALGORITHM  ---------------
-    DiskEncryptionAlgorithmList algorithmList = DiskEncryptionAlgorithm::GetAvailableAlgorithms();
+    DiskEncryptionAlgorithmList algorithmList = GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
     for (auto & algorithmIterator : algorithmList) {
         algorithm = algorithmIterator;
 
@@ -485,25 +485,25 @@ void GostCrypt::VolumeStandard::close()
 
 }
 
-std::string GostCrypt::VolumeStandard::getAlgorithmName()
+std::string GostCrypt::VolumeStandard::getAlgorithmName() const
 {
     if (EA == nullptr) throw ALGORITHMUNITITILIZEDEXCEPTION();
     return EA->GetName();
 }
 
-std::string GostCrypt::VolumeStandard::getAlgorithmID()
+std::string GostCrypt::VolumeStandard::getAlgorithmID() const
 {
     if (EA == nullptr) throw ALGORITHMUNITITILIZEDEXCEPTION();
     return EA->GetID();
 }
 
-std::string GostCrypt::VolumeStandard::getAlgorithmDescription()
+std::string GostCrypt::VolumeStandard::getAlgorithmDescription() const
 {
     if (EA == nullptr) throw ALGORITHMUNITITILIZEDEXCEPTION();
     return EA->GetDescription();
 }
 
-size_t GostCrypt::VolumeStandard::getSize()
+size_t GostCrypt::VolumeStandard::getSize() const
 {
     return header.dataSize;
 }

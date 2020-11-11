@@ -39,6 +39,7 @@ namespace GostCrypt
 
         // ----- INIT -----
         Volume() = default;
+        ~Volume() = default;
 
         /**
          * @brief Function to open an existing volume from a file on the disk.
@@ -129,25 +130,25 @@ namespace GostCrypt
          * Returns information about the current algorithm used in this Volume
          * @return Algorithm's name
          */
-        virtual std::string getAlgorithmName() = 0;
+        virtual std::string getAlgorithmName() const = 0;
 
         /**
          * Returns information about the current algorithm used in this Volume
          * @return Algorithm's ID
          */
-        virtual std::string getAlgorithmID() = 0;
+        virtual std::string getAlgorithmID() const = 0;
 
         /**
          * Returns information about the current algorithm used in this Volume
          * @return Algorithm's description
          */
-        virtual std::string getAlgorithmDescription() = 0;
+        virtual std::string getAlgorithmDescription() const = 0;
 
         /**
          * Returns the size in bytes of this Volume
          * @return Size in bytes
          */
-        virtual size_t getSize();
+        virtual size_t getSize() const = 0;
 
     };
 
