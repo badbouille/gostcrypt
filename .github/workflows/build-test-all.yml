@@ -29,6 +29,12 @@ jobs:
           name: ut_crypto
           path: bin/ut/ut_crypto
           retention-days: 1
+      - name: 'Upload volume test binary'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ut_volume
+          path: bin/ut/ut_volume
+          retention-days: 1
   ut:
     name: 'Unit tests'
     needs: build
@@ -43,9 +49,15 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ut_crypto
+      - name: 'Getting volume built binary'
+        uses: actions/download-artifact@v2
+        with:
+          name: ut_volume
       - name: 'Giving execution rights to binaries'
         run: sudo chmod a+x ./ut_*
       - name: 'Running common test'
         run: ./ut_common
       - name: 'Running crypto test'
         run: ./ut_crypto
+      - name: 'Running volume test'
+        run: ./ut_volume
