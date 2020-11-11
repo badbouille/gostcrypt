@@ -28,7 +28,7 @@ OD?=obj
 BINARY?=
 
 # Path for tools. Using tools from PATH by default
-PP:=g++
+CXX:=g++
 CC:=gcc
 AR:=ar
 DOX:=doxygen
@@ -66,7 +66,7 @@ all: $(COMPONENTS) $(UNIT_TESTS)
 # global compilation rule (works only in submake)
 $(OD)/%.o: %.cpp
 	@mkdir -p $(shell dirname $@)
-	$(PP) -c $(CFLAGS) $< -o $@
+	$(CXX) -c $(CFLAGS) $< -o $@
 
 .PHONY: all clean $(COMPONENTS) $(UNIT_TESTS)
 
@@ -89,7 +89,7 @@ $(UNITY_STATIC_LIB): $(UNITY_DIR)/src/unity.c
 $(BINARY): $(OBJS)
 	@echo "-------- Building binary $@ --------"
 	@mkdir -p $(shell dirname $@)
-	$(PP) $(CFLAGS) $^ $(EXTERNAL_STATIC_LIBS) -o $@
+	$(CXX) $(CFLAGS) $^ $(EXTERNAL_STATIC_LIBS) -o $@
 
 # Component maker
 $(COMPONENTS):
