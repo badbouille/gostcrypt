@@ -122,31 +122,31 @@ bool GostCrypt::VolumeStandardHeader::Deserialize(const GostCrypt::SecureBufferP
     }
 
     // CRC (save for later)
-    temp32bit = *((uint32_t*)dataptr);
+    temp32bit = be32toh(*((uint32_t*)dataptr));
     dataptr += 4;
 
     // Sector size, data start, data size
     temp64bit = *((uint64_t*)dataptr);
-    sectorsize = temp64bit;
+    sectorsize = be64toh(temp64bit);
     dataptr += 8;
 
-    if (((uint64_t)sectorsize) != temp64bit) {
+    if (((uint64_t)sectorsize) != be64toh(temp64bit)) {
         throw UNSUPPORED64BITSEXCEPTION();
     }
 
     temp64bit = *((uint64_t*)dataptr);
-    dataStartOffset = temp64bit;
+    dataStartOffset = be64toh(temp64bit);
     dataptr += 8;
 
-    if (((uint64_t)sectorsize) != temp64bit) {
+    if (((uint64_t)dataStartOffset) != be64toh(temp64bit)) {
         throw UNSUPPORED64BITSEXCEPTION();
     }
 
     temp64bit = *((uint64_t*)dataptr);
-    dataSize = temp64bit;
+    dataSize = be64toh(temp64bit);
     dataptr += 8;
 
-    if (((uint64_t)sectorsize) != temp64bit) {
+    if (((uint64_t)dataSize) != be64toh(temp64bit)) {
         throw UNSUPPORED64BITSEXCEPTION();
     }
 
