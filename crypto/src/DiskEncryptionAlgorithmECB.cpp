@@ -16,6 +16,11 @@ void GostCrypt::DiskEncryptionAlgorithmECB<T>::Encrypt(SecureBufferPtr &data, si
 
     assertInit();
 
+    if (maxSize < blockSize) {
+        // impossible to encrypt a sector smaller than the blocksize (at least in this algorithm)
+        throw INVALIDPARAMETEREXCEPTION("Sector size too small for encryption");
+    }
+
     // Ignoring sector index (ECB)
     (void)sectorIndex;
 
@@ -61,6 +66,11 @@ void GostCrypt::DiskEncryptionAlgorithmECB<T>::Decrypt(SecureBufferPtr &data, si
     SecureBufferPtr finalBlock;
 
     assertInit();
+
+    if (maxSize < blockSize) {
+        // impossible to decrypt a sector smaller than the blocksize (at least in this algorithm)
+        throw INVALIDPARAMETEREXCEPTION("Sector size too small for decryption");
+    }
 
     // Ignoring sector index (ECB)
     (void)sectorIndex;
