@@ -23,19 +23,18 @@ namespace GostCrypt {
 	{
 	public:
 
-	    explicit GostCryptException(const char* message, const char* function, const char* filename, uint32_t line): 
-		msg(message),func(function),file(filename),l(line) {}
+	    explicit GostCryptException(const char* message, const char* function, const char* filename, uint32_t line);
 
-	    explicit GostCryptException(std::string message, const char* function, const char* filename, uint32_t line):
-		msg(std::move(message)),func(function),file(filename),l(line) {}
+	    explicit GostCryptException(std::string message, const char* function, const char* filename, uint32_t line);
 
 	    ~GostCryptException() noexcept override= default;
 
-	    const char* what() const noexcept override;
+	    const char* what() const noexcept override { return compiledmessage.c_str(); };
 	protected:
 	    std::string msg;
 		std::string func;
 		std::string file;
+		std::string compiledmessage;
         const std::string exceptionName = "GostCryptException";
 		uint32_t l;
 		

@@ -4,21 +4,42 @@
 #include <sstream>
 #include <cstring>
 
-const char* GostCrypt::GostCryptException::what() const noexcept {
-	std::stringstream output;
-	output << exceptionName;
-	output << " in " << file;
-	output << "::" << func;
-	output << "::" << l;
-	output << " \t" << msg;
+GostCrypt::GostCryptException::GostCryptException(const char * message,
+                                                  const char *function,
+                                                  const char *filename,
+                                                  uint32_t line)
+{
+    std::stringstream output;
+    msg = message;
+    func = function;
+    file = filename;
+    l = line;
 
-	// Note: Exception::what() should not build a message but instead should have a predefined message ready to be sent.
-	// In GostCrypt, we usually need a lot of parameters and building the exception here is VERY practical.
-	// The huge drawback is that the ressource is never freed.
-	// TODO: move this code in the Constructor maybe, so this function returns only a pointer.
+    /* Building final message */
+    output << exceptionName;
+    output << " in " << file;
+    output << "::" << func;
+    output << "::" << l;
+    output << " " << msg;
+    compiledmessage = output.str();
+}
 
-	char *message = new char[strlen(output.str().c_str())+1];
-	strcpy(message, output.str().c_str());
+GostCrypt::GostCryptException::GostCryptException(std::string message,
+                                                  const char *function,
+                                                  const char *filename,
+                                                  uint32_t line)
+{
+    std::stringstream output;
+    msg = std::move(message);
+    func = function;
+    file = filename;
+    l = line;
 
-	return message;
+    /* Building final message */
+    output << exceptionName;
+    output << " in " << file;
+    output << "::" << func;
+    output << "::" << l;
+    output << " " << msg;
+    compiledmessage = output.str();
 }
