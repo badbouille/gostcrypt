@@ -11,7 +11,7 @@ CFILES:= $(shell find src -name '*.cpp')
 CFILES+= mainTests.cpp
 
 # external components needed
-EXTERNAL_STATIC_LIBS=../../$(BD)/common.a ../../$(BD)/crypto.a ../../$(BDUT)/unity.a
+EXTERNAL_STATIC_LIBS=../../$(BD)/crypto.a ../../$(BD)/common.a ../../$(BDUT)/unity.a
 
 # actual compilation
 include ../../Makefile
