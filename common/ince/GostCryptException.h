@@ -69,7 +69,7 @@ namespace GostCrypt {
     #define UNSUPPORED64BITSEXCEPTION() Unsupported64BitsException("This operation is supported only by the 64Bits version of Gostcrypt", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(VolumePasswordException, GostCryptException);
-    #define VOLUMEPASSWORDEXCEPTION() BufferAlreadyFreedException("Can't ", __FUNCTION__, __FILE__, __LINE__)
+    #define VOLUMEPASSWORDEXCEPTION() VolumePasswordException("Could not open volume. Double check the password ?", __FUNCTION__, __FILE__, __LINE__)
 
 
 }
