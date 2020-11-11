@@ -28,6 +28,9 @@ int main(int argc, char **argv) {
 
     /* ECB */
     RUN_TEST(test_diskencryptionalgorithm_ecb_xor_basic);
+    RUN_TEST(test_diskencryptionalgorithm_ecb_xor_encrypt);
+    RUN_TEST(test_diskencryptionalgorithm_ecb_xor_decrypt);
+    RUN_TEST(test_diskencryptionalgorithm_ecb_xor_sizechecks);
 
     return UNITY_END();
 }

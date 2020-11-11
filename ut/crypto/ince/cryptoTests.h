@@ -19,6 +19,9 @@ void stdtest_blockcipher_decrypt128(GostCrypt::BlockCipher *b, size_t test_num, 
 void stdtest_blockcipher_sizechecks(GostCrypt::BlockCipher *b, size_t wrongsize);
 
 void stdtest_diskencryptionalgorithm_basic(GostCrypt::DiskEncryptionAlgorithm *a, size_t ks, const std::string& id);
+void stdtest_diskencryptionalgorithm_encrypt(GostCrypt::DiskEncryptionAlgorithm *a, size_t test_num, const GostCrypt::DiskEncryptionAlgorithmTestData520 *testvector);
+void stdtest_diskencryptionalgorithm_decrypt(GostCrypt::DiskEncryptionAlgorithm *a, size_t test_num, const GostCrypt::DiskEncryptionAlgorithmTestData520 *testvector);
+void stdtest_diskencryptionalgorithm_sizechecks(GostCrypt::DiskEncryptionAlgorithm *a, size_t wrongblocksize);
 
 /* XOR Cipher tests */
 void test_blockcipher_xor_basic();
@@ -28,5 +31,8 @@ void test_blockcipher_xor_sizechecks();
 
 /* ECB (XOR) DiskEA tests */
 void test_diskencryptionalgorithm_ecb_xor_basic();
+void test_diskencryptionalgorithm_ecb_xor_encrypt();
+void test_diskencryptionalgorithm_ecb_xor_decrypt();
+void test_diskencryptionalgorithm_ecb_xor_sizechecks();
 
 #endif //_COMMON_TESTS_H

@@ -10,25 +10,17 @@
 namespace GostCrypt
 {
 
-    // 128+8bits is a great value to test out the ciphertext stealing mechanism
-    typedef struct DiskEncryptionAlgorithmTestData136_s
+    // huge vector that can store smaller values
+    typedef struct DiskEncryptionAlgorithmTestData520_s
     {
-        uint8_t input[17];
-        uint8_t expected[17];
+        uint8_t key[16]; // ecryption modes are tested with a standard algorithm (128bit key)
+        uint8_t input[65];
+        uint8_t expected[65];
+        size_t inputsize;
         size_t sectornum;
         size_t sectorsize;
         size_t sectoroffset;
-    } DiskEncryptionAlgorithmTestData136;
-
-    // 56 bits is usually not enough to encrypt
-    typedef struct DiskEncryptionAlgorithmTestData56_s
-    {
-        uint8_t input[7];
-        uint8_t expected[7];
-        size_t sectornum;
-        size_t sectorsize;
-        size_t sectoroffset;
-    } DiskEncryptionAlgorithmTestData56;
+    } DiskEncryptionAlgorithmTestData520;
 
 }
 
