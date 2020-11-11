@@ -16,7 +16,7 @@ namespace GostCrypt
     public:
         BlockCipherXOR() : ctx(keySize) {};
 
-        virtual void SetKey(SecureBufferPtr &key) { ctx.copyFrom(key); currentState = READY; };
+        virtual void SetKey(SecureBufferPtr &key) { if(key.size() != keySize) throw INVALIDPARAMETEREXCEPTION("Wrong key size given"); ctx.copyFrom(key); currentState = READY; };
         virtual void Encrypt(SecureBufferPtr &buffer) const;
         virtual void Decrypt(SecureBufferPtr &buffer) const { return Encrypt(buffer); };
 
