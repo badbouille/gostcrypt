@@ -317,6 +317,10 @@ void GostCrypt::VolumeStandard::read(GostCrypt::SecureBufferPtr buffer, size_t o
         if (maxReadable > rwBufferSectorNum) {
             maxReadable = rwBufferSectorNum;
         }
+
+        // Applying size to rwBufferPtr
+        rwBuffer->getRange(rwBufferPtr, 0, maxReadable*sectorSize);
+
         // copying data into rwBuffer
         volumefile.read(rwBufferPtr_char, maxReadable*sectorSize);
 
@@ -449,7 +453,10 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
         if (maxReadable > rwBufferSectorNum) {
             maxReadable = rwBufferSectorNum;
         }
-        //volumefile.read(rwBufferPtr_char, maxReadable*sectorSize);
+
+        // Applying size to rwBufferPtr
+        rwBuffer->getRange(rwBufferPtr, 0, maxReadable*sectorSize);
+
         // copying data into rwBuffer
         memcpy(rBufferPtr_char, rwBufferPtr_char, maxReadable*sectorSize);
 
