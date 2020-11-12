@@ -28,4 +28,26 @@ void test_volume_standard_open() {
     delete v;
 }
 
+void test_volume_standard_read() {
+    Volume *v = nullptr;
+    SecureBuffer password(16);
+    SecureBufferPtr pass(password.get(), password.size());
 
+    pass.erase();
+
+    // opening a good volume
+    v = new VolumeStandard();
+    try {
+        if(!v->open(creator_files[1].filename, pass)) {
+            TEST_FAIL_MESSAGE("Could not open volume");
+        }
+    } catch (GostCryptException &e) {
+        TEST_FAIL_MESSAGE(e.what());
+    }
+
+    // read tests (these tests are hardcoded, making them generic would require a lot more time)
+    stdtests_volume_read(v, 32, STANDARD_HEADER_SIZE, volume1_content+STANDARD_HEADER_SIZE*2);
+
+    // finish
+    delete v;
+}

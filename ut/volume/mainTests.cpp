@@ -20,7 +20,9 @@ void tearDown(void) {
 int main(int argc, char **argv) {
     UNITY_BEGIN();
 
+    /* VolumeStandard tests */
     RUN_TEST(test_volume_standard_open);
+    RUN_TEST(test_volume_standard_read);
 
     return UNITY_END();
 }
