@@ -17,6 +17,8 @@ void test_volume_standard_open() {
     SecureBuffer password(16);
     SecureBufferPtr pass(password.get(), password.size());
 
+    pass.erase(); // 0
+
     v = new VolumeStandard();
     stdtests_volume_open(v, creator_files[0].filename, pass, false, false);
     delete v;
