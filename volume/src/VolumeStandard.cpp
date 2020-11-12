@@ -323,10 +323,8 @@ void GostCrypt::VolumeStandard::read(GostCrypt::SecureBufferPtr buffer, size_t o
         // Decrypting data
         EA->Decrypt(rwBufferPtr, sectorIndexBegin, maxReadable, sectorSize);
 
-        // Writing to disk
-        volumefile.write(rwBufferPtr_char, maxReadable*sectorSize);
-
-        memcpy(rwBufferPtr_char, wBufferPtr_char, maxReadable*sectorSize);
+        // copy to output buffer
+        memcpy(wBufferPtr_char, rwBufferPtr_char, maxReadable*sectorSize);
 
         // adjusting input
         sectorIndexBegin += maxReadable;
