@@ -458,7 +458,7 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
         rwBuffer->getRange(rwBufferPtr, 0, maxReadable*sectorSize);
 
         // copying data into rwBuffer
-        memcpy(rBufferPtr_char, rwBufferPtr_char, maxReadable*sectorSize);
+        memcpy(rwBufferPtr_char, rBufferPtr_char, maxReadable*sectorSize);
 
         // Encrypting data
         EA->Encrypt(rwBufferPtr, sectorIndexBegin, maxReadable, sectorSize);
