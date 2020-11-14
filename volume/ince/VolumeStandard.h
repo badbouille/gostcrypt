@@ -30,7 +30,7 @@
 // |           STANDARD BACKUP HEADER              |
 // |________________  192 Bytes  __________________|
 
-#define STANDARD_VOLUME_FILL_SIZE 1024
+#define STANDARD_VOLUME_FILL_SIZE 16
 
 #define STANDARD_VOLUME_RWBUFFER_SIZE (32*32)
 
