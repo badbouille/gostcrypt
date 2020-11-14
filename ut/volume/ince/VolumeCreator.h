@@ -7,7 +7,7 @@
 
 #include "Buffer.h"
 
-void stdtests_createvolume(const std::string& file, size_t length, char *content);
+void stdtests_createvolume(const std::string& file, size_t length, const char *content);
 void stdtests_createvolumes();
 void stdtests_deletevolumes();
 

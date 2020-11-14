@@ -51,3 +51,19 @@ void test_volume_standard_read() {
     // finish
     delete v;
 }
+
+void test_volume_standard_write() {
+    Volume *v = nullptr;
+    SecureBuffer password(16);
+    SecureBufferPtr pass(password.get(), password.size());
+
+    pass.erase();
+
+    // opening a good volume
+    v = new VolumeStandard();
+
+    stdtests_volume_write(v, pass, STANDARD_HEADER_SIZE, 32, &creator_files[1]);
+
+    // finish
+    delete v;
+}

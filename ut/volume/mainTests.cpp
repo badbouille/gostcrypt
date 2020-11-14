@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
     /* VolumeStandard tests */
     RUN_TEST(test_volume_standard_open);
     RUN_TEST(test_volume_standard_read);
+    RUN_TEST(test_volume_standard_write);
 
     return UNITY_END();
 }
