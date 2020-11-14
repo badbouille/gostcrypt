@@ -178,6 +178,7 @@ void Buffer<T>::allocate(size_t size)
     if (Data->size() != 0)
     {
         freeData();
+        Usersize = size; // was erased by the free function
     }
 
     try
