@@ -18,5 +18,7 @@ void stdtests_volume_write(GostCrypt::Volume *v, GostCrypt::SecureBufferPtr &pas
 void test_volume_standard_open();
 void test_volume_standard_read();
 void test_volume_standard_write();
+void test_volume_standard_create();
+void test_volume_standard_checks();
 
 #endif //_VOLUMETESTS_H

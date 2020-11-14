@@ -24,6 +24,8 @@ int main(int argc, char **argv) {
     RUN_TEST(test_volume_standard_open);
     RUN_TEST(test_volume_standard_read);
     RUN_TEST(test_volume_standard_write);
+    RUN_TEST(test_volume_standard_create);
+    RUN_TEST(test_volume_standard_checks);
 
     return UNITY_END();
 }
