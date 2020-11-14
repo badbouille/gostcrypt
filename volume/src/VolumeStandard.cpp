@@ -479,9 +479,8 @@ void GostCrypt::VolumeStandard::close()
     // closing file
     volumefile.close();
 
-    // deleting Algoritm (and all contexts that might contain keys
-    delete EA.get();
-    EA.reset();
+    // Algorithm will be deleted since it's a shared pointer
+    // TODO: make sure keys are deleted in case the shared pointer is somewhere else
 
     // deleting rw buffer
     delete rwBuffer;
