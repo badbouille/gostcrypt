@@ -12,7 +12,7 @@ GostCrypt::DiskEncryptionAlgorithmList GostCrypt::DiskEncryptionAlgorithm::GetAv
     GostCrypt::DiskEncryptionAlgorithmList l;
 
     // ECB - XOR (most simple algorithm for test purposes)
-    l.push_back(std::shared_ptr<DiskEncryptionAlgorithm>(new DiskEncryptionAlgorithmECB<BlockCipherXOR>()));
+    l.push_back(new DiskEncryptionAlgorithmECB<BlockCipherXOR>());
 
     return l;
 }

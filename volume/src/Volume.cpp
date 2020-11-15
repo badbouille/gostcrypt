@@ -10,7 +10,7 @@ GostCrypt::VolumeList GostCrypt::Volume::GetAvailableVolumeTypes()
     GostCrypt::VolumeList l;
 
     // Default volume type
-    l.push_back(std::shared_ptr<Volume>(new VolumeStandard()));
+    l.push_back(new VolumeStandard());
 
     return l;
 }

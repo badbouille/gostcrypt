@@ -12,7 +12,7 @@ namespace GostCrypt
 
     class DiskEncryptionAlgorithm;
 
-    typedef std::list<std::shared_ptr<DiskEncryptionAlgorithm>> DiskEncryptionAlgorithmList;
+    typedef std::list<DiskEncryptionAlgorithm*> DiskEncryptionAlgorithmList;
 
     /**
      * @brief Abstract disk encryption algorithm class used to encrypt files, or just abstract buffers of data.

@@ -14,7 +14,7 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
     SecureBuffer tempDecryptedHeader(STANDARD_HEADER_SIZE);
     SecureBufferPtr encryptedHeaderPtr;
     SecureBufferPtr tempDecryptedHeaderPtr;
-    std::shared_ptr<DiskEncryptionAlgorithm> algorithm(nullptr);
+    DiskEncryptionAlgorithm * algorithm = nullptr;
     bool headerRead = false;
 
     // getting pointers on secure buffers
@@ -50,6 +50,14 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
         }
 
         // didn't work, let's try to open it with the next algorithm
+        algorithm = nullptr;
+    }
+
+    // cleaning unused structures
+    for (auto & algorithmIterator : algorithmList) {
+        if (algorithm != algorithmIterator) {
+            delete algorithmIterator;
+        }
     }
 
     if(!headerRead) {
@@ -72,7 +80,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
                                        size_t sectorsize,
                                        GostCrypt::SecureBufferPtr password)
 {
-    std::shared_ptr<DiskEncryptionAlgorithm> algorithm(nullptr);
+    DiskEncryptionAlgorithm *algorithm = nullptr;
     bool algorithmFound = false;
     SecureBuffer encryptedHeader(STANDARD_HEADER_SIZE);
     SecureBufferPtr encryptedHeaderPtr;
@@ -86,13 +94,19 @@ void GostCrypt::VolumeStandard::create(std::string file,
     //  ---------------  FINDING ALGORITHM  ---------------
     DiskEncryptionAlgorithmList algorithmList = GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
     for (auto & algorithmIterator : algorithmList) {
-        algorithm = algorithmIterator;
-
         // trying to read header
-        if (algorithm->GetID() == algorithmID) {
+        if (algorithmIterator->GetID() == algorithmID) {
             // Worked! Header was successfully decrypted
+            algorithm = algorithmIterator;
             algorithmFound = true;
             break;
+        }
+    }
+
+    // cleaning unused structures
+    for (auto & algorithmIterator : algorithmList) {
+        if (algorithm != algorithmIterator) {
+            delete algorithmIterator;
         }
     }
 
@@ -181,12 +195,12 @@ void GostCrypt::VolumeStandard::create(std::string file,
     // volume is now ready to use
 }
 
-void GostCrypt::VolumeStandard::setUpVolumeFromHeader(std::shared_ptr<DiskEncryptionAlgorithm> algorithm)
+void GostCrypt::VolumeStandard::setUpVolumeFromHeader(DiskEncryptionAlgorithm *algorithm)
 {
     SecureBufferPtr tempKeysPtr;
 
     // Setting up algorithm
-    EA = std::move(algorithm);
+    EA = algorithm;
     header.masterkey.getRange(tempKeysPtr, 0, EA->GetKeySize());
     EA->SetKey(tempKeysPtr);
 
@@ -479,8 +493,9 @@ void GostCrypt::VolumeStandard::close()
     // closing file
     volumefile.close();
 
-    // Algorithm will be deleted since it's a shared pointer
-    // TODO: make sure keys are deleted in case the shared pointer is somewhere else
+    // Deleting the algorithm (and keys)
+    delete EA;
+    EA = nullptr;
 
     // deleting rw buffer
     delete rwBuffer;

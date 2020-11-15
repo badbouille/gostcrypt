@@ -16,7 +16,7 @@ namespace GostCrypt
 
     class Volume;
 
-    typedef std::list<std::shared_ptr<Volume>> VolumeList;
+    typedef std::list<Volume*> VolumeList;
 
     /**
      * @brief Abstract structure used to define a Volume, the entity representing an encrypted memory space.

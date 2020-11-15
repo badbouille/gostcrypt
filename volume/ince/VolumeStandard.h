@@ -118,7 +118,7 @@ namespace GostCrypt
          * Will setup: R/W Buffer, Encryption Algorithm, etc
          * @param algorithm the algorithm used to decrypt the header: Same algorithm as the one used to decrypt the content
          */
-        virtual void setUpVolumeFromHeader(std::shared_ptr<DiskEncryptionAlgorithm> algorithm);
+        virtual void setUpVolumeFromHeader(DiskEncryptionAlgorithm *algorithm);
 
         /**
          * Function to get normal header offset. (Overriden in StandardVolumeHidden to use a different header location)
@@ -145,7 +145,7 @@ namespace GostCrypt
         /**
          * Encryption Algorithm of this volume. Loaded with the master key, and used on the fly for encryption/decryption
          */
-        std::shared_ptr<DiskEncryptionAlgorithm> EA;
+        DiskEncryptionAlgorithm *EA;
 
         /**
          * Buffer used in reading/writing operations

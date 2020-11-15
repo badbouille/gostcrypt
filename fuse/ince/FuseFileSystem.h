@@ -18,7 +18,7 @@ namespace GostCrypt
 
     class FuseFileSystem;
 
-    typedef std::list<std::shared_ptr<FuseFileSystem>> FuseFileSystemList;
+    typedef std::list<FuseFileSystem*> FuseFileSystemList;
 
     class FuseFileSystem
     {

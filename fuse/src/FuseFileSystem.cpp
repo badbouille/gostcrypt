@@ -12,7 +12,7 @@ GostCrypt::FuseFileSystemList GostCrypt::FuseFileSystem::GetFileSystems()
     GostCrypt::FuseFileSystemList l;
 
     // Default volume type
-    l.push_back(std::shared_ptr<FuseFileSystem>(new FuseFileSystemNone()));
+    l.push_back(new FuseFileSystemNone());
 
     return l;
 }
