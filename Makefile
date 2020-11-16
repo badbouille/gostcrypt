@@ -55,11 +55,12 @@ UNITY_DIR:=ut/unity/
 # Components that can be built (folders)
 COMPONENTS:=common core crypto fuse volume
 UNIT_TESTS:=ut_common ut_crypto ut_volume
+UI:=cmdline
 
 # Objects needed, computed from given sources
 OBJS:= $(addprefix $(OD)/, $(subst .cpp,.o,$(CFILES)))
 
-all: $(COMPONENTS) $(UNIT_TESTS)
+all: $(COMPONENTS) $(UNIT_TESTS) $(UI)
 
 .SUFFIXES: .cpp .o .
 
@@ -100,6 +101,10 @@ $(COMPONENTS):
 $(UNIT_TESTS): ut_% : $(COMPONENTS) $(UNITY_STATIC_LIB)
 	@echo "-------- Building Unit testing program $@ --------"
 	$(MAKE) -C ut/$* OD=../../$(OD)/$@ BINARY=../../$(BDUT)/$@ ../../$(BDUT)/$@
+
+$(UI): % : $(COMPONENTS)
+	@echo "-------- Building main binary $@ --------"
+	$(MAKE) -C ui/$* OD=../../$(OD)/$@ BINARY=../../$(BD)/gc_$@ ../../$(BD)/gc_$@
 
 clean:
 	@echo "Cleaning object directory ($(OD))"
