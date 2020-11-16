@@ -53,8 +53,8 @@ void start_fuse(const char * mountpoint, GostCrypt::Volume * l_volume, GostCrypt
 
     char params[4][256] = {"gostcrypt", "", "-o", "allow_other"};
 
-    // memcpy_s (256o max)
-    memcpy(params[1], mountpoint, strlen(mountpoint));
+    // TODO strcpy_s (256o max)
+    strcpy(params[1], mountpoint);
 
     char* args[4];
     for (int i = 0; i < 4 ; i++)
