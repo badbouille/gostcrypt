@@ -32,7 +32,24 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
 
     // Pointer on final Volume object
     GostCrypt::Volume *volume = nullptr;
+    GostCrypt::FuseFileSystem *interface = nullptr;
     bool volumeOpened = false;
+
+    // finding interface requested
+    FuseFileSystemList fileSystemList = GostCrypt::FuseFileSystem::GetFileSystems();
+    for (auto & fileSystemIterator : fileSystemList) {
+        // checking name
+        if (fileSystemIterator->getID() == p->fileSystemID) {
+            interface = fileSystemIterator;
+        }
+    }
+
+    // cleaning unused structures
+    for (auto & fileSystemIterator : fileSystemList) {
+        if (interface != fileSystemIterator) {
+            delete fileSystemIterator;
+        }
+    }
 
     // TODO : try catch
 
@@ -42,13 +59,19 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
         // trying to open volume
         if (volumeIterator->open(p->volumePath, p->password)) {
             // Worked! Header was successfully decrypted
-            // TODO : must make a copy of this shite
-            //volume = volumeIterator;
+            volume = volumeIterator;
             volumeOpened = true;
             break;
         }
 
         // didn't work, let's try to open it with the next algorithm
+    }
+
+    // cleaning unused structures
+    for (auto & volumeIterator : volumeList) {
+        if (volume != volumeIterator) {
+            delete volumeIterator;
+        }
     }
 
     if (!volumeOpened) {
@@ -59,7 +82,7 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
     // Volume has been opened successfully
     // Starting fuse
 
-    //start_fuse(p->mountPoint, )
+    start_fuse(p->mountPoint.c_str(), volume, interface);
 
 }
 
