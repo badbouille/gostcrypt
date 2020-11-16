@@ -20,6 +20,7 @@ CFILES?=
 # Supplementary ressources needed for build
 # warning : will not be built or made as a dependency of the binary
 EXTERNAL_STATIC_LIBS?=
+EXTERNAL_LINK_LIBS?=
 
 # defined by super make (location of object files)
 OD?=obj
@@ -90,7 +91,7 @@ $(UNITY_STATIC_LIB): $(UNITY_DIR)/src/unity.c
 $(BINARY): $(OBJS)
 	@echo "-------- Building binary $@ --------"
 	@mkdir -p $(shell dirname $@)
-	$(CXX) $(CFLAGS) $^ $(EXTERNAL_STATIC_LIBS) -o $@
+	$(CXX) $(CFLAGS) $^ $(EXTERNAL_STATIC_LIBS) $(EXTERNAL_LINK_LIBS) -o $@
 
 # Component maker
 $(COMPONENTS):
