@@ -4,6 +4,7 @@
 
 #include <argp.h>
 #include <iostream>
+#include <vector>
 #include "Commands.h"
 #include "Buffer.h"
 #include "Core.h"
@@ -19,7 +20,8 @@ static char doc_list[] = "Command to list different options supported by GostCry
 static char args_doc_list[] = "<algorithms|kdfs|types|filesystems>";
 
 /* Options */
-static struct argp_option list_options[] = {
+// TODO check overflows
+static struct argp_option list_options[50] = {
         {nullptr }
 };
 
@@ -60,12 +62,101 @@ static struct argp argp_list = { list_options, parse_opt_list, args_doc_list, do
 /* Real command */
 int cmd_list(int argc, char **argv) {
     std::string item;
+    uint32_t index = 0;
 
     item = "";
 
     argp_parse (&argp_list, argc, argv, 0, 0, &item);
 
-    argp_help(&argp_list, stdout, ARGP_HELP_STD_USAGE, argv[0]);
+    if (item == "algorithms") {
+        DiskEncryptionAlgorithmList dealist = Core::GetEncryptionAlgorithms();
+        // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
+        std::vector<std::string> names;
+        std::vector<std::string> descs;
+        for (auto dea : dealist) {
+            names.push_back(dea->GetID());
+            descs.push_back("[" + dea->GetName() + "]\n" + dea->GetDescription());
 
-    return 0;
+            list_options[index].name = names.front().c_str();
+            list_options[index].key = 0;
+            list_options[index].arg = 0;
+            list_options[index].flags = OPTION_DOC;
+            list_options[index].doc = descs.front().c_str();
+            index++;
+
+            delete dea;
+        }
+        argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
+        return 0;
+    }
+
+    if (item == "kdfs") {
+        // TODO : replace with real KDFs
+        DiskEncryptionAlgorithmList dealist = Core::GetEncryptionAlgorithms();
+        // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
+        std::vector<std::string> names;
+        std::vector<std::string> descs;
+        for (auto dea : dealist) {
+            names.push_back(dea->GetID());
+            descs.push_back("[" + dea->GetName() + "]\n" + dea->GetDescription());
+
+            list_options[index].name = names.front().c_str();
+            list_options[index].key = 0;
+            list_options[index].arg = 0;
+            list_options[index].flags = OPTION_DOC;
+            list_options[index].doc = descs.front().c_str();
+            index++;
+
+            delete dea;
+        }
+        argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
+        return 0;
+    }
+
+    if (item == "types") {
+        VolumeList vlist = Core::GetVolumeTypes();
+        // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
+        std::vector<std::string> names;
+        std::vector<std::string> descs;
+        for (auto v : vlist) {
+            names.push_back(v->GetID());
+            descs.push_back("[" + v->GetName() + "]\n" + v->GetDescription());
+
+            list_options[index].name = names.front().c_str();
+            list_options[index].key = 0;
+            list_options[index].arg = 0;
+            list_options[index].flags = OPTION_DOC;
+            list_options[index].doc = descs.front().c_str();
+            index++;
+
+            delete v;
+        }
+        argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
+        return 0;
+    }
+
+    if (item == "filesystems") {
+        FuseFileSystemList fslist = Core::GetFileSystems();
+        // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
+        std::vector<std::string> names;
+        std::vector<std::string> descs;
+        for (auto fs : fslist) {
+            names.push_back(fs->getID());
+            descs.push_back("[" + fs->getName() + "]\n" + fs->getDescription());
+
+            list_options[index].name = names.front().c_str();
+            list_options[index].key = 0;
+            list_options[index].arg = 0;
+            list_options[index].flags = OPTION_DOC;
+            list_options[index].doc = descs.front().c_str();
+            index++;
+
+            delete fs;
+        }
+        argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
+        return 0;
+    }
+
+    argp_help(&argp_list, stdout, ARGP_HELP_STD_USAGE, argv[0]);
+    return 1;
 }
