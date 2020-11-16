@@ -21,6 +21,6 @@ int fuse_service_read(const char* path, char* buf, size_t size, off_t offset, st
 int fuse_service_readdir(const char* path, void* buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info* fi);
 int fuse_service_write(const char* path, const char* buf, size_t size, off_t offset, struct fuse_file_info* fi);
 
-void start_fuse(char * mountpoint, GostCrypt::Volume * volume, GostCrypt::FuseFileSystem *interface);
+void start_fuse(const char * mountpoint, GostCrypt::Volume * volume, GostCrypt::FuseFileSystem *interface);
 
 #endif //_FUSESERVICE_H

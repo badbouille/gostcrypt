@@ -46,7 +46,7 @@ int fuse_service_write(const char* path, const char* buf, size_t size, off_t off
     return interface->fuse_service_write(path, buf, size, offset, fi);
 }
 
-void start_fuse(char * mountpoint, GostCrypt::Volume * l_volume, GostCrypt::FuseFileSystem *l_interface) {
+void start_fuse(const char * mountpoint, GostCrypt::Volume * l_volume, GostCrypt::FuseFileSystem *l_interface) {
 
     interface = l_interface;
     mountedVolume = l_volume;
