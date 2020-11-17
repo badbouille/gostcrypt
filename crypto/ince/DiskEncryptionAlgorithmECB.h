@@ -38,10 +38,10 @@ namespace GostCrypt
         std::string GetID() const override { return "ECB_{" + bc->GetID() + "}"; };
 
         std::string GetDescription() const override { return "Electronic Codebook (ECB) mode is a simple mode where the sectors "
-                                                      "are divided in blocks and encrypted using the underlying block cipher."
+                                                      "are divided in blocks and encrypted using the underlying block cipher. "
                                                       "This is a very simple mode that should only be used for test purposes."
                                                       "\n"
-                                                      "This version of ECB comes with ciphertext stealing, in case the given data"
+                                                      "This version of ECB comes with ciphertext stealing, in case the given data "
                                                       "can not be separated in a round number of blocks."
                                                       "\n"
                                                       + bc->GetDescription(); };

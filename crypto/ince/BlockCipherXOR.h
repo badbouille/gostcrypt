@@ -26,8 +26,8 @@ namespace GostCrypt
 
         virtual std::string GetName() const { return "XOR 128bits"; };
         virtual std::string GetID() const { return "XOR128"; };
-        virtual std::string GetDescription() const { return "XOR Cipher is one of the most simple ciphers available."
-                                                            "The key is the same size of a block. Decryption is the same"
+        virtual std::string GetDescription() const { return "XOR Cipher is one of the most simple ciphers available. "
+                                                            "The key is the same size of a block. Decryption is the same "
                                                             "as encryption: the key is XORed with the data for every block."; };
 
     protected:
