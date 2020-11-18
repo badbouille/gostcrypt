@@ -51,13 +51,15 @@ void start_fuse(const char * mountpoint, GostCrypt::Volume * l_volume, GostCrypt
     interface = l_interface;
     mountedVolume = l_volume;
 
-    char params[4][256] = {"gostcrypt", "", "-o", "allow_other"};
+    char params[6][256] = {"gostcrypt", "", "-o", "allow_other", "-f", "-s"};
+
+    // TODO option allow_other only allowed if 'user_allow_other' is set in /etc/fuse.conf
 
     // TODO strcpy_s (256o max)
     strcpy(params[1], mountpoint);
 
-    char* args[4];
-    for (int i = 0; i < 4 ; i++)
+    char* args[6];
+    for (int i = 0; i < 6 ; i++)
     {
         args[i] = params[i];
     }
@@ -77,5 +79,5 @@ void start_fuse(const char * mountpoint, GostCrypt::Volume * l_volume, GostCrypt
     fuse_service_oper.destroy = fuse_service_destroy;
     fuse_service_oper.access = fuse_service_access;
 
-    fuse_main(4, args, &fuse_service_oper, nullptr);
+    fuse_main(6, args, &fuse_service_oper, nullptr);
 }
