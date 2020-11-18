@@ -87,5 +87,11 @@ int cmd_mount(int argc, char **argv) {
     std::cout << "Password: " << std::string((char*)arguments.password.get()) << std::endl;
     std::cout << "FileSystem: " << arguments.fileSystemID << std::endl;
 
+    try {
+        Core::mount(&arguments);
+    } catch (GostCryptException &e) {
+        std::cout << "Cannot mount volume. " << e.what() << std::endl;
+    }
+
     return 0;
 }
