@@ -36,8 +36,15 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
         algorithm = algorithmIterator;
 
         // TODO : Add key derivation function !!!!!
+        // TODO ------ remove this stupid kdf ------
+        SecureBuffer df(algorithm->GetKeySize());
+        SecureBufferPtr pass(password.get(), std::min(df.size(), password.size()));
+        df.copyFrom(pass);
+        pass.set(df.get(), df.size());
+        // TODO ------ ------ ------ ------ ------
+
         // initialisation of algorithm with user password
-        algorithm->SetKey(password);
+        algorithm->SetKey(pass);
 
         // trying to decrypt header
         algorithm->Decrypt(tempDecryptedHeaderPtr);
