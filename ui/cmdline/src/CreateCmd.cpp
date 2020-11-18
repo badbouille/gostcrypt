@@ -22,8 +22,8 @@ static char args_doc_create[] = "VOLUME FOLDER";
 static struct argp_option create_options[] = {
         {"password", 'p', "<pass>", 0, "Manually enter password (deprecated)" },
         {"filesystem", 'f', "<fs>", 0, "Filesystem to use when mounting this volume. Type 'gostcrypt list filesystems' for list of supported filesystems" },
-        {"size", 0, "<size>", 0, "Volume size in bytes" },
-        {"sector-size", 0, "<size>", 0, "Sector size in bytes" },
+        {"size", 's', "<size>", 0, "Volume size in bytes" },
+        {"sector-size", 'b', "<size>", 0, "Sector size in bytes" },
         {"type", 't', "<type>", 0, "Volume type. Type 'gostcrypt list types' for list of supported volume types." },
         {"algorithm", 'a', "<algo>", 0, "Encryption algorithm to use. Type 'gostcrypt list algorithms' for list of supported algorithms." },
         {"kdf", 'k', "<algo>", 0, "Key derivation algorithm to use. Type 'gostcrypt list kdfs' for list of supported derivation functions." },
@@ -35,14 +35,81 @@ static error_t parse_opt_create (int key, char *arg, struct argp_state *state) {
     /* Get the input argument from argp_parse, which we
        know is a pointer to our arguments structure. */
     Core::CreateParams_t *arguments = (Core::CreateParams_t *)state->input;
+    char *unit;
 
     switch (key)
     {
         case 'p':
+            // password
             strcpy((char *)arguments->password.get(), arg);
             break;
         case 'f':
+            // filesystem
             arguments->afterCreationMount.fileSystemID = arg;
+            break;
+        case 's':
+            // volume size
+            arguments->dataSize = std::strtoll(arg, &unit, 10);
+            if (*unit != 0) { // si une unité est spécifiée
+                std::string u(unit);
+                if (u == "KB") {
+                    arguments->dataSize*=KB;
+                    break;
+                }
+                if (u == "MB") {
+                    arguments->dataSize*=MB;
+                    break;
+                }
+                if (u == "GB") {
+                    arguments->dataSize*=GB;
+                    break;
+                }
+                if (u == "TB") {
+                    arguments->dataSize*=TB;
+                    break;
+                }
+                // unrecognised option is not ignored
+                argp_usage (state);
+                break;
+            }
+            break;
+        case 'b':
+            // sector size
+            arguments->sectorSize = std::strtoll(arg, &unit, 10);
+            if (*unit != 0) { // si une unité est spécifiée
+                std::string u(unit);
+                if (u == "KB") {
+                    arguments->sectorSize*=KB;
+                    break;
+                }
+                if (u == "MB") {
+                    arguments->sectorSize*=MB;
+                    break;
+                }
+                if (u == "GB") {
+                    arguments->sectorSize*=GB;
+                    break;
+                }
+                if (u == "TB") {
+                    arguments->sectorSize*=TB;
+                    break;
+                }
+                // unrecognised option is not ignored
+                argp_usage (state);
+                break;
+            }
+            break;
+        case 't':
+            // volume type
+            arguments->volumeTypeID = std::string(arg);
+            break;
+        case 'a':
+            // algorithm
+            arguments->algorithmID = std::string(arg);
+            break;
+        case 'k':
+            // kdf
+            arguments->keyDerivationFunctionID = std::string(arg);
             break;
         case ARGP_KEY_NO_ARGS:
             argp_usage (state);
@@ -108,6 +175,12 @@ int cmd_create(int argc, char **argv) {
     std::cout << "Volume type: " << arguments.volumeTypeID << std::endl;
     std::cout << "Algorithm: " << arguments.algorithmID << std::endl;
     std::cout << "Key derivation function: " << arguments.keyDerivationFunctionID << std::endl;
+
+    try {
+        Core::create(&arguments);
+    } catch (GostCryptException &e) {
+        std::cout << "Cannot create volume. " << e.what() << std::endl;
+    }
 
     return 0;
 }
