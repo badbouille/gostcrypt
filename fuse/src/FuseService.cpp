@@ -62,6 +62,9 @@ void start_fuse(const char * mountpoint, GostCrypt::Volume * l_volume, GostCrypt
         args[i] = params[i];
     }
 
+    // making sure interface points on the volume
+    interface->setTarget(mountedVolume);
+
     /* Setting up fuse_service callbacks */
     // note: it could be a constant, but in c++xx>11 C like structures can't be easily initialised
     fuse_service_oper.getattr = fuse_service_getattr;
