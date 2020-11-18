@@ -51,6 +51,10 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
         }
     }
 
+    if (interface == nullptr) {
+        throw INVALIDPARAMETEREXCEPTION("Could not find the requested interface (filesystem).");
+    }
+
     // TODO : try catch
 
     // trying all different volume types on input
