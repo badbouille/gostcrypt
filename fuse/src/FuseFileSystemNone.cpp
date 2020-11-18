@@ -102,14 +102,14 @@ int GostCrypt::FuseFileSystemNone::fuse_service_read(const char *path,
 
     // prevent reads after end
     if (size + offset > target->getSize()) {
-        size = target->getSize();
+        size = target->getSize() - offset;
     }
 
     SecureBufferPtr ptr((uint8_t *)(buf), size);
 
     target->read(ptr, offset);
 
-    return 0;
+    return size;
 }
 
 int GostCrypt::FuseFileSystemNone::fuse_service_readdir(const char *path,
@@ -156,12 +156,12 @@ int GostCrypt::FuseFileSystemNone::fuse_service_write(const char *path,
 
     // prevent writes after end
     if (size + offset > target->getSize()) {
-        size = target->getSize();
+        size = target->getSize() - offset;
     }
 
     SecureBufferPtr ptr((uint8_t *)(buf), size);
 
     target->write(ptr, offset);
 
-    return 0;
+    return size;
 }
