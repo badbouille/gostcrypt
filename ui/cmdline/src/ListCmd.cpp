@@ -20,8 +20,9 @@ static char doc_list[] = "Command to list different options supported by GostCry
 static char args_doc_list[] = "<algorithms|kdfs|types|filesystems>";
 
 /* Options */
-// TODO check overflows
-static struct argp_option list_options[50] = {
+
+#define MAX_OPTION_NUMBER 50
+static struct argp_option list_options[MAX_OPTION_NUMBER] = {
         {nullptr }
 };
 
@@ -77,6 +78,12 @@ int cmd_list(int argc, char **argv) {
             names.push_back(dea->GetID());
             descs.push_back("[" + dea->GetName() + "]\n" + dea->GetDescription());
 
+            // impossible to compute a list this long.
+            // list can be longer but current limit is already very high
+            if(index >= MAX_OPTION_NUMBER) {
+                abort();
+            }
+
             list_options[index].name = names.front().c_str();
             list_options[index].key = 0;
             list_options[index].arg = 0;
@@ -100,6 +107,10 @@ int cmd_list(int argc, char **argv) {
             names.push_back(dea->GetID());
             descs.push_back("[" + dea->GetName() + "]\n" + dea->GetDescription());
 
+            if(index >= MAX_OPTION_NUMBER) {
+                abort();
+            }
+
             list_options[index].name = names.front().c_str();
             list_options[index].key = 0;
             list_options[index].arg = 0;
@@ -122,6 +133,10 @@ int cmd_list(int argc, char **argv) {
             names.push_back(v->GetID());
             descs.push_back("[" + v->GetName() + "]\n" + v->GetDescription());
 
+            if(index >= MAX_OPTION_NUMBER) {
+                abort();
+            }
+
             list_options[index].name = names.front().c_str();
             list_options[index].key = 0;
             list_options[index].arg = 0;
@@ -143,6 +158,10 @@ int cmd_list(int argc, char **argv) {
         for (auto fs : fslist) {
             names.push_back(fs->getID());
             descs.push_back("[" + fs->getName() + "]\n" + fs->getDescription());
+
+            if(index >= MAX_OPTION_NUMBER) {
+                abort();
+            }
 
             list_options[index].name = names.front().c_str();
             list_options[index].key = 0;
