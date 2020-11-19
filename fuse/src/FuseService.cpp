@@ -4,6 +4,8 @@
 
 #include "FuseService.h"
 
+using namespace GostCrypt;
+
 fuse_operations fuse_service_oper;
 
 GostCrypt::Volume * mountedVolume;
@@ -55,7 +57,10 @@ void start_fuse(const char * mountpoint, GostCrypt::Volume * l_volume, GostCrypt
 
     // TODO option allow_other only allowed if 'user_allow_other' is set in /etc/fuse.conf
 
-    // TODO strcpy_s (256o max)
+    // strcpy_s not part of c++11. Using good old strlen instead.
+    if(strlen(mountpoint) > 255) {
+        throw INVALIDPARAMETEREXCEPTION("mounpoint name too long for buffer.");
+    }
     strcpy(params[1], mountpoint);
 
     char* args[6];
