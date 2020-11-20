@@ -24,6 +24,9 @@ namespace GostCrypt
         std::string getDescription() override { return "Not a filesystem, just a FUSE mountpoint of the RAW content "
                                                       "of the Volume with no interpretation."; };
 
+        // create
+        void create() override {}; // none filesystem does not need to be built
+
         // Abstract interface that will be bind to FUSE
         int fuse_service_access(const char* path, int mask) override;
         int fuse_service_getattr(const char* path, struct stat* statData) override;

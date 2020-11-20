@@ -38,6 +38,9 @@ namespace GostCrypt
         virtual std::string getID() = 0;
         virtual std::string getDescription() = 0;
 
+        // creation
+        virtual void create() = 0;
+
         // Abstract interface that will be bind to FUSE
         virtual int fuse_service_access(const char* path, int mask) = 0;
         virtual int fuse_service_getattr(const char* path, struct stat* statData) = 0;
