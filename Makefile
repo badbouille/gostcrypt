@@ -11,10 +11,13 @@ DEBUG?=yes
 # flags to use for compilation
 INCFLAGS?=-Iince -Iinci
 CFLAGS += -D_FILE_OFFSET_BITS=64
-CFLAGS += -std=c++17
 CFLAGS += -DFUSE_USE_VERSION=26
 
+# CXX flags
+CXXFLAGS += -std=c++17
+
 # list of files to compile for any static or dynamic target
+CXXFILES?=
 CFILES?=
 
 # Supplementary ressources needed for build
@@ -59,21 +62,27 @@ UNIT_TESTS:=ut_common ut_crypto ut_volume
 UI:=cmdline
 
 # Objects needed, computed from given sources
-OBJS:= $(addprefix $(OD)/, $(subst .cpp,.o,$(CFILES)))
+CXXOBJS:= $(addprefix $(OD)/, $(subst .cpp,.o,$(CXXFILES)))
+COBJS:= $(addprefix $(OD)/, $(subst .c,.o,$(CFILES)))
 
 all: $(COMPONENTS) $(UNIT_TESTS) $(UI)
 
 .SUFFIXES: .cpp .o .
 
 # global compilation rule (works only in submake)
-$(OD)/%.o: %.cpp
+$(CXXOBJS): $(OD)/%.o : %.cpp
 	@mkdir -p $(shell dirname $@)
-	$(CXX) -c $(CFLAGS) $< -o $@
+	$(CXX) -c $(CXXFLAGS) $(CFLAGS) $< -o $@
+
+# global compilation rule (works only in submake)
+$(COBJS): $(OD)/%.o : %.c
+	@mkdir -p $(shell dirname $@)
+	$(CC) -c $(CFLAGS) $< -o $@
 
 .PHONY: all clean $(COMPONENTS) $(UNIT_TESTS)
 
 # Lib maker (actual job for submake)
-%.a: $(OBJS)
+%.a: $(COBJS) $(CXXOBJS)
 	@echo "-------- Building static library $@ --------"
 	@mkdir -p $(shell dirname $@)
 	$(AR) rcs $@ $^ $(EXTERNAL_STATIC_LIBS)
@@ -88,7 +97,7 @@ $(UNITY_STATIC_LIB): $(UNITY_DIR)/src/unity.c
 	$(AR) rcs $@ $(OD)/unity.o
 
 # binary maker
-$(BINARY): $(OBJS)
+$(BINARY): $(COBJS) $(CXXOBJS)
 	@echo "-------- Building binary $@ --------"
 	@mkdir -p $(shell dirname $@)
 	$(CXX) $(CFLAGS) $^ $(EXTERNAL_STATIC_LIBS) $(EXTERNAL_LINK_LIBS) -o $@
