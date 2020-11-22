@@ -44,7 +44,10 @@ namespace GostCrypt {
 
 
 	BUILD_EXCEPTION(FileNotFoundException, GostCryptException);
-	#define FILENOTFOUNDEXCEPTION(file) FileNotFoundException(file, __FUNCTION__, __FILE__, __LINE__)
+	#define FILENOTFOUNDEXCEPTION(file) FileNotFoundException("File " + file + " not found", __FUNCTION__, __FILE__, __LINE__)
+
+    BUILD_EXCEPTION(CantCreateFileException, GostCryptException);
+    #define CANTCREATEFILEEXCEPTION(file) CantCreateFileException("File " + file + " could not be created", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(InvalidParameterException, GostCryptException);
     #define INVALIDPARAMETEREXCEPTION(msg) InvalidParameterException(msg, __FUNCTION__, __FILE__, __LINE__)
