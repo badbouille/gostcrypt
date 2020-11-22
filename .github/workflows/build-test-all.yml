@@ -13,8 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: 'Install libfuse-dev'
-        run: sudo apt install libfuse-dev
+      - name: 'Install libfuse-dev e2fslibs-dev'
+        run: sudo apt install libfuse-dev e2fslibs-dev
       - name: 'Building whole project'
         run: make
       - name: 'Upload common test binary'
