@@ -11,7 +11,7 @@ DEBUG?=yes
 # flags to use for compilation
 INCFLAGS?=-Iince -Iinci
 CFLAGS += -D_FILE_OFFSET_BITS=64
-CFLAGS += -DFUSE_USE_VERSION=26
+CFLAGS += -DFUSE_USE_VERSION=29
 
 # CXX flags
 CXXFLAGS += -std=c++17
