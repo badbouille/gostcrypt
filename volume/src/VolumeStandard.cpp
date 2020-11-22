@@ -96,7 +96,11 @@ void GostCrypt::VolumeStandard::create(std::string file,
 
     //  ---------------  OPENING FILE  ---------------
     // TODO : error handling / checks / readonly
-    volumefile.open(file, std::ios::binary | std::ios::in | std::ios::out);
+    volumefile.open(file, std::fstream::out | std::fstream::binary);
+
+    if (volumefile.fail()) {
+        throw CANTCREATEFILEEXCEPTION(file);
+    }
 
     //  ---------------  FINDING ALGORITHM  ---------------
     DiskEncryptionAlgorithmList algorithmList = GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
@@ -150,8 +154,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
     volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
 
     // backup header
-    // TODO: wrong seek! Use real offset since end is not final end
-    volumefile.seekg(getHeaderOffsetBackup(), std::ios::end);
+    volumefile.seekg(4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup(), std::ios::beg);
     volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
 
     //  ---------------  Writing random data across data area and encrypting it  ---------------
@@ -189,7 +192,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
     volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
 
     // backup header
-    volumefile.seekg(getHeaderOffsetBackup() - STANDARD_HEADER_SIZE, std::ios::end);
+    volumefile.seekg(4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup() - STANDARD_HEADER_SIZE, std::ios::beg);
     volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
 
     //  ---------------  CLOSING AND REOPENING VOLUME  ---------------
