@@ -350,9 +350,7 @@ static errcode_t unix_open(const char *name, int flags,
 	if (flags & IO_FLAG_DIRECT_IO)
 		open_flags |= O_DIRECT;
 #endif
-	fd = ext2fs_open_file(name, open_flags, 0);
-	if (fd < 0)
-		return errno;
+
 #if defined(F_NOCACHE) && !defined(IO_DIRECT)
 	if (flags & IO_FLAG_DIRECT_IO) {
 		if (fcntl(fd, F_NOCACHE, 1) < 0)
