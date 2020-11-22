@@ -10,7 +10,8 @@ CXXFILES:= $(shell find src -name '*.cpp')
 EXTERNAL_STATIC_LIBS=../../$(BD)/core.a ../../$(BD)/fuse.a ../../$(BD)/volume.a ../../$(BD)/crypto.a ../../$(BD)/common.a
 
 #external linker components
-EXTERNAL_LINK_LIBS=-lfuse
+EXTERNAL_LINK_LIBS += -lfuse
+EXTERNAL_LINK_LIBS += -lext2fs -lrt -lpthread -lcom_err
 
 # actual compilation
 include ../../Makefile

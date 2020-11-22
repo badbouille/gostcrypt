@@ -7,12 +7,27 @@
 #include <zconf.h>
 #include "../ince/FuseFileSystemNone.h"
 
-bool GostCrypt::FuseFileSystemNone::checkAccessRights()
-{
-    return fuse_get_context()->uid == 0 || fuse_get_context()->uid == userID;
+fuse_operations fuse_service_oper;
+
+GostCrypt::Volume * mountedVolume;
+GostCrypt::FuseFileSystemNone * interface;
+
+void * fusefs_none_init(struct fuse_conn_info * cf) {
+    // nothing
+    return nullptr;
 }
 
-int GostCrypt::FuseFileSystemNone::fuse_service_access(const char *path, int mask)
+void fusefs_none_destroy(void* userdata) {
+    // nothing
+    mountedVolume->close();
+}
+
+bool checkAccessRights()
+{
+    return fuse_get_context()->uid == 0 || fuse_get_context()->uid == interface->getUID();
+}
+
+int fusefs_none_access(const char *path, int mask)
 {
     // parameters are ignored
     (void)path;
@@ -23,12 +38,12 @@ int GostCrypt::FuseFileSystemNone::fuse_service_access(const char *path, int mas
     return 0;
 }
 
-int GostCrypt::FuseFileSystemNone::fuse_service_getattr(const char *path, struct stat *statData)
+int fusefs_none_getattr(const char *path, struct stat *statData)
 {
     memset(statData, 0, sizeof(*statData));
 
-    statData->st_uid = userID;
-    statData->st_gid = groupID;
+    statData->st_uid = interface->getUID();
+    statData->st_gid = interface->getGID();
     statData->st_atime = time(NULL);
     statData->st_ctime = time(NULL);
     statData->st_mtime = time(NULL);
@@ -46,7 +61,7 @@ int GostCrypt::FuseFileSystemNone::fuse_service_getattr(const char *path, struct
         {
             statData->st_mode = S_IFREG | 0600;
             statData->st_nlink = 1;
-            statData->st_size = target->getSize();
+            statData->st_size = mountedVolume->getSize();
         }
         else
         {
@@ -56,7 +71,7 @@ int GostCrypt::FuseFileSystemNone::fuse_service_getattr(const char *path, struct
     return 0;
 }
 
-int GostCrypt::FuseFileSystemNone::fuse_service_open(const char *path, struct fuse_file_info *fi)
+int fusefs_none_open(const char *path, struct fuse_file_info *fi)
 {
     (void)fi;
     if (!checkAccessRights())
@@ -70,7 +85,7 @@ int GostCrypt::FuseFileSystemNone::fuse_service_open(const char *path, struct fu
     return 0;
 }
 
-int GostCrypt::FuseFileSystemNone::fuse_service_opendir(const char *path, struct fuse_file_info *fi)
+int fusefs_none_opendir(const char *path, struct fuse_file_info *fi)
 {
     (void)fi;
     if (!checkAccessRights())
@@ -84,11 +99,11 @@ int GostCrypt::FuseFileSystemNone::fuse_service_opendir(const char *path, struct
     return 0;
 }
 
-int GostCrypt::FuseFileSystemNone::fuse_service_read(const char *path,
-                                                     char *buf,
-                                                     size_t size,
-                                                     off_t offset,
-                                                     struct fuse_file_info *fi)
+int fusefs_none_read(const char *path,
+                             char *buf,
+                             size_t size,
+                             off_t offset,
+                             struct fuse_file_info *fi)
 {
     (void)fi;
     if (!checkAccessRights())
@@ -101,22 +116,22 @@ int GostCrypt::FuseFileSystemNone::fuse_service_read(const char *path,
     }
 
     // prevent reads after end
-    if (size + offset > target->getSize()) {
-        size = target->getSize() - offset;
+    if (size + offset > mountedVolume->getSize()) {
+        size = mountedVolume->getSize() - offset;
     }
 
-    SecureBufferPtr ptr((uint8_t *)(buf), size);
+    GostCrypt::SecureBufferPtr ptr((uint8_t *)(buf), size);
 
-    target->read(ptr, offset);
+    mountedVolume->read(ptr, offset);
 
     return size;
 }
 
-int GostCrypt::FuseFileSystemNone::fuse_service_readdir(const char *path,
-                                                        void *buf,
-                                                        fuse_fill_dir_t filler,
-                                                        off_t offset,
-                                                        struct fuse_file_info *fi)
+int fusefs_none_readdir(const char *path,
+                                void *buf,
+                                fuse_fill_dir_t filler,
+                                off_t offset,
+                                struct fuse_file_info *fi)
 {
     (void)fi;
     (void)offset;
@@ -137,11 +152,11 @@ int GostCrypt::FuseFileSystemNone::fuse_service_readdir(const char *path,
     return 0;
 }
 
-int GostCrypt::FuseFileSystemNone::fuse_service_write(const char *path,
-                                                      const char *buf,
-                                                      size_t size,
-                                                      off_t offset,
-                                                      struct fuse_file_info *fi)
+int fusefs_none_write(const char *path,
+                              const char *buf,
+                              size_t size,
+                              off_t offset,
+                              struct fuse_file_info *fi)
 {
 
     (void)fi;
@@ -155,13 +170,50 @@ int GostCrypt::FuseFileSystemNone::fuse_service_write(const char *path,
     }
 
     // prevent writes after end
-    if (size + offset > target->getSize()) {
-        size = target->getSize() - offset;
+    if (size + offset > mountedVolume->getSize()) {
+        size = mountedVolume->getSize() - offset;
     }
 
-    SecureBufferPtr ptr((uint8_t *)(buf), size);
+    GostCrypt::SecureBufferPtr ptr((uint8_t *)(buf), size);
 
-    target->write(ptr, offset);
+    mountedVolume->write(ptr, offset);
 
     return size;
+}
+
+void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint) {
+
+    char params[6][256] = {"gostcrypt", "", "-o", "allow_other", "-f", "-s"};
+
+    // TODO option allow_other only allowed if 'user_allow_other' is set in /etc/fuse.conf
+
+    // strcpy_s not part of c++11. Using good old strlen instead.
+    if(strlen(mountpoint) > 255) {
+        throw INVALIDPARAMETEREXCEPTION("mounpoint name too long for buffer.");
+    }
+    strcpy(params[1], mountpoint);
+
+    char* args[6];
+    for (int i = 0; i < 6 ; i++)
+    {
+        args[i] = params[i];
+    }
+
+    // making sure interface points on the volume
+    mountedVolume = target;
+    interface = this;
+
+    /* Setting up fuse_service callbacks */
+    // note: it could be a constant, but in c++xx>11 C like structures can't be easily initialised
+    fuse_service_oper.getattr = fusefs_none_getattr;
+    fuse_service_oper.open = fusefs_none_open;
+    fuse_service_oper.read = fusefs_none_read;
+    fuse_service_oper.write = fusefs_none_write;
+    fuse_service_oper.opendir = fusefs_none_opendir;
+    fuse_service_oper.readdir = fusefs_none_readdir;
+    fuse_service_oper.init = fusefs_none_init;
+    fuse_service_oper.destroy = fusefs_none_destroy;
+    fuse_service_oper.access = fusefs_none_access;
+
+    fuse_main(6, args, &fuse_service_oper, nullptr);
 }

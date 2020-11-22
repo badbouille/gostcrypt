@@ -3,7 +3,7 @@
 //
 
 #include "Core.h"
-#include "FuseService.h"
+#include "FuseFileSystem.h"
 
 GostCrypt::DiskEncryptionAlgorithmList GostCrypt::Core::GetEncryptionAlgorithms()
 {
@@ -86,7 +86,8 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
     // Volume has been opened successfully
     // Starting fuse
 
-    start_fuse(p->mountPoint.c_str(), volume, interface);
+    interface->setTarget(volume);
+    interface->start_fuse(p->mountPoint.c_str());
 
 }
 
