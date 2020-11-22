@@ -2,6 +2,7 @@
 // Created by badbouille on 06/05/2020.
 //
 
+#include <iostream>
 #include "Core.h"
 #include "FuseFileSystem.h"
 
@@ -98,5 +99,71 @@ void GostCrypt::Core::umount(std::string mountPoint)
 
 void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
 {
-    // TODO
+    // TODO check input
+
+    // Pointer on final Volume object
+    GostCrypt::Volume *volume = nullptr;
+    GostCrypt::FuseFileSystem *interface = nullptr;
+    bool volumeOpened = false;
+
+    // finding interface requested
+    FuseFileSystemList fileSystemList = GostCrypt::FuseFileSystem::GetFileSystems();
+    for (auto & fileSystemIterator : fileSystemList) {
+        // checking name
+        if (fileSystemIterator->getID() == p->afterCreationMount.fileSystemID) {
+            interface = fileSystemIterator;
+        }
+    }
+
+    // cleaning unused structures
+    for (auto & fileSystemIterator : fileSystemList) {
+        if (interface != fileSystemIterator) {
+            delete fileSystemIterator;
+        }
+    }
+
+    if (interface == nullptr) {
+        throw INVALIDPARAMETEREXCEPTION("Could not find the requested interface (filesystem).");
+    }
+
+    // finding volume type requested
+    VolumeList volumeList = GostCrypt::Volume::GetAvailableVolumeTypes();
+    for (auto & volumeIterator : volumeList) {
+        // checking name
+        if (volumeIterator->GetID() == p->volumeTypeID) {
+            volume = volumeIterator;
+        }
+    }
+
+    // cleaning unused structures
+    for (auto & volumeIterator : volumeList) {
+        if (volume != volumeIterator) {
+            delete volumeIterator;
+        }
+    }
+
+    if (volume == nullptr) {
+        throw INVALIDPARAMETEREXCEPTION("Could not find the requested volume type.");
+    }
+
+    // volume creation
+    try {
+        volume->create(p->volumePath, p->dataSize, p->algorithmID, p->sectorSize, p->password);
+    } catch (GostCryptException &e) {
+        delete volume;
+        throw;
+    }
+
+    // filesystem init
+    interface->setTarget(volume);
+    interface->create();
+
+    // closing volume
+    volume->close();
+
+    delete volume;
+    delete interface;
+
+    // post-creation mount
+    mount(&p->afterCreationMount);
 }
