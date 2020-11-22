@@ -25,6 +25,8 @@ namespace GostCrypt
     public:
 
         /* WARNING: Will crash if used with nullptr */
+        // TODO : work on this and add checks on target value maybe
+        //        maybe the target is not needed here anymore
         FuseFileSystem() : target(nullptr) {};
         FuseFileSystem(Volume &target) : target(&target) {};
 

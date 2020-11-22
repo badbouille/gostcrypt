@@ -10,6 +10,7 @@ void GostCrypt::FuseFileSystemExt2::create() {
 
     // not implemented yet
     // should use mke2fs and init the current target.
+    // TODO
 
 }
 
