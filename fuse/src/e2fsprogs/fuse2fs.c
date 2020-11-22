@@ -9,11 +9,11 @@
  * %End-Header%
  */
 #define _FILE_OFFSET_BITS 64
-#define FUSE_USE_VERSION 29
+//#define FUSE_USE_VERSION 29
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#include "config.h"
+//#include "config.h"
 #include <pthread.h>
 #ifdef __linux__
 # include <linux/fs.h>
@@ -36,7 +36,8 @@
 #include "ext2fs/ext2fs.h"
 #include "ext2fs/ext2_fs.h"
 
-#include "../version.h"
+#define E2FSPROGS_VERSION "1.46-WIP"
+#define E2FSPROGS_DATE "20-Mar-2020"
 
 #ifdef ENABLE_NLS
 #include <libintl.h>
@@ -298,6 +299,11 @@ out:
 	return err;
 }
 #endif /* TRANSLATE_LINUX_ACLS */
+
+// custom io manager
+/* gost_io.cpp */
+extern io_manager gost_io_manager;
+extern io_manager gostfd_io_manager;
 
 /*
  * ext2_file_t contains a struct inode, so we can't leave files open.
@@ -755,6 +761,22 @@ static void *op_init(struct fuse_conn_info *conn)
 	return ff;
 }
 
+/*
+ * Return the inode i_blocks in stat (512 byte) units
+ */
+static blk64_t ext2fs_get_stat_i_blocks(ext2_filsys fs,
+                                 struct ext2_inode *inode)
+{
+    blk64_t	ret = inode->i_blocks;
+
+    if (ext2fs_has_feature_huge_file(fs->super)) {
+        ret += ((long long) inode->osd2.linux2.l_i_blocks_hi) << 32;
+        if (inode->i_flags & EXT4_HUGE_FILE_FL)
+            ret *= (fs->blocksize / 512);
+    }
+    return ret;
+}
+
 static int stat_inode(ext2_filsys fs, ext2_ino_t ino, struct stat *statbuf)
 {
 	struct ext2_inode_large inode;
@@ -857,33 +879,30 @@ static int op_readlink(const char *path, char *buf, size_t len)
 	len--;
 	if (inode.i_size < len)
 		len = inode.i_size;
-	if (ext2fs_is_fast_symlink(&inode))
-		memcpy(buf, (char *)inode.i_block, len);
-	else {
-		/* big/inline symlink */
 
-		err = ext2fs_file_open(fs, ino, 0, &file);
-		if (err) {
-			ret = translate_error(fs, ino, err);
-			goto out;
-		}
+    /* big/inline symlink */
 
-		err = ext2fs_file_read(file, buf, len, &got);
-		if (err || got != len) {
-			ext2fs_file_close(file);
-			ret = translate_error(fs, ino, err);
-			goto out2;
-		}
+    err = ext2fs_file_open(fs, ino, 0, &file);
+    if (err) {
+        ret = translate_error(fs, ino, err);
+        goto out;
+    }
+
+    err = ext2fs_file_read(file, buf, len, &got);
+    if (err || got != len) {
+        ext2fs_file_close(file);
+        ret = translate_error(fs, ino, err);
+        goto out2;
+    }
 
 out2:
-		err = ext2fs_file_close(file);
-		if (ret)
-			goto out;
-		if (err) {
-			ret = translate_error(fs, ino, err);
-			goto out;
-		}
-	}
+    err = ext2fs_file_close(file);
+    if (ret)
+        goto out;
+    if (err) {
+        ret = translate_error(fs, ino, err);
+        goto out;
+    }
 	buf[len] = 0;
 
 	if (fs_writeable(fs)) {
@@ -3720,7 +3739,7 @@ static int fuse2fs_opt_proc(void *data, const char *arg,
 	return 1;
 }
 
-int main(int argc, char *argv[])
+int fuse2fs_main(int argc, char *argv[])
 {
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	struct fuse2fs fctx;
@@ -3775,7 +3794,7 @@ int main(int argc, char *argv[])
 	ret = 2;
 	if (!fctx.ro)
 		flags |= EXT2_FLAG_RW;
-	err = ext2fs_open2(fctx.device, NULL, flags, 0, 0, unix_io_manager,
+	err = ext2fs_open2(fctx.device, NULL, flags, 0, 0, gost_io_manager,
 			   &global_fs);
 	if (err) {
 		printf(_("%s: %s.\n"), fctx.device, error_message(err));
@@ -3792,18 +3811,6 @@ int main(int argc, char *argv[])
 			printf(_("%s: mounting read-only without "
 				 "recovering journal\n"),
 			       fctx.device);
-		} else if (!fctx.ro) {
-			printf(_("%s: recovering journal\n"), fctx.device);
-			err = ext2fs_run_ext3_journal(&global_fs);
-			if (err) {
-				printf(_("%s: %s.\n"), fctx.device,
-				       error_message(err));
-				printf(_("Please run e2fsck -fy %s.\n"),
-				       fctx.device);
-				goto out;
-			}
-			ext2fs_clear_feature_journal_needs_recovery(global_fs->super);
-			ext2fs_mark_super_dirty(global_fs);
 		} else {
 			printf("%s", _("Journal needs recovery; running "
 			       "`e2fsck -E journal_only' is required.\n"));
