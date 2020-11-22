@@ -3739,7 +3739,7 @@ static int fuse2fs_opt_proc(void *data, const char *arg,
 	return 1;
 }
 
-int fuse2fs_main(int argc, char *argv[])
+int fuse2fs_main(int argc, char *argv[], const char *fuse_additional_params)
 {
 	struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
 	struct fuse2fs fctx;
@@ -3861,8 +3861,8 @@ int fuse2fs_main(int argc, char *argv[])
 
 	/* Set up default fuse parameters */
 	snprintf(extra_args, BUFSIZ, "-okernel_cache,subtype=ext4,use_ino,"
-		 "fsname=%s,attr_timeout=0" FUSE_PLATFORM_OPTS,
-		 fctx.device);
+		 "fsname=%s,attr_timeout=0" FUSE_PLATFORM_OPTS "%s",
+		 fctx.device, fuse_additional_params);
 	if (fctx.no_default_opts == 0)
 		fuse_opt_add_arg(&args, extra_args);
 

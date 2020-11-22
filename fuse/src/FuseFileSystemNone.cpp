@@ -183,7 +183,7 @@ int fusefs_none_write(const char *path,
 
 void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint) {
 
-    char params[6][256] = {"gostcrypt", "", "-o", "allow_other", "-f", "-s"};
+    char params[][256] = {"gostcrypt", "", ""};
 
     // TODO option allow_other only allowed if 'user_allow_other' is set in /etc/fuse.conf
 
@@ -193,8 +193,12 @@ void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint) {
     }
     strcpy(params[1], mountpoint);
 
-    char* args[6];
-    for (int i = 0; i < 6 ; i++)
+    // options
+    snprintf(params[2], 256, "-ouid=%d,gid=%d", userID, groupID);
+    //snprintf(params[2], 256, "-oallow_other");
+
+    char* args[3];
+    for (int i = 0; i < 3; i++)
     {
         args[i] = params[i];
     }
@@ -215,5 +219,5 @@ void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint) {
     fuse_service_oper.destroy = fusefs_none_destroy;
     fuse_service_oper.access = fusefs_none_access;
 
-    fuse_main(6, args, &fuse_service_oper, nullptr);
+    fuse_main(3, args, &fuse_service_oper, nullptr);
 }

@@ -21,21 +21,22 @@ extern GostCrypt::Volume *already_opened_volume;
 // marking extern C or else linker won't create the right symbol
 extern "C" {
     // fuse fs main. Will setup everything and call fuse_main.
-    int fuse2fs_main(int argc, char *argv[]);
+    int fuse2fs_main(int argc, char *argv[], const char *fuse_additional_params);
 }
 
 void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint) {
 
-    char params[5][256] = {"gostcrypt", "nofile", "", "-o", "fuse2fs_debug"};
+    char params[3][256] = {"gostcrypt", "gostcrypt", ""};
+    char fuse_params[256] = ",allow_other";
 
     // strcpy_s not part of c++11. Using good old strlen instead.
     if(strlen(mountpoint) > 255) {
         throw INVALIDPARAMETEREXCEPTION("mountpoint name too long for buffer.");
     }
-    strcpy(params[1], mountpoint);
+    strcpy(params[2], mountpoint);
 
-    char* args[5];
-    for (int i = 0; i < 5 ; i++)
+    char* args[3];
+    for (int i = 0; i < 3 ; i++)
     {
         args[i] = params[i];
     }
@@ -43,7 +44,10 @@ void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint) {
     // binding parameters
     already_opened_volume = target;
 
+    // options
+    snprintf(fuse_params, 256, ",uid=%d,gid=%d", geteuid(), getegid());
+
     // calling fuse2fs
-    fuse2fs_main(5, args);
+    fuse2fs_main(3, args, fuse_params);
 }
 
