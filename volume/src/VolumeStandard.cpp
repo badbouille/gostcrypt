@@ -96,6 +96,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
 
     //  ---------------  OPENING FILE  ---------------
     // TODO : error handling / checks / readonly
+    // TODO : handle device files
     volumefile.open(file, std::fstream::out | std::fstream::binary);
 
     if (volumefile.fail()) {
