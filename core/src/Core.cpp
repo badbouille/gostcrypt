@@ -167,3 +167,58 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     // post-creation mount
     mount(&p->afterCreationMount);
 }
+
+GostCrypt::Core::VolumeInfoList GostCrypt::Core::list()
+{
+    std::string sourcefile = "/proc/mounts";
+    std::ifstream mounts(sourcefile);
+    std::string line;
+
+    size_t first_space = 0;
+    std::string mountType;
+    std::string folder;
+
+    GostCrypt::Core::VolumeInfoList volumes;
+
+    if(!mounts.is_open()) {
+        throw FILENOTFOUNDEXCEPTION(sourcefile);
+    }
+
+    while (std::getline(mounts, line)) {
+        first_space = line.find(' ');
+        mountType = line.substr(0, first_space);
+        folder = line.substr(first_space+1, line.find(' ', first_space+1) - first_space - 1);
+
+        // TODO add constant
+        if (mountType == "gostcrypt") {
+            // extract info from folder
+            VolumeInfoFile_t infos;
+            std::ifstream gostinfo(folder + INFO_FILE);
+
+            if(!gostinfo.is_open()) {
+                throw FILENOTFOUNDEXCEPTION(folder + INFO_FILE);
+            }
+
+            gostinfo.read((char *)&infos, sizeof(infos));
+
+            if(gostinfo.fail()) { // TODO consider a better exception
+                throw FILENOTFOUNDEXCEPTION(folder + INFO_FILE);
+            }
+
+            // creating entry
+            VolumeInfo vi;
+            vi.file = infos.file;
+            vi.mountPoint = infos.mountPoint;
+            vi.algorithmID = infos.algorithmID;
+            vi.keyDerivationFunctionID = infos.keyDerivationFunctionID;
+            vi.volumeTypeID = infos.volumeTypeID;
+            vi.dataSize = be64toh(infos.dataSize);
+
+            // adding entry
+            volumes.push_back(vi);
+
+        }
+    }
+
+    return volumes;
+}
