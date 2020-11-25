@@ -25,6 +25,9 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
     // opening volume in readonly mode
     volumefile.open(file, std::ios::binary | std::ios::in | std::ios::out);
 
+    // remembering requested file
+    volumefilepath = file;
+
     // going to header offset (usually 0 : beginning of file)
     volumefile.seekg(getHeaderOffset(), std::ios::beg);
     volumefile.read((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
@@ -536,4 +539,9 @@ std::string GostCrypt::VolumeStandard::getAlgorithmDescription() const
 size_t GostCrypt::VolumeStandard::getSize() const
 {
     return header.dataSize;
+}
+
+std::string GostCrypt::VolumeStandard::getVolumeSource() const
+{
+    return volumefilepath;
 }

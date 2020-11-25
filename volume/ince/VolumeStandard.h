@@ -108,6 +108,7 @@ namespace GostCrypt
         std::string getAlgorithmName() const override;
         std::string getAlgorithmID() const override;
         std::string getAlgorithmDescription() const override;
+        std::string getVolumeSource() const override;
 
         size_t getSize() const override;
 
@@ -131,6 +132,12 @@ namespace GostCrypt
          * @return the backup header offset
          */
         virtual size_t getHeaderOffsetBackup() { return -STANDARD_HEADER_SIZE; };
+
+        /**
+         * Path of the currently opened file.
+         * Useful for user interface to remember what file is currently used.
+         */
+        std::string volumefilepath;
 
         /**
          * Stream pointing to the current encrypted volume file. Must be handled with care.

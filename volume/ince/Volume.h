@@ -145,6 +145,13 @@ namespace GostCrypt
         virtual std::string getAlgorithmDescription() const = 0;
 
         /**
+         * Returns the source of the data of this volume.
+         * Usually a file but can be a folder, url, etc. It is only for UI purposes.
+         * @return the volume's source path
+         */
+        virtual std::string getVolumeSource() const = 0;
+
+        /**
          * Returns the size in bytes of this Volume
          * @return Size in bytes
          */
