@@ -102,11 +102,11 @@ int cmd_list(int argc, char **argv) {
                 abort();
             }
 
-            list_options[index].name = names.front().c_str();
+            list_options[index].name = names.back().c_str();
             list_options[index].key = 0;
             list_options[index].arg = 0;
             list_options[index].flags = OPTION_DOC;
-            list_options[index].doc = descs.front().c_str();
+            list_options[index].doc = descs.back().c_str();
             index++;
 
             delete dea;
@@ -129,11 +129,11 @@ int cmd_list(int argc, char **argv) {
                 abort();
             }
 
-            list_options[index].name = names.front().c_str();
+            list_options[index].name = names.back().c_str();
             list_options[index].key = 0;
             list_options[index].arg = 0;
             list_options[index].flags = OPTION_DOC;
-            list_options[index].doc = descs.front().c_str();
+            list_options[index].doc = descs.back().c_str();
             index++;
 
             delete dea;
@@ -147,7 +147,7 @@ int cmd_list(int argc, char **argv) {
         // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
         std::vector<std::string> names;
         std::vector<std::string> descs;
-        for (auto v : vlist) {
+        for (auto v : vlist) { // TODO display error!
             names.push_back(v->GetID());
             descs.push_back("[" + v->GetName() + "]\n" + v->GetDescription());
 
@@ -155,11 +155,11 @@ int cmd_list(int argc, char **argv) {
                 abort();
             }
 
-            list_options[index].name = names.front().c_str();
+            list_options[index].name = names.back().c_str();
             list_options[index].key = 0;
             list_options[index].arg = 0;
             list_options[index].flags = OPTION_DOC;
-            list_options[index].doc = descs.front().c_str();
+            list_options[index].doc = descs.back().c_str();
             index++;
 
             delete v;
@@ -181,11 +181,11 @@ int cmd_list(int argc, char **argv) {
                 abort();
             }
 
-            list_options[index].name = names.front().c_str();
+            list_options[index].name = names.back().c_str();
             list_options[index].key = 0;
             list_options[index].arg = 0;
             list_options[index].flags = OPTION_DOC;
-            list_options[index].doc = descs.front().c_str();
+            list_options[index].doc = descs.back().c_str();
             index++;
 
             delete fs;
