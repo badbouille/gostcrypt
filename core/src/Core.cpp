@@ -87,8 +87,7 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
     // Volume has been opened successfully
     // Starting fuse
 
-    interface->setTarget(volume);
-    interface->start_fuse(p->mountPoint.c_str());
+    interface->start_fuse(p->mountPoint.c_str(), volume);
 
 }
 
@@ -155,8 +154,7 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     }
 
     // filesystem init
-    interface->setTarget(volume);
-    interface->create();
+    interface->create(volume);
 
     // closing volume
     volume->close();

@@ -6,7 +6,7 @@
 #include <VolumeStandard.h>
 #include "FuseFileSystemExt2.h"
 
-void GostCrypt::FuseFileSystemExt2::create() {
+void GostCrypt::FuseFileSystemExt2::create(Volume *target) {
 
     // not implemented yet
     // should use mke2fs and init the current target.
@@ -25,7 +25,7 @@ extern "C" {
     int fuse2fs_main(int argc, char *argv[], const char *fuse_additional_params);
 }
 
-void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint) {
+void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *target) {
 
     char params[3][256] = {"gostcrypt", "gostcrypt", ""};
     char fuse_params[256] = ",allow_other";
@@ -47,6 +47,9 @@ void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint) {
 
     // options
     snprintf(fuse_params, 256, ",uid=%d,gid=%d", geteuid(), getegid());
+
+    // setup super fuse (info file)
+    setupSuperFuse(geteuid(), getegid(), target, mountpoint);
 
     // calling fuse2fs
     fuse2fs_main(3, args, fuse_params);

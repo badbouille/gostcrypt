@@ -305,6 +305,10 @@ out:
 extern io_manager gost_io_manager;
 extern io_manager gostfd_io_manager;
 
+// custom fuse_main
+/* FuseFileSystem.cpp */
+int super_fuse_main(int argc, char *argv[], const struct fuse_operations *op, void *private_data);
+
 /*
  * ext2_file_t contains a struct inode, so we can't leave files open.
  * Use this as a proxy instead.
@@ -3884,8 +3888,13 @@ int fuse2fs_main(int argc, char *argv[], const char *fuse_additional_params)
 		printf("\n");
 	}
 
+#ifdef DEBUG
+    fuse_opt_add_arg(&args,"-f");
+    fuse_opt_add_arg(&args,"-s");
+#endif
+
 	pthread_mutex_init(&fctx.bfl, NULL);
-	fuse_main(args.argc, args.argv, &fs_ops, &fctx);
+    super_fuse_main(args.argc, args.argv, &fs_ops, &fctx);
 	pthread_mutex_destroy(&fctx.bfl);
 
 	ret = 0;

@@ -5,6 +5,7 @@
 #include <Volume.h>
 #include <VolumeStandard.h>
 #include <zconf.h>
+#include <iostream>
 #include "../ince/FuseFileSystemNone.h"
 
 fuse_operations fuse_service_oper;
@@ -181,15 +182,22 @@ int fusefs_none_write(const char *path,
     return size;
 }
 
-void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint) {
 
-    char params[][256] = {"gostcrypt", "", ""};
+void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint, Volume *target) {
+
+#ifdef DEBUG
+#define ARG_NUM 5
+    char params[ARG_NUM][256] = {"gostcrypt", "", "", "-f", "-s"};
+#else
+#define ARG_NUM 3
+    char params[ARG_NUM][256] = {"gostcrypt", "", ""};
+#endif
 
     // TODO option allow_other only allowed if 'user_allow_other' is set in /etc/fuse.conf
 
     // strcpy_s not part of c++11. Using good old strlen instead.
     if(strlen(mountpoint) > 255) {
-        throw INVALIDPARAMETEREXCEPTION("mounpoint name too long for buffer.");
+        throw INVALIDPARAMETEREXCEPTION("mountpoint name too long for buffer.");
     }
     strcpy(params[1], mountpoint);
 
@@ -197,8 +205,8 @@ void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint) {
     snprintf(params[2], 256, "-ouid=%d,gid=%d", userID, groupID);
     //snprintf(params[2], 256, "-oallow_other");
 
-    char* args[3];
-    for (int i = 0; i < 3; i++)
+    char* args[ARG_NUM];
+    for (int i = 0; i < ARG_NUM; i++)
     {
         args[i] = params[i];
     }
@@ -219,5 +227,8 @@ void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint) {
     fuse_service_oper.destroy = fusefs_none_destroy;
     fuse_service_oper.access = fusefs_none_access;
 
-    fuse_main(3, args, &fuse_service_oper, nullptr);
+    // setup super fuse (info file)
+    setupSuperFuse(geteuid(), getegid(), target, mountpoint);
+
+    super_fuse_main(ARG_NUM, args, &fuse_service_oper, nullptr);
 }

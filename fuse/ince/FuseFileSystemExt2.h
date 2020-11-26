@@ -15,7 +15,6 @@ namespace GostCrypt
     {
     public:
 
-        FuseFileSystemExt2(Volume &target) : FuseFileSystem(target) { };
         FuseFileSystemExt2() : FuseFileSystem() { };
 
         // infos
@@ -25,10 +24,10 @@ namespace GostCrypt
                                                       "its own fuse implementation, fuse2fs."; };
 
         // create
-        void create() override;
+        void create(Volume *target) override;
 
         // Fuse entrypoint
-        void start_fuse(const char * mountpoint);
+        void start_fuse(const char * mountpoint, Volume *target);
 
     };
 
