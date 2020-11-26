@@ -64,10 +64,10 @@ static error_t parse_opt_create (int key, char *arg, struct argp_state *state) {
                     arguments->dataSize*=GB;
                     break;
                 }
-                if (u == "TB") {
-                    arguments->dataSize*=TB;
+                /*if (u == "TB") {
+                    arguments->dataSize*=TB; // TODO : why overflow here
                     break;
-                }
+                }*/
                 // unrecognised option is not ignored
                 argp_usage (state);
                 break;
@@ -90,10 +90,10 @@ static error_t parse_opt_create (int key, char *arg, struct argp_state *state) {
                     arguments->sectorSize*=GB;
                     break;
                 }
-                if (u == "TB") {
+                /*if (u == "TB") {
                     arguments->sectorSize*=TB;
                     break;
-                }
+                }*/
                 // unrecognised option is not ignored
                 argp_usage (state);
                 break;
