@@ -34,9 +34,6 @@ static error_t parse_opt_list (int key, char *arg, struct argp_state *state) {
 
     switch (key)
     {
-        case ARGP_KEY_NO_ARGS:
-            argp_usage (state);
-            break;
         case ARGP_KEY_ARG:
             if (state->arg_num == 0) {
                 *arguments = std::string(arg);
@@ -45,10 +42,11 @@ static error_t parse_opt_list (int key, char *arg, struct argp_state *state) {
             /* Too many arguments. */
             argp_usage(state);
             break;
+        case ARGP_KEY_NO_ARGS:
         case ARGP_KEY_END:
             if (state->arg_num < 1) {
-                /* Not enough arguments. */
-                argp_usage(state);
+                /* No arguments means listing volumes */
+                *arguments = std::string("mounted");
             }
             break;
         default:
@@ -59,6 +57,26 @@ static error_t parse_opt_list (int key, char *arg, struct argp_state *state) {
 
 /* argp custom params */
 static struct argp argp_list = { list_options, parse_opt_list, args_doc_list, doc_list };
+
+std::string formatSize(size_t s) {
+    /*if (s > TB) {
+        s /= TB;
+        return std::to_string(s) + "TB";
+    }*/
+    if (s > GB) {
+        s /= GB;
+        return std::to_string(s) + "GB";
+    }
+    if (s > MB) {
+        s /= MB;
+        return std::to_string(s) + "MB";
+    }
+    if (s > KB) {
+        s /= KB;
+        return std::to_string(s) + "KB";
+    }
+    return std::to_string(s) + "B";
+}
 
 /* Real command */
 int cmd_list(int argc, char **argv) {
@@ -173,6 +191,15 @@ int cmd_list(int argc, char **argv) {
             delete fs;
         }
         argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
+        return 0;
+    }
+
+    if (item == "mounted") {
+        Core::VolumeInfoList vlist = Core::list();
+
+        for (auto v : vlist) {
+            std::cout << v.mountPoint << ": " << v.file << " " << v.algorithmID << " (" << formatSize(v.dataSize) << ")" << std::endl;
+        }
         return 0;
     }
 
