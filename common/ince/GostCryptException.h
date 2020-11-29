@@ -46,6 +46,12 @@ namespace GostCrypt {
 	BUILD_EXCEPTION(FileNotFoundException, GostCryptException);
 	#define FILENOTFOUNDEXCEPTION(file) FileNotFoundException("File " + file + " not found", __FUNCTION__, __FILE__, __LINE__)
 
+    BUILD_EXCEPTION(MountpointNotFoundException, GostCryptException);
+    #define MOUNTPOINTNOTFOUNDEXCEPTION(folder) MountpointNotFoundException("Mountpoint " + folder + " not found. Is the volume mounted?", __FUNCTION__, __FILE__, __LINE__)
+
+    BUILD_EXCEPTION(UmountFailedException, GostCryptException);
+    #define UMOUNTFAILEDEXCEPTION(folder) UmountFailedException("Mountpoint " + folder + " could not be unmounted.", __FUNCTION__, __FILE__, __LINE__)
+
     BUILD_EXCEPTION(CantCreateFileException, GostCryptException);
     #define CANTCREATEFILEEXCEPTION(file) CantCreateFileException("File " + file + " could not be created", __FUNCTION__, __FILE__, __LINE__)
 
