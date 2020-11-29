@@ -106,13 +106,24 @@ void GostCrypt::Core::umount(std::string mountPoint)
         mountPoint.pop_back();
     }
 
+    /* opening special file to check presence of volume */
+    gostinfo.open(mountPoint + INFO_FILE, std::ios_base::in );
+
+    /* Checking */
+    if (!gostinfo.is_open()) {
+        throw MOUNTPOINTNOTFOUNDEXCEPTION(mountPoint);
+    }
+
+    /* Closing read-only file */
+    gostinfo.close();
+
     /* Opening special file */
     /* Append mode is the only mode where the 'write' callback is called in fuse.
      * Other modes just recreate the file, etc
      */
     gostinfo.open(mountPoint + INFO_FILE, std::ios_base::app );
     if (!gostinfo.is_open()) {
-        throw MOUNTPOINTNOTFOUNDEXCEPTION(mountPoint);
+        throw GOSTCRYPTEXCEPTION("Mountpoint found but cannot be accessed: " + mountPoint);
     }
 
     /* writing command to it to close it */
@@ -126,6 +137,7 @@ void GostCrypt::Core::umount(std::string mountPoint)
 
     /* Checking */
     if (gostinfo.is_open()) {
+        gostinfo.close();
         throw UMOUNTFAILEDEXCEPTION(mountPoint);
     }
 
