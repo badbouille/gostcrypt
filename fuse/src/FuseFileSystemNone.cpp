@@ -202,7 +202,7 @@ void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint, Volume *
     strcpy(params[1], mountpoint);
 
     // options
-    snprintf(params[2], 256, "-ouid=%d,gid=%d", userID, groupID);
+    snprintf(params[2], 256, "-ouid=%d,gid=%d,allow_other", userID, groupID);
     //snprintf(params[2], 256, "-oallow_other");
 
     char* args[ARG_NUM];

@@ -61,7 +61,7 @@ extern "C" {
 void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *target) {
 
     char params[3][256] = {"gostcrypt", "gostcrypt", ""};
-    char fuse_params[256] = ",allow_other";
+    char fuse_params[256] = "";
 
     // strcpy_s not part of c++11. Using good old strlen instead.
     if(strlen(mountpoint) > 255) {
@@ -79,7 +79,7 @@ void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *
     already_opened_volume = target;
 
     // options
-    snprintf(fuse_params, 256, ",uid=%d,gid=%d", geteuid(), getegid());
+    snprintf(fuse_params, 256, ",uid=%d,gid=%d,allow_other", geteuid(), getegid());
 
     // setup super fuse (info file)
     setupSuperFuse(geteuid(), getegid(), target, mountpoint);
