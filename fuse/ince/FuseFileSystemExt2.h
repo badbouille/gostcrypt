@@ -24,7 +24,7 @@ namespace GostCrypt
                                                       "its own fuse implementation, fuse2fs."; };
 
         // create
-        void create(Volume *target) override;
+        void create(std::string target) override;
 
         // Fuse entrypoint
         void start_fuse(const char * mountpoint, Volume *target);

@@ -4,14 +4,47 @@
 
 #include <Volume.h>
 #include <VolumeStandard.h>
+#include <wait.h>
 #include "FuseFileSystemExt2.h"
 
-void GostCrypt::FuseFileSystemExt2::create(Volume *target) {
+void GostCrypt::FuseFileSystemExt2::create(std::string target) {
 
-    // not implemented yet
-    // should use mke2fs and init the current target.
-    // TODO
+    /* Forking and execing the mkfs program */
+    pid_t pid = fork();
+    if ( pid == 0 ) {
+        static char argvT[][256] = { "-E", "root_owner=$UID:$GID", ""};
+        static char *argv[] = { argvT[0], argvT[1], argvT[2] };
 
+        if (strlen(target.c_str()) < 256) {
+            strcpy(argvT[2], target.c_str());
+        }
+
+        /* Executing basic mkfs.ext2 program */
+        execv("/sbin/mkfs.ext2", argv);
+
+        /* If execv fails, exit with error code */
+        exit(127);
+
+    } else {
+        int status;
+
+        /* Waiting for child to build disk image */
+        if (waitpid(pid, &status, 0) == -1 ) {
+            throw GOSTCRYPTEXCEPTION("waitpid failed.");
+        }
+
+        /* Checking return value */
+        if ( WIFEXITED(status) ) {
+            if (WEXITSTATUS(status) != 0) {
+                throw GOSTCRYPTEXCEPTION("Wrong exit status for mkfs.ext2.");
+            }
+        } else {
+            throw GOSTCRYPTEXCEPTION("Child not exited.");
+        }
+
+        /* Formatted successfully */
+
+    }
 }
 
 // global var containing opened volume

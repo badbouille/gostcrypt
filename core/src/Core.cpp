@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <wait.h>
 #include "Core.h"
 #include "FuseFileSystem.h"
 
@@ -152,6 +153,8 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     GostCrypt::FuseFileSystem *interface = nullptr;
     bool volumeOpened = false;
 
+    std::string realfs = p->afterCreationMount.fileSystemID;
+
     // finding interface requested
     FuseFileSystemList fileSystemList = GostCrypt::FuseFileSystem::GetFileSystems();
     for (auto & fileSystemIterator : fileSystemList) {
@@ -201,15 +204,53 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     }
 
     // filesystem init
-    interface->create(volume);
 
     // closing volume
     volume->close();
-
     delete volume;
+
+    // mounting using the 'none' filesystem (loop device to create the fs)
+    p->afterCreationMount.fileSystemID = "none";
+
+    /* Forking to mount program */
+    pid_t pid = fork();
+    int status;
+
+    if ( pid == 0 ) {
+
+        // Mounting raw volume
+        mount(&p->afterCreationMount);
+
+        /* If fuse_main fails, exit with error code */
+        exit(127);
+    }
+
+    /* Waiting for child to mount the raw volume */
+    if (waitpid(pid, &status, 0) == -1 ) {
+        throw GOSTCRYPTEXCEPTION("waitpid failed.");
+    }
+
+    /* Checking return value */
+    if ( WIFEXITED(status) ) {
+        if (WEXITSTATUS(status) != 0) {
+            throw GOSTCRYPTEXCEPTION("Mount operation failed.");
+        }
+    } else {
+        throw GOSTCRYPTEXCEPTION("Child not exited.");
+    }
+
+    // creating filesystem in raw file
+    interface->create(p->afterCreationMount.mountPoint + "/volume");
+
+    // unmounting volume
+    umount(p->afterCreationMount.mountPoint);
+
     delete interface;
 
-    // post-creation mount
+    // restoring real filesystem asked by the user
+    p->afterCreationMount.fileSystemID = realfs;
+
+    // post-creation mount (with real filesystem this time)
     mount(&p->afterCreationMount);
 }
 

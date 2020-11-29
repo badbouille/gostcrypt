@@ -112,14 +112,14 @@ namespace GostCrypt
 
         /**
          * @brief Function to create a filesystem on a volume. equivalent to mkfs.
-         * @note The target volume must be opened but not mounted to avoid any problems.
+         * @note The target volume must be opened and mounted at the target location (as none).
          *
          * For FuseFileSystemNone, does nothing (nothing to init).
          * For FuseFileSystemExt2, calls mkfs.ext2.
          *
          * @param target the volume to initialise.
          */
-        virtual void create(Volume *target) = 0;
+        virtual void create(std::string target) = 0;
 
         /**
          * @brief Starts fuse on this volume
