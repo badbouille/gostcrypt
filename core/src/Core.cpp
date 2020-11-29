@@ -93,7 +93,42 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
 
 void GostCrypt::Core::umount(std::string mountPoint)
 {
-    // TODO
+    std::fstream gostinfo;
+    const std::string umountcmd = "umount";
+
+    /* Checking if mountpoint present */
+    if (mountPoint.empty()) {
+        throw INVALIDPARAMETEREXCEPTION("empty mountpoint");
+    }
+
+    /* removing trailing slash to add INFO_FILE constant */
+    if (mountPoint.back() == '/') {
+        mountPoint.pop_back();
+    }
+
+    /* Opening special file */
+    /* Append mode is the only mode where the 'write' callback is called in fuse.
+     * Other modes just recreate the file, etc
+     */
+    gostinfo.open(mountPoint + INFO_FILE, std::ios_base::app );
+    if (!gostinfo.is_open()) {
+        throw MOUNTPOINTNOTFOUNDEXCEPTION(mountPoint);
+    }
+
+    /* writing command to it to close it */
+    gostinfo.write(umountcmd.c_str(), umountcmd.length());
+
+    /* Closing file */
+    gostinfo.close();
+
+    /* reopening file to check for success */
+    gostinfo.open(mountPoint + INFO_FILE, std::ios_base::in );
+
+    /* Checking */
+    if (gostinfo.is_open()) {
+        throw UMOUNTFAILEDEXCEPTION(mountPoint);
+    }
+
 }
 
 void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)

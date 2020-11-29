@@ -132,7 +132,8 @@ extern "C" {
             /* We only let the user or root read this file */
             if (fuse_get_context()->uid == 0 || fuse_get_context()->uid == mount_uid)
             {
-                // TODO kill filesystem itself here
+                /* Killing current fuse mountpoint */
+                fuse_exit(fuse_get_context()->fuse);
                 return size;
             }
             return -EACCES;
@@ -176,6 +177,7 @@ extern "C" {
         new_op.getattr = fusefs_super_getattr;
         new_op.open = fusefs_super_open;
         new_op.read = fusefs_super_read;
+        new_op.write = fusefs_super_write;
         new_op.release = fusefs_super_release;
 
         /* Calling real main */

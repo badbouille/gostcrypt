@@ -68,5 +68,11 @@ int cmd_umount(int argc, char **argv) {
 
     std::cout << "Unmounting folder: " << folder << std::endl;
 
+    try {
+        Core::umount(folder);
+    } catch (GostCryptException &e) {
+        std::cout << "Cannot unmount volume. " << e.what() << std::endl;
+    }
+
     return 0;
 }
