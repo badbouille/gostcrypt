@@ -125,7 +125,7 @@ void GostCrypt::Core::umount(std::string mountPoint)
     if ( pid == 0 ) {
         // calling fusermount
         static char argvT[][256] = { "/bin/fusermount", "-u", "" };
-        static char *argv[] = { argvT[0], argvT[1], argvT[2] };
+        static char *argv[] = { argvT[0], argvT[1], argvT[2], nullptr };
 
         if (strlen(mountPoint.c_str()) < 256) {
             strcpy(argv[2], mountPoint.c_str());
