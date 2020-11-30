@@ -187,10 +187,10 @@ void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint, Volume *
 
 #ifdef DEBUG
 #define ARG_NUM 5
-    char params[ARG_NUM][256] = {"gostcrypt", "", "", "-f", "-s"};
+    char params[ARG_NUM][256] = {"gostcrypt", "", "-oallow_other", "-f", "-s"};
 #else
 #define ARG_NUM 3
-    char params[ARG_NUM][256] = {"gostcrypt", "", ""};
+    char params[ARG_NUM][256] = {"gostcrypt", "", "-oallow_other"};
 #endif
 
     // TODO option allow_other only allowed if 'user_allow_other' is set in /etc/fuse.conf
@@ -200,10 +200,6 @@ void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint, Volume *
         throw INVALIDPARAMETEREXCEPTION("mountpoint name too long for buffer.");
     }
     strcpy(params[1], mountpoint);
-
-    // options
-    snprintf(params[2], 256, "-ouid=%d,gid=%d,allow_other", userID, groupID);
-    //snprintf(params[2], 256, "-oallow_other");
 
     char* args[ARG_NUM];
     for (int i = 0; i < ARG_NUM; i++)
