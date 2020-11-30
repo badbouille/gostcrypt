@@ -95,7 +95,6 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
 void GostCrypt::Core::umount(std::string mountPoint)
 {
     std::fstream gostinfo;
-    const std::string umountcmd = "umount";
 
     /* Checking if mountpoint present */
     if (mountPoint.empty()) {
@@ -118,20 +117,40 @@ void GostCrypt::Core::umount(std::string mountPoint)
     /* Closing read-only file */
     gostinfo.close();
 
-    /* Opening special file */
-    /* Append mode is the only mode where the 'write' callback is called in fuse.
-     * Other modes just recreate the file, etc
-     */
-    gostinfo.open(mountPoint + INFO_FILE, std::ios_base::app );
-    if (!gostinfo.is_open()) {
-        throw GOSTCRYPTEXCEPTION("Mountpoint found but cannot be accessed: " + mountPoint);
+    /* Calling fusermount to kill the volume gracefully */
+    /* Forking to call fusermount */
+    pid_t pid = fork();
+    int status;
+
+    if ( pid == 0 ) {
+        // calling fusermount
+        static char argvT[][256] = { "/bin/fusermount", "-u", "" };
+        static char *argv[] = { argvT[0], argvT[1], argvT[2] };
+
+        if (strlen(mountPoint.c_str()) < 256) {
+            strcpy(argv[2], mountPoint.c_str());
+        }
+
+        /* Executing fusermount program */
+        execv(argv[0], argv);
+
+        /* If fusermount fails, exit with error code */
+        exit(127);
     }
 
-    /* writing command to it to close it */
-    gostinfo.write(umountcmd.c_str(), umountcmd.length());
+    /* Waiting for child to mount the raw volume */
+    if (waitpid(pid, &status, 0) == -1 ) {
+        throw GOSTCRYPTEXCEPTION("waitpid failed.");
+    }
 
-    /* Closing file */
-    gostinfo.close();
+    /* Checking return value */
+    if ( WIFEXITED(status) ) {
+        if (WEXITSTATUS(status) != 0) {
+            throw GOSTCRYPTEXCEPTION("fusermount operation failed.");
+        }
+    } else {
+        throw GOSTCRYPTEXCEPTION("Child not exited.");
+    }
 
     /* reopening file to check for success */
     gostinfo.open(mountPoint + INFO_FILE, std::ios_base::in );

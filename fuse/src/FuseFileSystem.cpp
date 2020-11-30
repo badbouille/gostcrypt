@@ -116,35 +116,6 @@ extern "C" {
         return -ENOENT;
     }
 
-    int fusefs_super_write(const char *path,
-                          const char *buf,
-                          size_t size,
-                          off_t offset,
-                          struct fuse_file_info *fi)
-    {
-        /* Checking if this is our file we are writing:
-         *  - Checking path value (equals to INFO_FILE?)
-         *  - Checking fh value (only gostcrypt sets it to zero)
-         */
-        if ( (path != nullptr && strcmp(path, INFO_FILE) == 0) ||
-             (path == nullptr && fi->fh == 0) )
-        {
-            /* We only let the user or root read this file */
-            if (fuse_get_context()->uid == 0 || fuse_get_context()->uid == mount_uid)
-            {
-                /* Killing current fuse mountpoint */
-                fuse_exit(fuse_get_context()->fuse);
-                return size;
-            }
-            return -EACCES;
-        }
-        /* If it's not our file, let the real filesystem do its job */
-        if(real_op.write)
-            return real_op.write(path, buf, size, offset, fi);
-        /* If not implemented in the real filesystem, a simple -ENOENT is enough */
-        return -ENOENT;
-    }
-
     int fusefs_super_release(const char *path,
                              struct fuse_file_info *fp)
     {
@@ -177,7 +148,6 @@ extern "C" {
         new_op.getattr = fusefs_super_getattr;
         new_op.open = fusefs_super_open;
         new_op.read = fusefs_super_read;
-        new_op.write = fusefs_super_write;
         new_op.release = fusefs_super_release;
 
         /* Calling real main */
