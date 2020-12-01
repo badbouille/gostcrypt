@@ -94,8 +94,6 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
 
 void GostCrypt::Core::umount(std::string mountPoint)
 {
-    std::fstream gostinfo;
-
     /* Checking if mountpoint present */
     if (mountPoint.empty()) {
         throw INVALIDPARAMETEREXCEPTION("empty mountpoint");
@@ -105,17 +103,6 @@ void GostCrypt::Core::umount(std::string mountPoint)
     if (mountPoint.back() == '/') {
         mountPoint.pop_back();
     }
-
-    /* opening special file to check presence of volume */
-    gostinfo.open(mountPoint + INFO_FILE, std::ios_base::in );
-
-    /* Checking */
-    if (!gostinfo.is_open()) {
-        throw MOUNTPOINTNOTFOUNDEXCEPTION(mountPoint);
-    }
-
-    /* Closing read-only file */
-    gostinfo.close();
 
     /* Calling fusermount to kill the volume gracefully */
     /* Forking to call fusermount */
@@ -150,15 +137,6 @@ void GostCrypt::Core::umount(std::string mountPoint)
         }
     } else {
         throw GOSTCRYPTEXCEPTION("Child not exited.");
-    }
-
-    /* reopening file to check for success */
-    gostinfo.open(mountPoint + INFO_FILE, std::ios_base::in );
-
-    /* Checking */
-    if (gostinfo.is_open()) {
-        gostinfo.close();
-        throw UMOUNTFAILEDEXCEPTION(mountPoint);
     }
 
 }
