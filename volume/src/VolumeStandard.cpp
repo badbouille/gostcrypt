@@ -94,8 +94,14 @@ void GostCrypt::VolumeStandard::create(std::string file,
     bool algorithmFound = false;
     SecureBuffer encryptedHeader(STANDARD_HEADER_SIZE);
     SecureBufferPtr encryptedHeaderPtr;
+    SecureBufferPtr tmpKeyPtr;
 
     encryptedHeader.getRange(encryptedHeaderPtr, 0, STANDARD_HEADER_SIZE);
+
+    // ----------------  FEASABILITY CHECKS ----------------
+    if (datasize % sectorsize != 0) {
+        throw INVALIDPARAMETEREXCEPTION("Datasize % sectorsize != 0");
+    }
 
     //  ---------------  OPENING FILE  ---------------
     // TODO : error handling / checks / readonly
@@ -134,7 +140,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
     header.dataStartOffset = 2*STANDARD_HEADER_SIZE; // normal + hidden
     header.dataSize = datasize;
 
-    // TODO : use derivation function
+    // TODO : use PRNG (content password different from header password)
 
     header.masterkey.erase();
     header.masterkey.copyFrom(password);
@@ -144,12 +150,27 @@ void GostCrypt::VolumeStandard::create(std::string file,
     header.salt.erase();
     header.salt.copyFrom(password);
 
-    // Setting up EA
-    setUpVolumeFromHeader(algorithm);
-
     // fill header
     header.Serialize(encryptedHeaderPtr);
-    EA->Encrypt(encryptedHeaderPtr);
+
+    // deriving given password using the kdf
+
+    // TODO : Add key derivation function !!!!!
+    // TODO ------ remove this stupid kdf ------
+    SecureBuffer df(algorithm->GetKeySize());
+    SecureBufferPtr pass(password.get(), std::min(df.size(), password.size()));
+    df.copyFrom(pass);
+    pass.set(df.get(), df.size());
+    // TODO ------ ------ ------ ------ ------
+
+    // setting password and encrypting header
+
+    password.getRange(tmpKeyPtr, 0, algorithm->GetKeySize());
+    algorithm->SetKey(pass);
+    algorithm->Encrypt(encryptedHeaderPtr);
+
+    // Setting up EA
+    setUpVolumeFromHeader(algorithm);
 
     //  ---------------  WRITING HEADERS TO DISK  ---------------
 
@@ -157,6 +178,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
     volumefile.seekg(getHeaderOffset(), std::ios::beg);
     volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
 
+    // TODO encrypt with different sector num
     // backup header
     volumefile.seekg(4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup(), std::ios::beg);
     volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
@@ -165,16 +187,25 @@ void GostCrypt::VolumeStandard::create(std::string file,
 
     // TODO use prng across whole disk
     // TODO skip step if fast creation
-    SecureBuffer randomBuffer(STANDARD_VOLUME_FILL_SIZE);
+    // TODO watch out for crazy values of sectorsize
+    // TODO buffer would be better in this case
+    SecureBuffer randomBuffer(header.sectorsize);
     SecureBufferPtr randomBufferPtr;
-    randomBuffer.getRange(randomBufferPtr, 0, STANDARD_VOLUME_FILL_SIZE);
+    randomBuffer.getRange(randomBufferPtr, 0, header.sectorsize);
 
-    for (size_t i = 0; i < header.dataSize; i+=STANDARD_VOLUME_FILL_SIZE) {
+    for (size_t i = 0; i < header.dataSize; i+=header.sectorsize) {
         // TODO filling buffer with random data
         // TODO Use rwBuffer instead of randomBuffer
 
-        // writing buffer
-        write(randomBufferPtr, i);
+        // erasing buffer
+        randomBufferPtr.erase();
+
+        // encrypting with sector num
+        EA->Encrypt(randomBufferPtr, i/header.sectorsize, 1, header.sectorsize);
+
+        // writing sector
+        volumefile.seekg(header.dataStartOffset + (i/header.sectorsize)*header.sectorsize);
+        volumefile.write((char*)randomBufferPtr.get(), header.sectorsize);
     }
 
 
@@ -195,6 +226,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
     volumefile.seekg(getHeaderOffset() + STANDARD_HEADER_SIZE, std::ios::beg);
     volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
 
+    // TODO encrypt with different sector num
     // backup header
     volumefile.seekg(4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup() - STANDARD_HEADER_SIZE, std::ios::beg);
     volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
