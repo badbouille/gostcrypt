@@ -52,19 +52,19 @@ static error_t parse_opt_create (int key, char *arg, struct argp_state *state) {
             arguments->dataSize = std::strtoll(arg, &unit, 10);
             if (*unit != 0) { // si une unité est spécifiée
                 std::string u(unit);
-                if (u == "KB") {
+                if (u == "KB" || u == "K") {
                     arguments->dataSize*=KB;
                     break;
                 }
-                if (u == "MB") {
+                if (u == "MB" || u == "M") {
                     arguments->dataSize*=MB;
                     break;
                 }
-                if (u == "GB") {
+                if (u == "GB" || u == "G") {
                     arguments->dataSize*=GB;
                     break;
                 }
-                /*if (u == "TB") {
+                /*if (u == "TB" || u == "T") {
                     arguments->dataSize*=TB; // TODO : why overflow here
                     break;
                 }*/
@@ -78,19 +78,19 @@ static error_t parse_opt_create (int key, char *arg, struct argp_state *state) {
             arguments->sectorSize = std::strtoll(arg, &unit, 10);
             if (*unit != 0) { // si une unité est spécifiée
                 std::string u(unit);
-                if (u == "KB") {
+                if (u == "KB" || u == "K") {
                     arguments->sectorSize*=KB;
                     break;
                 }
-                if (u == "MB") {
+                if (u == "MB" || u == "M") {
                     arguments->sectorSize*=MB;
                     break;
                 }
-                if (u == "GB") {
+                if (u == "GB" || u == "G") {
                     arguments->sectorSize*=GB;
                     break;
                 }
-                /*if (u == "TB") {
+                /*if (u == "TB" || u == "T") {
                     arguments->sectorSize*=TB;
                     break;
                 }*/
