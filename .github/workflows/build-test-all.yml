@@ -81,5 +81,7 @@ jobs:
           path: bin
       - name: 'Giving execution rights to binaries'
         run: sudo chmod a+x ./bin/gc_*
+      - name: 'Uncommenting allow_other to the global fuse options'
+        run: sudo sed -b -i 's/#user_allow_other/user_allow_other/g' /etc/fuse.conf
       - name: 'Running cmdline integration tests'
         run: cd it/cmdline/ && ./mainTests.sh
