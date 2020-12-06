@@ -1,4 +1,4 @@
-name: Build and test all targets
+name: Basic
 
 on:
   push:
