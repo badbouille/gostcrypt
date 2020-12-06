@@ -12,14 +12,14 @@ void GostCrypt::FuseFileSystemExt2::create(std::string target) {
     /* Forking and execing the mkfs program */
     pid_t pid = fork();
     if ( pid == 0 ) {
-        static char argvT[][256] = { "/sbin/mkfs.ext2", "", ""};
-        static char *argv[] = { argvT[0], argvT[1], argvT[2], nullptr };
+        static char argvT[][256] = { "/sbin/mkfs.ext2", "-q", "", ""};
+        static char *argv[] = { argvT[0], argvT[1], argvT[2], argvT[3], nullptr };
 
         uid_t uid = geteuid();
-        snprintf(argv[1], 256, "-Eroot_owner=%d:%d", uid, uid);
+        snprintf(argv[2], 256, "-Eroot_owner=%d:%d", uid, uid);
 
         if (strlen(target.c_str()) < 256) {
-            strcpy(argv[2], target.c_str());
+            strcpy(argv[3], target.c_str());
         }
 
         /* Executing basic mkfs.ext2 program */
