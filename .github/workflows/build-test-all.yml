@@ -35,6 +35,12 @@ jobs:
           name: ut_volume
           path: bin/ut/ut_volume
           retention-days: 1
+      - name: 'Upload gc_cmdline binary'
+        uses: actions/upload-artifact@v2
+        with:
+          name: gc_cmdline
+          path: bin/gc_cmdline
+          retention-days: 1
   ut:
     name: 'Unit tests'
     needs: build
@@ -61,3 +67,19 @@ jobs:
         run: ./ut_crypto
       - name: 'Running volume test'
         run: ./ut_volume
+  it:
+    name: 'Integration tests'
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Getting cmdline built binary'
+        uses: actions/download-artifact@v2
+        with:
+          name: gc_cmdline
+          path: bin
+      - name: 'Giving execution rights to binaries'
+        run: sudo chmod a+x ./bin/gc_*
+      - name: 'Running cmdline integration tests'
+        run: cd it/cmdline/ && ./mainTests.sh
