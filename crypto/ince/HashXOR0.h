@@ -19,6 +19,7 @@ namespace GostCrypt
 
         void Process(SecureBufferPtr &data) override;
         void GetDigest(SecureBufferPtr &result) override { if(result.size() != SIZE) throw INVALIDPARAMETEREXCEPTION("Wrong input buffer size"); result.copyFrom(pdigest); };
+        void Reset() override { pdigest.erase(); offset = 0; };
 
         size_t GetDigestSize() const override { return SIZE; };
 

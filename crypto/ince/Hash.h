@@ -35,6 +35,12 @@ namespace GostCrypt
         virtual void GetDigest(SecureBufferPtr &digest) = 0;
 
         /**
+         * @brief This method resets the processed data to nothing.
+         * Used when a user wants to reuse the algorithm without having to initialise the class
+         */
+        virtual void Reset() = 0;
+
+        /**
          * Static function to get the list of available Hash functions
          * @return A list of all available hashes
          */
