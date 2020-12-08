@@ -116,14 +116,13 @@ int cmd_list(int argc, char **argv) {
     }
 
     if (item == "kdfs") {
-        // TODO : replace with real KDFs
-        DiskEncryptionAlgorithmList dealist = Core::GetEncryptionAlgorithms();
+        HashList hlist = Core::GetDerivationFunctions();
         // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
         std::vector<std::string> names;
         std::vector<std::string> descs;
-        for (auto dea : dealist) {
-            names.push_back(dea->GetID());
-            descs.push_back("[" + dea->GetName() + "]\n" + dea->GetDescription());
+        for (auto h : hlist) {
+            names.push_back(h->GetID());
+            descs.push_back("[" + h->GetName() + "]\n" + h->GetDescription());
 
             if(index >= MAX_OPTION_NUMBER) {
                 abort();
@@ -136,7 +135,7 @@ int cmd_list(int argc, char **argv) {
             list_options[index].doc = descs.back().c_str();
             index++;
 
-            delete dea;
+            delete h;
         }
         argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
         return 0;

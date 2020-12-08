@@ -7,6 +7,7 @@
 
 
 #include <Volume.h>
+#include <Hash.h>
 #include "DiskEncryptionAlgorithm.h"
 #include "FuseFileSystem.h"
 
@@ -69,7 +70,7 @@ namespace GostCrypt
 
         // Getting info
         static DiskEncryptionAlgorithmList GetEncryptionAlgorithms();
-        static DiskEncryptionAlgorithmList GetDerivationFunctions();
+        static HashList GetDerivationFunctions();
         static VolumeList GetVolumeTypes();
         static FuseFileSystemList GetFileSystems();
 

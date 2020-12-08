@@ -12,10 +12,9 @@ GostCrypt::DiskEncryptionAlgorithmList GostCrypt::Core::GetEncryptionAlgorithms(
     return GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
 }
 
-GostCrypt::DiskEncryptionAlgorithmList GostCrypt::Core::GetDerivationFunctions()
+GostCrypt::KDFList GostCrypt::Core::GetDerivationFunctions()
 {
-    // TODO
-    return GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
+    return GostCrypt::KDF::GetAvailableHashes();
 }
 
 GostCrypt::VolumeList GostCrypt::Core::GetVolumeTypes()
