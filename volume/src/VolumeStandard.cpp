@@ -174,7 +174,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
     for (auto & hIterator : hList) {
         // Checking ID
         if (hIterator->GetID() == kdfID) {
-            kdf = hIterator;
+            pkdf = hIterator;
             kdfFound = true;
             break;
         }
@@ -182,7 +182,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
 
     // cleaning unused structures
     for (auto & hIterator : hList) {
-        if (kdf != hIterator) {
+        if (pkdf != hIterator) {
             delete hIterator;
         }
     }
@@ -192,7 +192,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
     }
 
     // Checking if given KDF is fit
-    if (kdf->GetDigestSize() != algorithm->GetKeySize()) {
+    if (pkdf->GetDigestSize() != algorithm->GetKeySize()) {
         // kdf was found but can't generate data fit for the wanted algorithm
         throw INVALIDPARAMETEREXCEPTION("Given kdf has a digest size different from the algorithm's key size.");
     }
@@ -220,16 +220,16 @@ void GostCrypt::VolumeStandard::create(std::string file,
     SecureBufferPtr derivedKeyPtr(derivedKey.get(), derivedKey.size());
 
     /* Deriving Key using KDF */
-    kdf->Reset();
-    kdf->Process(password);
-    kdf->GetDigest(derivedKeyPtr);
+    pkdf->Reset();
+    pkdf->Process(password);
+    pkdf->GetDigest(derivedKeyPtr);
 
     // setting password and encrypting header
     algorithm->SetKey(derivedKeyPtr);
     algorithm->Encrypt(encryptedHeaderPtr);
 
     // Setting up EA
-    setUpVolumeFromHeader(algorithm, kdf);
+    setUpVolumeFromHeader(algorithm, pkdf);
 
     //  ---------------  WRITING HEADERS TO DISK  ---------------
 
