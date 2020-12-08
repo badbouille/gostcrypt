@@ -11,11 +11,11 @@
 namespace GostCrypt
 {
     class Hash;
-
-    typedef std::list<Hash*> HashList;
-
     /** Key derivation functions are just Hashes honestly, let's not waste time redefining an interface */
     typedef Hash KDF;
+
+    typedef std::list<Hash*> HashList;
+    typedef std::list<KDF*> KDFList;
 
     class Hash
     {
