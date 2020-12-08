@@ -10,6 +10,7 @@
 #include "Volume.h"
 #include "VolumeStandardHeader.h"
 #include "../../crypto/ince/DiskEncryptionAlgorithm.h"
+#include "../../crypto/ince/Hash.h"
 
 //         ------ VOLUME DESCRIPTION ------
 //  _______________________________________________
@@ -60,14 +61,14 @@ namespace GostCrypt
          * @brief Creates a standard volume
          *
          * Steps:
-         *  - Parameters are parsed (algorithm ID, sector size, etc)
+         *  - Parameters are parsed (algorithm ID, kdfID, sector size, etc)
          *  - Header is created and written to disk at correct offsets: Header at the beginning, Backup header at the end
          *  - Random data is written across disk
          *  - Fake headers are written on the disk -> There must be no noticeable difference between a Standard and StandardHidden Volume
          *  - Written file is closed then reopened using VolumeStandard::open(), to ensure everything was done correctly.
          *  - Ready! (from open)
          */
-        void create(std::string file, size_t datasize, std::string algorithmID, size_t sectorsize, SecureBufferPtr password) override;
+        void create(std::string file, size_t datasize, std::string algorithmID, std::string kdfID, size_t sectorsize, SecureBufferPtr password) override;
 
         // ----- RUNTIME -----
         // Filesystem interface
@@ -108,6 +109,9 @@ namespace GostCrypt
         std::string getAlgorithmName() const override;
         std::string getAlgorithmID() const override;
         std::string getAlgorithmDescription() const override;
+        std::string getKdfName() const override;
+        std::string getKdfID() const override;
+        std::string getKdfDescription() const override;
         std::string getVolumeSource() const override;
 
         size_t getSize() const override;
@@ -118,8 +122,9 @@ namespace GostCrypt
          * Function to setup the whole class from a decrypted header stored in #VolumeStandard::header
          * Will setup: R/W Buffer, Encryption Algorithm, etc
          * @param algorithm the algorithm used to decrypt the header: Same algorithm as the one used to decrypt the content
+         * @param pkdf the kdf used to decrypt the header: only used at this step.
          */
-        virtual void setUpVolumeFromHeader(DiskEncryptionAlgorithm *algorithm);
+        virtual void setUpVolumeFromHeader(DiskEncryptionAlgorithm *algorithm, KDF *pkdf);
 
         /**
          * Function to get normal header offset. (Overriden in StandardVolumeHidden to use a different header location)
@@ -153,6 +158,11 @@ namespace GostCrypt
          * Encryption Algorithm of this volume. Loaded with the master key, and used on the fly for encryption/decryption
          */
         DiskEncryptionAlgorithm *EA;
+
+        /**
+         * Key Derivation Function of this volume. Not really used after the volume is opened.
+         */
+        KDF *kdf;
 
         /**
          * Buffer used in reading/writing operations

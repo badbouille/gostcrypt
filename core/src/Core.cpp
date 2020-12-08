@@ -193,7 +193,7 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
 
     // volume creation
     try {
-        volume->create(p->volumePath, p->dataSize, p->algorithmID, p->sectorSize, p->password);
+        volume->create(p->volumePath, p->dataSize, p->algorithmID, p->keyDerivationFunctionID, p->sectorSize, p->password);
     } catch (GostCryptException &e) {
         delete volume;
         throw;

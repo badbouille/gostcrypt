@@ -81,7 +81,7 @@ void test_volume_standard_create() {
 
     // opening a good volume
     v = new VolumeStandard();
-    v->create(creator_files[1].filename, STANDARD_HEADER_SIZE, "ECB_{XOR128}", 32, pass);
+    v->create(creator_files[1].filename, STANDARD_HEADER_SIZE, "ECB_{XOR128}", "XOR0", 32, pass);
     v->close();
 
     // checking file
@@ -140,7 +140,7 @@ void test_volume_standard_checks() {
 
     // create
     v = new VolumeStandard();
-    v->create(creator_files[1].filename, STANDARD_HEADER_SIZE, "ECB_{XOR128}", 32, pass);
+    v->create(creator_files[1].filename, STANDARD_HEADER_SIZE, "ECB_{XOR128}", "XOR0", 32, pass);
     v->close();
 
     // open

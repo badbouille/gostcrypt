@@ -60,11 +60,12 @@ namespace GostCrypt
          * @param file the path of the file to create. Note that some implementations might take a directory or even a url instead.
          * @param datasize Exact size of the volume to create. Must be a multiple of sectorsize.
          * @param algorithmID ID of the algorithm to use. Algorithm must be in #DiskEncryptionAlgorithm::GetAvailableAlgorithms(). See #DiskEncryptionAlgorithm::GetID() for details.
+         * @param kdfID ID of the key derivation function to use. Algorithm must be in #KDF::GetAvailableHashes(). See #KDF::GetID() for details.
          * @param sectorsize size of a sector on the disk. It's the smallest size that can be read from the disk.
          * Cannot be smaller than the BlockCipher's block size. Some algorithms only allow multiples of the cipher's blocksize.
          * @param password User's password to use to open this volume
          */
-        virtual void create(std::string file, size_t datasize, std::string algorithmID, size_t sectorsize, SecureBufferPtr password) = 0;
+        virtual void create(std::string file, size_t datasize, std::string algorithmID, std::string kdfID, size_t sectorsize, SecureBufferPtr password) = 0;
 
         // ----- RUNTIME -----
         // Filesystem interface
@@ -143,6 +144,24 @@ namespace GostCrypt
          * @return Algorithm's description
          */
         virtual std::string getAlgorithmDescription() const = 0;
+
+        /**
+         * Returns information about the current kdf used in this Volume
+         * @return Algorithm's name
+         */
+        virtual std::string getKdfName() const = 0;
+
+        /**
+         * Returns information about the current kdf used in this Volume
+         * @return Algorithm's ID
+         */
+        virtual std::string getKdfID() const = 0;
+
+        /**
+         * Returns information about the current kdf used in this Volume
+         * @return Algorithm's description
+         */
+        virtual std::string getKdfDescription() const = 0;
 
         /**
          * Returns the source of the data of this volume.

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <utility>
 #include "../../crypto/ince/DiskEncryptionAlgorithm.h"
+#include "../../crypto/ince/Hash.h"
 #include <cstring>
 
 bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPtr password)
@@ -15,6 +16,7 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
     SecureBufferPtr encryptedHeaderPtr;
     SecureBufferPtr tempDecryptedHeaderPtr;
     DiskEncryptionAlgorithm * algorithm = nullptr;
+    KDF * kdf = nullptr;
     bool headerRead = false;
 
     // getting pointers on secure buffers
@@ -34,28 +36,52 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
 
     // Getting list of all available algorithms to open the volume
     DiskEncryptionAlgorithmList algorithmList = GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
+    KDFList kdfList = GostCrypt::KDF::GetAvailableHashes();
     for (auto & algorithmIterator : algorithmList) {
-        tempDecryptedHeaderPtr.copyFrom(encryptedHeaderPtr);
         algorithm = algorithmIterator;
 
-        // TODO : Add key derivation function !!!!!
-        // TODO ------ remove this stupid kdf ------
-        SecureBuffer df(algorithm->GetKeySize());
-        SecureBufferPtr pass(password.get(), std::min(df.size(), password.size()));
-        df.copyFrom(pass);
-        pass.set(df.get(), df.size());
-        // TODO ------ ------ ------ ------ ------
+        SecureBuffer derivedKey(algorithm->GetKeySize());
+        SecureBufferPtr derivedKeyPtr(derivedKey.get(), derivedKey.size());
 
-        // initialisation of algorithm with user password
-        algorithm->SetKey(pass);
+        for (auto & kdfIterator : kdfList) {
+            kdf = kdfIterator;
 
-        // trying to decrypt header
-        algorithm->Decrypt(tempDecryptedHeaderPtr);
+            /* Checking key size against digest size */
+            if (kdf->GetDigestSize() != algorithm->GetKeySize()) {
+                /* in this case, this kdf can not be used with this algorithm,
+                 * since it doesn't generate keys fit for the algorithm. */
+                // TODO maybe check for algorithms that do not have any fitting hash
+                continue;
+            }
 
-        // trying to read header
-        if (header.Deserialize(tempDecryptedHeaderPtr)) {
-            // Worked! Header was successfully decrypted
-            headerRead = true;
+            /* Copying the header to try to decrypt it "in-place" */
+            tempDecryptedHeaderPtr.copyFrom(encryptedHeaderPtr);
+
+            /* Deriving Key using KDF */
+            kdf->Reset();
+            kdf->Process(password);
+            kdf->GetDigest(derivedKeyPtr);
+
+            /* initialisation of algorithm with user password */
+            algorithm->SetKey(derivedKeyPtr);
+
+            /* trying to decrypt header */
+            algorithm->Decrypt(tempDecryptedHeaderPtr);
+
+            /* trying to read header */
+            if (header.Deserialize(tempDecryptedHeaderPtr))
+            {
+                // Worked! Header was successfully decrypted
+                headerRead = true;
+                break;
+            }
+
+            /* didn't work, let's try to open it with the next kdf */
+            kdf = nullptr;
+        }
+
+        /* Double break to outside the loop when header is read */
+        if (headerRead) {
             break;
         }
 
@@ -70,6 +96,12 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
         }
     }
 
+    for (auto & kdfIterator : kdfList) {
+        if (kdf != kdfIterator) {
+            delete kdfIterator;
+        }
+    }
+
     if(!headerRead) {
         // TODO : try backup Header
         return false;
@@ -78,7 +110,7 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
     // TODO reopening as rw instead of readonly
 
     // setting up class
-    setUpVolumeFromHeader(algorithm);
+    setUpVolumeFromHeader(algorithm, kdf);
 
     return true;
 
@@ -87,11 +119,14 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
 void GostCrypt::VolumeStandard::create(std::string file,
                                        size_t datasize,
                                        std::string algorithmID,
+                                       std::string kdfID,
                                        size_t sectorsize,
                                        GostCrypt::SecureBufferPtr password)
 {
     DiskEncryptionAlgorithm *algorithm = nullptr;
     bool algorithmFound = false;
+    KDF *pkdf = nullptr;
+    bool kdfFound = false;
     SecureBuffer encryptedHeader(STANDARD_HEADER_SIZE);
     SecureBufferPtr encryptedHeaderPtr;
     SecureBufferPtr tmpKeyPtr;
@@ -115,9 +150,8 @@ void GostCrypt::VolumeStandard::create(std::string file,
     //  ---------------  FINDING ALGORITHM  ---------------
     DiskEncryptionAlgorithmList algorithmList = GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
     for (auto & algorithmIterator : algorithmList) {
-        // trying to read header
+        // Checking ID
         if (algorithmIterator->GetID() == algorithmID) {
-            // Worked! Header was successfully decrypted
             algorithm = algorithmIterator;
             algorithmFound = true;
             break;
@@ -133,6 +167,34 @@ void GostCrypt::VolumeStandard::create(std::string file,
 
     if(!algorithmFound) {
         throw INVALIDPARAMETEREXCEPTION("Given algorithm ID was not found. Is this a supported algorithm?");
+    }
+
+    //  ---------------  FINDING KDF  ---------------
+    KDFList hList = GostCrypt::KDF::GetAvailableHashes();
+    for (auto & hIterator : hList) {
+        // Checking ID
+        if (hIterator->GetID() == kdfID) {
+            kdf = hIterator;
+            kdfFound = true;
+            break;
+        }
+    }
+
+    // cleaning unused structures
+    for (auto & hIterator : hList) {
+        if (kdf != hIterator) {
+            delete hIterator;
+        }
+    }
+
+    if(!kdfFound) {
+        throw INVALIDPARAMETEREXCEPTION("Given kdf ID was not found. Is this a supported kdf?");
+    }
+
+    // Checking if given KDF is fit
+    if (kdf->GetDigestSize() != algorithm->GetKeySize()) {
+        // kdf was found but can't generate data fit for the wanted algorithm
+        throw INVALIDPARAMETEREXCEPTION("Given kdf has a digest size different from the algorithm's key size.");
     }
 
     //  ---------------  FILLING AND ENCRYPTING HEADER  ---------------
@@ -154,23 +216,20 @@ void GostCrypt::VolumeStandard::create(std::string file,
     header.Serialize(encryptedHeaderPtr);
 
     // deriving given password using the kdf
+    SecureBuffer derivedKey(algorithm->GetKeySize());
+    SecureBufferPtr derivedKeyPtr(derivedKey.get(), derivedKey.size());
 
-    // TODO : Add key derivation function !!!!!
-    // TODO ------ remove this stupid kdf ------
-    SecureBuffer df(algorithm->GetKeySize());
-    SecureBufferPtr pass(password.get(), std::min(df.size(), password.size()));
-    df.copyFrom(pass);
-    pass.set(df.get(), df.size());
-    // TODO ------ ------ ------ ------ ------
+    /* Deriving Key using KDF */
+    kdf->Reset();
+    kdf->Process(password);
+    kdf->GetDigest(derivedKeyPtr);
 
     // setting password and encrypting header
-
-    password.getRange(tmpKeyPtr, 0, algorithm->GetKeySize());
-    algorithm->SetKey(pass);
+    algorithm->SetKey(derivedKeyPtr);
     algorithm->Encrypt(encryptedHeaderPtr);
 
     // Setting up EA
-    setUpVolumeFromHeader(algorithm);
+    setUpVolumeFromHeader(algorithm, kdf);
 
     //  ---------------  WRITING HEADERS TO DISK  ---------------
 
@@ -241,7 +300,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
     // volume is now ready to use
 }
 
-void GostCrypt::VolumeStandard::setUpVolumeFromHeader(DiskEncryptionAlgorithm *algorithm)
+void GostCrypt::VolumeStandard::setUpVolumeFromHeader(DiskEncryptionAlgorithm *algorithm, KDF *pkdf)
 {
     SecureBufferPtr tempKeysPtr;
 
@@ -249,6 +308,9 @@ void GostCrypt::VolumeStandard::setUpVolumeFromHeader(DiskEncryptionAlgorithm *a
     EA = algorithm;
     header.masterkey.getRange(tempKeysPtr, 0, EA->GetKeySize());
     EA->SetKey(tempKeysPtr);
+
+    // Setting up KDF
+    kdf = pkdf;
 
     // TODO : do the same with salt
 
@@ -566,6 +628,24 @@ std::string GostCrypt::VolumeStandard::getAlgorithmDescription() const
 {
     if (EA == nullptr) throw ALGORITHMUNITITILIZEDEXCEPTION();
     return EA->GetDescription();
+}
+
+std::string GostCrypt::VolumeStandard::getKdfName() const
+{
+    if (kdf == nullptr) throw ALGORITHMUNITITILIZEDEXCEPTION();
+    return kdf->GetName();
+}
+
+std::string GostCrypt::VolumeStandard::getKdfID() const
+{
+    if (kdf == nullptr) throw ALGORITHMUNITITILIZEDEXCEPTION();
+    return kdf->GetID();
+}
+
+std::string GostCrypt::VolumeStandard::getKdfDescription() const
+{
+    if (kdf == nullptr) throw ALGORITHMUNITITILIZEDEXCEPTION();
+    return kdf->GetDescription();
 }
 
 size_t GostCrypt::VolumeStandard::getSize() const
