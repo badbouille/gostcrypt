@@ -197,7 +197,7 @@ int cmd_list(int argc, char **argv) {
         Core::VolumeInfoList vlist = Core::list();
 
         for (auto v : vlist) {
-            std::cout << v.mountPoint << ": " << v.file << " " << v.algorithmID << " (" << formatSize(v.dataSize) << ")" << std::endl;
+            std::cout << v.mountPoint << ": " << v.file << " " << v.algorithmID << ":" << v.keyDerivationFunctionID << " (" << formatSize(v.dataSize) << ")" << std::endl;
         }
         return 0;
     }

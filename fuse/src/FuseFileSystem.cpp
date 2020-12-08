@@ -197,9 +197,8 @@ void GostCrypt::FuseFileSystem::setupSuperFuse(uid_t uid, gid_t gid, GostCrypt::
         strcpy(fileinfo.algorithmID, volume->getAlgorithmID().c_str());
     }
 
-    // TODO use kdf
-    if(strlen(volume->getAlgorithmID().c_str()) < VOLUMEINFO_SHORTSTR_SIZE) {
-        strcpy(fileinfo.keyDerivationFunctionID, volume->getAlgorithmID().c_str());
+    if(strlen(volume->getKdfID().c_str()) < VOLUMEINFO_SHORTSTR_SIZE) {
+        strcpy(fileinfo.keyDerivationFunctionID, volume->getKdfID().c_str());
     }
 
     if(strlen(volume->GetID().c_str()) < VOLUMEINFO_SHORTSTR_SIZE) {
