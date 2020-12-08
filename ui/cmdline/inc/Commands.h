@@ -27,8 +27,8 @@
 /** Default algorithm is ECB with XOR */ // TODO change this to XTS_{GOST-G}
 #define DEFAULT_ALGORITHM "ECB_{XOR128}"
 
-/** Default Key derivation function */ // TODO update when this function is developed
-#define DEFAULT_KDF "Streebog512"
+/** Default Key derivation function */ // TODO change this to Streebog or something
+#define DEFAULT_KDF "XOR0"
 
 /** Default volumetype is 'standard' */
 #define DEFAULT_VOLUMETYPE "standard"
