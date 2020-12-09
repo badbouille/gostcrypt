@@ -7,7 +7,7 @@
 namespace GostCrypt {
 
     template<uint32_t SIZE>
-    void HashXOR0<SIZE>::Process(SecureBufferPtr &data)
+    void HashXOR0<SIZE>::Process(const SecureBufferPtr &data)
     {
         for(int i=0; i< data.size(); i++) {
             digest.get()[(offset + i)%SIZE] ^= data.get()[i];

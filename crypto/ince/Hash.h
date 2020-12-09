@@ -26,7 +26,7 @@ namespace GostCrypt
          * @brief This method processes the given data. Multiple calls to this function can be made before GetDigest is called.
          * @param data the data to pass through the function
          */
-        virtual void Process(SecureBufferPtr &data) = 0;
+        virtual void Process(const SecureBufferPtr &data) = 0;
 
         /**
          * @brief This method returns the computed digest from the data given to Hash::Process
