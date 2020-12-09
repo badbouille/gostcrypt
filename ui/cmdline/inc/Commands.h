@@ -28,7 +28,7 @@
 #define DEFAULT_ALGORITHM "ECB_{XOR128}"
 
 /** Default Key derivation function */ // TODO change this to Streebog or something
-#define DEFAULT_KDF "XOR0"
+#define DEFAULT_KDF "XOR0-16"
 
 /** Default volumetype is 'standard' */
 #define DEFAULT_VOLUMETYPE "standard"
