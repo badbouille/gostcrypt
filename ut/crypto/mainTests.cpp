@@ -32,5 +32,12 @@ int main(int argc, char **argv) {
     RUN_TEST(test_diskencryptionalgorithm_ecb_xor_decrypt);
     RUN_TEST(test_diskencryptionalgorithm_ecb_xor_sizechecks);
 
+    /* Hash functions (KDFs) */
+
+    /* XOR0-16 */
+    RUN_TEST(test_hash_xor0_basic);
+    RUN_TEST(test_hash_xor0_process);
+    RUN_TEST(test_hash_xor0_sizechecks);
+
     return UNITY_END();
 }
