@@ -24,7 +24,7 @@ namespace GostCrypt
         size_t GetDigestSize() const override { return SIZE; };
 
         std::string GetName() const override { return "XOR-0Padding-"+std::to_string(SIZE); };
-        std::string GetID() const override { return "XOR0"; };
+        std::string GetID() const override { return "XOR0-"+std::to_string(SIZE); };
         std::string GetDescription() const override { return "XOR-0Padding (XOR0) hash function is a very simple hash "
                                                              "That XORs all given data on a 0-filled buffer."
                                                              "This is a very simple hash that should only be used for test purposes. "
