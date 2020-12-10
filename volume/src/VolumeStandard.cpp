@@ -7,7 +7,11 @@
 #include <utility>
 #include "../../crypto/ince/DiskEncryptionAlgorithm.h"
 #include "../../crypto/ince/Hash.h"
+#include "../../crypto/ince/PRNGSecure.h"
 #include <cstring>
+
+/** Compression factor of the CSPRNG: How many bytes of system random for one byte of secure random */
+#define PRNG_COMPRESSION_FACTOR 4
 
 bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPtr password)
 {
@@ -202,15 +206,14 @@ void GostCrypt::VolumeStandard::create(std::string file,
     header.dataStartOffset = 2*STANDARD_HEADER_SIZE; // normal + hidden
     header.dataSize = datasize;
 
-    // TODO : use PRNG (content password different from header password)
+    PRNGSecure csprng(pkdf, PRNG_COMPRESSION_FACTOR);
+    SecureBufferPtr randTarget;
 
-    header.masterkey.erase();
-    header.masterkey.copyFrom(password);
+    randTarget.set(header.masterkey.get(), header.masterkey.size());
+    csprng.Get(randTarget);
 
-    // TODO : use PRNG
-
-    header.salt.erase();
-    header.salt.copyFrom(password);
+    randTarget.set(header.salt.get(), header.salt.size());
+    csprng.Get(randTarget);
 
     // fill header
     header.Serialize(encryptedHeaderPtr);
@@ -244,7 +247,6 @@ void GostCrypt::VolumeStandard::create(std::string file,
 
     //  ---------------  Writing random data across data area and encrypting it  ---------------
 
-    // TODO use prng across whole disk
     // TODO skip step if fast creation
     // TODO watch out for crazy values of sectorsize
     // TODO buffer would be better in this case
@@ -252,12 +254,13 @@ void GostCrypt::VolumeStandard::create(std::string file,
     SecureBufferPtr randomBufferPtr;
     randomBuffer.getRange(randomBufferPtr, 0, header.sectorsize);
 
+    PRNGSystem fastprng;
+
     for (size_t i = 0; i < header.dataSize; i+=header.sectorsize) {
-        // TODO filling buffer with random data
         // TODO Use rwBuffer instead of randomBuffer
 
         // erasing buffer
-        randomBufferPtr.erase();
+        fastprng.Get(randomBufferPtr);
 
         // encrypting with sector num
         EA->Encrypt(randomBufferPtr, i/header.sectorsize, 1, header.sectorsize);
@@ -267,14 +270,22 @@ void GostCrypt::VolumeStandard::create(std::string file,
         volumefile.write((char*)randomBufferPtr.get(), header.sectorsize);
     }
 
+    randomBuffer.erase();
 
     //  ---------------  WRITING FAKE HEADERS TO VOLUME  ---------------
 
     // creation and encryption of fake headers
     VolumeStandardHeader::SerializeFake(encryptedHeaderPtr);
 
-    // TODO creating new random key and encrypting area
-    //EA->SetKey()
+    // creating random key to encrypt those differently
+    SecureBuffer randomKey(EA->GetKeySize());
+    SecureBufferPtr prandomKey(randomKey.get(), randomKey.size());
+
+    // generating random key
+    csprng.Get(prandomKey);
+
+    // seting random key and encrypting fake header
+    EA->SetKey(prandomKey);
     EA->Encrypt(encryptedHeaderPtr);
 
     // writing fake headers
