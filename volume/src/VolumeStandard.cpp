@@ -468,6 +468,10 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
     char * rwBufferPtr_char = (char *)rwBuffer->get();
     char * rBufferPtr_char = nullptr;
 
+    // TODO : erase rwBuffer after use ?
+    // TODO : check if volume exists
+    // TODO : check if read operation is possible (in bounds)
+
     // multiple cases
     // Case 1: xxx|rrrrwwwwrr|xxx
     // Case 2: xxx|rrrrwwwwww|www
