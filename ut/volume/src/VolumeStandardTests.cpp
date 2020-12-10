@@ -89,9 +89,10 @@ void test_volume_standard_create() {
     // first two headers
     bc.allocate(2*STANDARD_HEADER_SIZE);
     rfile.read((char *)bc.get(), bc.size());
-    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content, bc.get(), bc.size()/2, "Wrong first header");
+    // only the first 64 elements are not random and can be verified
+    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content, bc.get(), 64, "Wrong first header");
 
-    // TODO Not checking second header (random data)
+    // Not checking second header (random data)
     //TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content, bc.get(), bc.size(), "Wrong second header");
 
     bc.allocate(32);
@@ -101,16 +102,17 @@ void test_volume_standard_create() {
     // volume content (full)
     for (i=0; i < STANDARD_HEADER_SIZE/32; i++) {
         rfile.read((char *)bc.get(), bc.size()); // reading from file
-        // TODO: Not checking second header (random data)
+        // TODO: Not checking content because it's random data. Maybe check something else ?
         //TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(br.get(), bc.get(), bc.size(), "Wrong content written");
     }
 
     // last two headers
     bc.allocate(2*STANDARD_HEADER_SIZE);
     rfile.read((char *)bc.get(), bc.size());
-    // TODO Not checking second header (random data)
+    // Not checking second header (random data)
     //TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content + 3*STANDARD_HEADER_SIZE, bc.get(), bc.size()/2, "Wrong first backup header");
-    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content + 3*STANDARD_HEADER_SIZE + bc.size()/2, bc.get()+ bc.size()/2, bc.size()/2, "Wrong second backup header");
+    // only the first 64 elements are not random and can be verified
+    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content + 3*STANDARD_HEADER_SIZE + bc.size()/2, bc.get()+ bc.size()/2, 64, "Wrong second backup header");
 
     // checking eof
     if (rfile.eof()) {
