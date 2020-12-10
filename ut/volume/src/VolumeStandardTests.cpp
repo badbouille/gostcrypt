@@ -149,7 +149,7 @@ void test_volume_standard_checks() {
     v->open(creator_files[1].filename, pass);
 
     // write
-    v->write(pass, STANDARD_HEADER_SIZE);
+    v->write(pass, 0);
 
     // read
     v->read(rb, 0);
