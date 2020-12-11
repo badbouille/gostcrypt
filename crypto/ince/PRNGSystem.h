@@ -11,7 +11,7 @@
 
 namespace GostCrypt
 {
-    class PRNGSystem : PRNG
+    class PRNGSystem : public PRNG
     {
     public:
         PRNGSystem();

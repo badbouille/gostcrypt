@@ -13,7 +13,7 @@
 
 namespace GostCrypt
 {
-    class PRNGSecure : PRNGSystem
+    class PRNGSecure : public PRNGSystem
     {
     public:
         PRNGSecure(Hash *hash, uint32_t factor);
