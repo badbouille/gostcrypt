@@ -93,26 +93,26 @@
         <file>translations/gostcrypt_ru.qm</file>
         <file>translations/gostcrypt_ru.ts</file>
         <file>UI/dialogs/Performance.qml</file>
-        <file>CmdLineInterface.cpp</file>
-        <file>CmdLineInterface.h</file>
-        <file>DragWindowProvider.h</file>
-        <file>GraphicInterface.cpp</file>
-        <file>GraphicInterface.h</file>
+        <file>src/CmdLineInterface.cpp</file>
+        <file>inc/CmdLineInterface.h</file>
+        <file>inc/DragWindowProvider.h</file>
+        <file>src/GraphicInterface.cpp</file>
+        <file>inc/GraphicInterface.h</file>
         <file>gsbutton.qrc</file>
-        <file>main.cpp</file>
-        <file>Parser.cpp</file>
-        <file>Parser.h</file>
+        <file>src/main.cpp</file>
+        <file>src/Parser.cpp</file>
+        <file>inc/Parser.h</file>
         <file>qml.qrc</file>
-        <file>SecureTextField.cpp</file>
-        <file>SecureTextField.h</file>
+        <file>src/SecureTextField.cpp</file>
+        <file>inc/SecureTextField.h</file>
         <file>TooltipArea.qml</file>
-        <file>TranslationApp.cpp</file>
-        <file>TranslationApp.h</file>
+        <file>src/TranslationApp.cpp</file>
+        <file>inc/TranslationApp.h</file>
         <file>UI.pro</file>
-        <file>UserSettings.cpp</file>
-        <file>UserSettings.h</file>
-        <file>volumelist.cpp</file>
-        <file>volumelist.h</file>
+        <file>src/UserSettings.cpp</file>
+        <file>inc/UserSettings.h</file>
+        <file>src/volumelist.cpp</file>
+        <file>inc/volumelist.h</file>
         <file>UI/dialogs/Preferences.qml</file>
         <file>UI/dialogs/DefaultKeyfile.qml</file>
         <file>UI/dialogs/Contributors.qml</file>
@@ -125,8 +125,8 @@
         <file>UI/dialogs/RestoreHeaderVolume.qml</file>
         <file>UI/dialogs/BackupHeaderVolume.qml</file>
         <file>UI/ressource/caps.png</file>
-        <file>UserInterface.cpp</file>
-        <file>UserInterface.h</file>
+        <file>src/UserInterface.cpp</file>
+        <file>inc/UserInterface.h</file>
         <file>UI/AbstractTheme.qml</file>
         <file>UI/MenuButton.qml</file>
         <file>UI/MenuButtonItem.qml</file>

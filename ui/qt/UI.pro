@@ -43,24 +43,24 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    UserSettings.h \
-    DragWindowProvider.h \
-    TranslationApp.h \
-    Parser.h \
-    CmdLineInterface.h \
-    GraphicInterface.h \
-    SecureTextField.h \
-    UserInterface.h
+    inc/UserSettings.h \
+    inc/DragWindowProvider.h \
+    inc/TranslationApp.h \
+    inc/Parser.h \
+    inc/CmdLineInterface.h \
+    inc/GraphicInterface.h \
+    inc/SecureTextField.h \
+    inc/UserInterface.h
 
 SOURCES += \
-    main.cpp \
-    UserSettings.cpp \
-    TranslationApp.cpp \
-    Parser.cpp \
-    CmdLineInterface.cpp \
-    GraphicInterface.cpp \
-    SecureTextField.cpp \
-    UserInterface.cpp
+    src/main.cpp \
+    src/UserSettings.cpp \
+    src/TranslationApp.cpp \
+    src/Parser.cpp \
+    src/CmdLineInterface.cpp \
+    src/GraphicInterface.cpp \
+    src/SecureTextField.cpp \
+    src/UserInterface.cpp
 
 LIBS += \
         ../Core/libCore.a \
