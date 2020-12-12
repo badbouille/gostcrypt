@@ -8,6 +8,7 @@
 #include "BlockCipher.h"
 #include "DiskEncryptionAlgorithm.h"
 #include "Hash.h"
+#include "PRNG.h"
 #include "BlockCipherTests.h"
 #include "DiskEncryptionAlgorithmTests.h"
 #include "HashTests.h"
@@ -28,6 +29,9 @@ void stdtest_diskencryptionalgorithm_sizechecks(GostCrypt::DiskEncryptionAlgorit
 void stdtest_hash_basic(GostCrypt::Hash *h, size_t ds, const std::string& name, const std::string& id);
 void stdtest_hash_process(GostCrypt::Hash *h, size_t test_num, const GostCrypt::HashTestData128 *testvector);
 void stdtest_hash_sizechecks(GostCrypt::Hash *h);
+
+void stdtest_prng_basic(GostCrypt::PRNG *p, const std::string& name, const std::string& id);
+void stdtest_prng_entropy(GostCrypt::PRNG *p, size_t cyclecount, float precision);
 
 /* XOR Cipher tests */
 void test_blockcipher_xor_basic();
