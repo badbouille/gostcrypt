@@ -59,7 +59,7 @@ UNITY_DIR:=ut/unity/
 # Components that can be built (folders)
 COMPONENTS:=common core crypto fuse volume
 UNIT_TESTS:=ut_common ut_crypto ut_volume
-UI:=cmdline
+UI:=cmdline qt
 
 # Objects needed, computed from given sources
 CXXOBJS:= $(addprefix $(OD)/, $(subst .cpp,.o,$(CXXFILES)))
@@ -79,7 +79,7 @@ $(COBJS): $(OD)/%.o : %.c
 	@mkdir -p $(shell dirname $@)
 	$(CC) -c $(CFLAGS) $< -o $@
 
-.PHONY: all clean $(COMPONENTS) $(UNIT_TESTS)
+.PHONY: all clean $(COMPONENTS) $(UNIT_TESTS) $(UI)
 
 # Lib maker (actual job for submake)
 %.a: $(COBJS) $(CXXOBJS)
