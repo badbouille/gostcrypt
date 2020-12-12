@@ -50,4 +50,12 @@ void test_hash_xor0_basic();
 void test_hash_xor0_process();
 void test_hash_xor0_sizechecks();
 
+/* System PRNG (SPRNG) tests */
+void test_prng_prngsystem_basic();
+void test_prng_prngsystem_entropy();
+
+/* Secure PRNG (CSPRNG) tests */
+void test_prng_prngsecure_basic();
+void test_prng_prngsecure_entropy();
+
 #endif //_COMMON_TESTS_H

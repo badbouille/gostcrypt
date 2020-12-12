@@ -39,5 +39,15 @@ int main(int argc, char **argv) {
     RUN_TEST(test_hash_xor0_process);
     RUN_TEST(test_hash_xor0_sizechecks);
 
+    /* PRNG functions */
+
+    /* System PRNG */
+    RUN_TEST(test_prng_prngsystem_basic);
+    RUN_TEST(test_prng_prngsystem_entropy);
+
+    /* Secure PRNG */
+    RUN_TEST(test_prng_prngsecure_basic);
+    RUN_TEST(test_prng_prngsecure_entropy);
+
     return UNITY_END();
 }
