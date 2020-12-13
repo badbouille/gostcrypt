@@ -1,2 +1,3 @@
 .qmake.stash
 Makefile_qt
+qrc_qml.cpp
