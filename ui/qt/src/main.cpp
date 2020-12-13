@@ -1,5 +1,4 @@
 #include "GraphicInterface.h"
-#include "CmdLineInterface.h"
 
 int main(int argc, char* argv[])
 {
