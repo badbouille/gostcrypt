@@ -6,14 +6,13 @@
 
 QT += qml quick widgets
 
-TARGET = GostCrypt
 TEMPLATE = app
-CONFIG += c++11
+CONFIG += c++17
+CONFIG += console
 
-INCLUDEPATH += ../ ../Crypto/
+INCLUDEPATH += inc ../../common/ince ../../crypto/ince ../../volume/ince ../../fuse/ince ../../core/ince
 
-DEFINES += _FILE_OFFSET_BITS=64 \
-    _LARGEFILE_SOURCE \
+DEFINES += _LARGEFILE_SOURCE \
     _LARGE_FILES
 
 unix {
@@ -46,8 +45,6 @@ HEADERS += \
     inc/UserSettings.h \
     inc/DragWindowProvider.h \
     inc/TranslationApp.h \
-    inc/Parser.h \
-    inc/CmdLineInterface.h \
     inc/GraphicInterface.h \
     inc/SecureTextField.h \
     inc/UserInterface.h
@@ -56,26 +53,22 @@ SOURCES += \
     src/main.cpp \
     src/UserSettings.cpp \
     src/TranslationApp.cpp \
-    src/Parser.cpp \
-    src/CmdLineInterface.cpp \
     src/GraphicInterface.cpp \
     src/SecureTextField.cpp \
     src/UserInterface.cpp
 
 LIBS += \
-        ../Core/libCore.a \
-        ../FuseService/libFuseService.a \
-        ../Volume/libVolume.a \
-        -ldl \
-        -pthread \
-        -lfuse \
-        -lblkid
+        ../../bin/core.a \
+        ../../bin/fuse.a \
+        ../../bin/volume.a \
+        ../../bin/crypto.a \
+        -ldl -lfuse -lext2fs -lrt -lpthread -lcom_err
 
-TARGET = ../GostCrypt
+TARGET = gc_qt
 
-PRE_TARGETDEPS += ../Core/libCore.a \
-    ../Volume/libVolume.a \
-    ../FuseService/libFuseService.a
+DESTDIR = ../../bin
+OBJECTS_DIR = ../../obj/qt
+MOC_DIR = ../../obj/qt
 
 lupdate_hack{
     SOURCES += qml/*.qml \

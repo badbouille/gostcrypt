@@ -93,15 +93,11 @@
         <file>translations/gostcrypt_ru.qm</file>
         <file>translations/gostcrypt_ru.ts</file>
         <file>UI/dialogs/Performance.qml</file>
-        <file>src/CmdLineInterface.cpp</file>
-        <file>inc/CmdLineInterface.h</file>
         <file>inc/DragWindowProvider.h</file>
         <file>src/GraphicInterface.cpp</file>
         <file>inc/GraphicInterface.h</file>
         <file>gsbutton.qrc</file>
         <file>src/main.cpp</file>
-        <file>src/Parser.cpp</file>
-        <file>inc/Parser.h</file>
         <file>qml.qrc</file>
         <file>src/SecureTextField.cpp</file>
         <file>inc/SecureTextField.h</file>
@@ -111,8 +107,6 @@
         <file>UI.pro</file>
         <file>src/UserSettings.cpp</file>
         <file>inc/UserSettings.h</file>
-        <file>src/volumelist.cpp</file>
-        <file>inc/volumelist.h</file>
         <file>UI/dialogs/Preferences.qml</file>
         <file>UI/dialogs/DefaultKeyfile.qml</file>
         <file>UI/dialogs/Contributors.qml</file>
