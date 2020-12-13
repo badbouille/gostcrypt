@@ -14,6 +14,8 @@ int GraphicInterface::start(int argc, char** argv)
 
     mApp->setWindowIcon(QIcon(":/logo_gostcrypt.png"));
     mApp->setApplicationName("GostCrypt");
+    mApp->setOrganizationName("The GostCrypt Team"); // TODO use constants
+    mApp->setOrganizationDomain("gostcrypt.org");
 
     QQmlContext* ctx = mEngine.rootContext();
 
