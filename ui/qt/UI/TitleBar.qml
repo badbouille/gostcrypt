@@ -69,7 +69,7 @@ Rectangle {
             width: parent.width
             height: parent.height
             hoverEnabled: true
-            onEntered: appclose.color=custompalette.darkThird
+            onEntered: appclose.color=custompalette.red
             onExited: appclose.color=custompalette.border
             onClicked: {
                 exitRequested = true

@@ -17,6 +17,7 @@ QtObject {
     property color blue:            "#2f88a7"
     property color blueHover:       "#3d97b6"
     property color bluePress:       "#266f88"
+    property color red:             "#b7322f"
     property color border:          style(["#202020", "#C7C7C7"])
     property color darkInput:       style(["#181818", "#C7C7C7"])
     property color hoverItemMenu:   style(["#404040", "#C7C7C7"])
