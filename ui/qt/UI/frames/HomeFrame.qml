@@ -313,8 +313,8 @@ Item {
                         SequentialAnimation {
                             running: true;
                             loops: Animation.Infinite;
-                            NumberAnimation { target: arrow; property: "y"; to: 85; duration: 5000; easing.type: Easing.InOutCubic; }
-                            NumberAnimation { target: arrow; property: "y"; to: 75; duration: 5000; easing.type: Easing.InOutCubic; }
+                            NumberAnimation { target: arrow; property: "y"; to: 85; duration: 1000; easing.type: Easing.InOutCubic; }
+                            NumberAnimation { target: arrow; property: "y"; to: 75; duration: 1000; easing.type: Easing.InOutCubic; }
                         }
                     }
                 }
