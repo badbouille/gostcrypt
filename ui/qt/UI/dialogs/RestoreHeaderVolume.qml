@@ -58,7 +58,7 @@ Item {
                 id: block
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 100
@@ -68,7 +68,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Please select the type of volume header backup you want to use:") + Translation.tr
                     font.pointSize: 11
                 }
@@ -107,7 +107,7 @@ Item {
                 id: blockHidden
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 140
@@ -117,7 +117,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Volume password") + Translation.tr
                     font.pointSize: 11
                 }
@@ -142,7 +142,7 @@ Item {
                                 horizontalAlignment: Text.AlignRight
                                 verticalAlignment: Text.AlignVCenter
                                 lineHeight: 40
-                                color: palette.text
+                                color: custompalette.text
                             }
 
                             UI.SecureTextField {
@@ -203,7 +203,7 @@ Item {
                                 height: 40
                                 text: qsTr("Keyfiles...") + Translation.tr
                                 width: 150
-                                color_: palette.green
+                                color_: custompalette.green
                             }
                         }
                     }
@@ -221,7 +221,7 @@ Item {
                     height: 40
                     text: "×"
                     width: 40
-                    color_: palette.blue
+                    color_: custompalette.blue
                     onClicked: {
                         password_value.readOnly = false
                         hiddenVolumePassword.visible = false
@@ -250,7 +250,7 @@ Item {
                     top.update();
                 }
             }
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
     }

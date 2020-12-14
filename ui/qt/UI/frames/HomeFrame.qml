@@ -38,7 +38,7 @@ Item {
             y: 0
             width: parent.width + 100
             height: 74
-            color: palette.darkSecond
+            color: custompalette.darkSecond
         }
 
         Rectangle {
@@ -49,9 +49,9 @@ Item {
             }
             width: parent.width
             height: 70
-            color: palette.darkSecond
+            color: custompalette.darkSecond
             border.width: 1
-            border.color: palette.darkInput
+            border.color: custompalette.darkInput
         }
         Behavior on x { NumberAnimation { duration: app.duration; easing.type: Easing.OutQuad } }
     }
@@ -70,7 +70,7 @@ Item {
             y: 111
             width: (isEmpty === true) ? 350 : 550
             height: 350
-            color: palette.darkSecond
+            color: custompalette.darkSecond
             property bool isEmpty: true
             //Borders
             Rectangle {
@@ -78,21 +78,21 @@ Item {
                 y: 0
                 x: 0
                 width: parent.width
-                color: palette.darkInput
+                color: custompalette.darkInput
             }
             Rectangle {
                 height: parent.height
                 y: 0
                 x: 0
                 width: 1
-                color: palette.darkInput
+                color: custompalette.darkInput
             }
             Rectangle {
                 height: parent.height
                 y: 0
                 x: parent.width-1
                 width: 1
-                color: palette.darkInput
+                color: custompalette.darkInput
             }
             Behavior on x { id: behaviorVolumeContainer; enabled: false; NumberAnimation { duration: app.duration; easing.type: Easing.OutQuad } }
         }
@@ -164,9 +164,9 @@ Item {
 
             Rectangle {
                 id: volumeToolsMenu
-                color: palette.darkThird
+                color: custompalette.darkThird
                 border.width: 2
-                border.color: palette.blue
+                border.color: custompalette.blue
                 width: 250
                 height: 240
                 anchors.centerIn: parent
@@ -280,7 +280,7 @@ Item {
                 height: rectangle2.height
                 Text {
                     id: text
-                    color: palette.text
+                    color: custompalette.text
                     width: parent.width
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
@@ -321,7 +321,7 @@ Item {
 
                 Text {
                     id: text2
-                    color: palette.text
+                    color: custompalette.text
                     width: parent.width
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
@@ -341,7 +341,7 @@ Item {
                 spacing: 10
                 Text {
                     id: title
-                    color: palette.text
+                    color: custompalette.text
                     width: parent.width
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHLeft
@@ -354,7 +354,7 @@ Item {
                 Text {
                     id: version
                     x: 5;
-                    color: palette.text
+                    color: custompalette.text
                     width: parent.width
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHLeft
@@ -364,7 +364,7 @@ Item {
                 Text {
                     id: descriptionHome
                     x: 5;
-                    color: palette.text
+                    color: custompalette.text
                     width: parent.width
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHLeft
@@ -391,11 +391,11 @@ Item {
                         {
                             toggleMenu(1)
                         }
-                        color_: palette.blue
+                        color_: custompalette.blue
                     }
                     UI.ButtonBordered {
                         text: qsTr("User Guide") + Translation.tr
-                        color_: palette.green
+                        color_: custompalette.green
                         width:100
                         onClicked: {
                             qmlRequest("openguide", "");
@@ -482,7 +482,7 @@ Item {
             {
                 qmlRequest("automount", "dummy");
             }
-            color_:palette.green
+            color_:custompalette.green
         }
         /*!
           \class ButtonBordered
@@ -490,7 +490,7 @@ Item {
         */
         UI.ButtonBordered {
             text: qsTr("Dismount All") + Translation.tr
-            color_:palette.blue
+            color_:custompalette.blue
             width:200
             onClicked: {
                 qmlRequest("dismountall", "dummy");
@@ -509,7 +509,7 @@ Item {
 
         Rectangle {
             anchors.fill: parent
-            color: palette.textLowOpacity
+            color: custompalette.textLowOpacity
             opacity: 0.5
             visible: parent.containsDrag
         }

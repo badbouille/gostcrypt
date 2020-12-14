@@ -43,14 +43,14 @@ Item {
     }
 
     Rectangle {
-        color: palette.darkThird
+        color: custompalette.darkThird
         anchors.centerIn: parent
         width: connectSudo_Form.width
         height: 165
         Rectangle {
             width: parent.width
             height: 3
-            color: palette.blue
+            color: custompalette.blue
             x: 0
             y: 0
         }
@@ -62,7 +62,7 @@ Item {
             text: contentText
             font.pointSize: 13
             lineHeightMode: Text.FixedHeight
-            color: palette.text
+            color: custompalette.text
         }
 
         SecureTextField {
@@ -104,7 +104,7 @@ Item {
 
         ButtonBordered {
             text: qsTr("Validate") + Translation.tr
-            color_:palette.blue
+            color_:custompalette.blue
             width:200
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: password_value.bottom

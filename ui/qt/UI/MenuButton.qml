@@ -5,14 +5,14 @@ Rectangle {
     height: 46
     color: "transparent"//"#2f88a7"
     radius: 46
-    border.color: palette.blue
+    border.color: custompalette.blue
     property real value
 
     Item {
         anchors.fill: parent
         rotation: (state == "menu") ? value*180 : -value*180
         Rectangle {
-            color: palette.text
+            color: custompalette.text
             id: bar1
             x: 14 + 7.5*value
             y: 14 + 5*value
@@ -23,7 +23,7 @@ Rectangle {
         }
 
         Rectangle {
-            color: palette.text
+            color: custompalette.text
             id: bar2
             x: 14 + value
             y: 22 + 1*value
@@ -33,7 +33,7 @@ Rectangle {
         }
 
         Rectangle {
-            color: palette.text
+            color: custompalette.text
             id: bar3
             x: 14 + 7.5*value
             y: 30 - 4*value
@@ -62,7 +62,7 @@ Rectangle {
             when: menuButton_mouseArea.containsMouse && !menuButton_mouseArea.pressed
             PropertyChanges {
                 target: menuButton
-                color : palette.darkInput
+                color : custompalette.darkInput
             }
         },
         State {
@@ -70,7 +70,7 @@ Rectangle {
             when: menuButton_mouseArea.pressed
             PropertyChanges {
                 target: menuButton
-                color : palette.border
+                color : custompalette.border
             }
         },
         State {

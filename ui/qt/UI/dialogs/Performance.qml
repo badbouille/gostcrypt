@@ -19,7 +19,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         y: 10
         anchors.bottomMargin: 30
-        color: palette.text
+        color: custompalette.text
         font.pointSize: 11
         text: {
             return "";
@@ -68,7 +68,7 @@ Item {
             width: 600
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHLeft
-            color: palette.text
+            color: custompalette.text
             font.pointSize: 11
             anchors.horizontalCenter: parent.horizontalCenter
         }
@@ -85,7 +85,7 @@ Item {
             text: qsTr("Benchmark") + Translation.tr
             width: 120
             onClicked: openSubWindow("dialogs/Benchmark.qml", qsTr("Benchmark"), qsTr("Benchmark"), 429, {"name" : "", "value" : ""})
-            color_: palette.green
+            color_: custompalette.green
             anchors.bottomMargin: 10
         }
         UI.ButtonBordered {
@@ -94,7 +94,7 @@ Item {
             text: qsTr("Save changes") + Translation.tr
             width: 120
             onClicked: top.update()
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
     }

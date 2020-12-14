@@ -29,7 +29,7 @@ Item {
             spacing: 5
             Text {
                 text: qsTr("Buffer Size:")+ "  "
-                color: palette.text
+                color: custompalette.text
                 font.pointSize: 11
                 verticalAlignment: Text.AlignVCenter
                 height: 40
@@ -51,7 +51,7 @@ Item {
             text: qsTr("Benchmark") + Translation.tr
             width: 120
             onClicked: qmlRequest("benchmark", {size: combo.currentText })
-            color_: palette.green
+            color_: custompalette.green
         }
 
     }
@@ -92,13 +92,13 @@ Item {
             style: TableViewStyle {
                 frame: Rectangle {
                     border{
-                        color: palette.darkInput
+                        color: custompalette.darkInput
                     }
                 }
                 headerDelegate: Rectangle {
                     height: textItem.implicitHeight * 1.2
                     width: textItem.implicitWidth
-                    color: palette.darkInput
+                    color: custompalette.darkInput
                     Text {
                         id: textItem
                         anchors.fill: parent
@@ -107,7 +107,7 @@ Item {
                         anchors.leftMargin: 12
                         text: styleData.value
                         elide: Text.ElideRight
-                        color: palette.text
+                        color: custompalette.text
                         renderType: Text.NativeRendering
                     }
                     Rectangle {
@@ -117,21 +117,21 @@ Item {
                         anchors.bottomMargin: 1
                         anchors.topMargin: 1
                         width: 1
-                        color: palette.darkInput
+                        color: custompalette.darkInput
                     }
                 }
                 rowDelegate: Rectangle {
                     color: {
-                        var baseColor = styleData.alternate ? palette.darkSecond : palette.darkThird
-                        return styleData.selected ? palette.dark : baseColor
+                        var baseColor = styleData.alternate ? custompalette.darkSecond : custompalette.darkThird
+                        return styleData.selected ? custompalette.dark : baseColor
                     }
                 }
 
                 activateItemOnSingleClick : true
-                alternateBackgroundColor : palette.darkSecond
-                backgroundColor : palette.darkThird
-                highlightedTextColor : palette.blue
-                textColor : palette.text
+                alternateBackgroundColor : custompalette.darkSecond
+                backgroundColor : custompalette.darkThird
+                highlightedTextColor : custompalette.blue
+                textColor : custompalette.text
 
 
             }
@@ -156,7 +156,7 @@ Item {
             width: 550
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHLeft
-            color: palette.text
+            color: custompalette.text
             font.pointSize: 11
         }
 
@@ -173,7 +173,7 @@ Item {
             text: qsTr("Close") + Translation.tr
             width: 120
             onClicked: top.update()
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
     }

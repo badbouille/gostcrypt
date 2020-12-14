@@ -12,7 +12,7 @@ Button {
         leftPadding: -37
         text: buttonBlueIcon.text
         font.pixelSize: 13
-        color: palette.textVeryLight
+        color: custompalette.textVeryLight
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
@@ -31,12 +31,12 @@ Button {
             smooth: false
             source: "ressource/buttonBlueRight.png"
         }
-        color: palette.dark
+        color: custompalette.dark
         implicitWidth: 160
         implicitHeight: 37
         border.width: 1
         radius: 2
-        border.color: palette.blue
+        border.color: custompalette.blue
     }
 
     //Capture du curseur
@@ -53,7 +53,7 @@ Button {
             when: buttonBlueIcon_mouseArea.containsMouse && !buttonBlueIcon_mouseArea.pressed
             PropertyChanges {
                 target: buttonBlueIcon_rect
-                color : palette.blueHover
+                color : custompalette.blueHover
             }
         },
         State {
@@ -61,7 +61,7 @@ Button {
             when: buttonBlueIcon_mouseArea.pressed
             PropertyChanges {
                 target: buttonBlueIcon_rect
-                color : palette.bluePress
+                color : custompalette.bluePress
             }
         },
         State {
@@ -69,7 +69,7 @@ Button {
             when: !buttonBlueIcon_mouseArea.containsMouse
             PropertyChanges {
                 target: buttonBlueIcon_rect
-                color : palette.dark
+                color : custompalette.dark
             }
         }
     ]

@@ -10,13 +10,13 @@ Rectangle {
     width: 40
     height: 40
     radius: 20
-    color: palette.grayWizard
+    color: custompalette.grayWizard
 
     Text {
         anchors.centerIn: parent
         text: (type === false) ? "<" : ">"
         font.pointSize: 15
-        color: palette.text
+        color: custompalette.text
     }
 
     MouseArea {

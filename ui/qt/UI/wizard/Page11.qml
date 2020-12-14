@@ -26,7 +26,7 @@ Item {
                    + "area will accommodate the hidden volume, so it will limit its maximum possible size. Cluster "
                    + "bitmap scanning ensures that no data on the outer volume are overwritter by the hidden volume.") + Translation.tr
         x: 30
-        color: palette.text
+        color: custompalette.text
         horizontalAlignment: Text.AlignJustify
         wrapMode: Text.WordWrap
     }
@@ -37,7 +37,7 @@ Item {
         anchors.topMargin: 10
         text: qsTr("Open the Outer Volume")
         width: 250
-        color_: palette.blue
+        color_: custompalette.blue
         onClicked: ConnectSignals.openPath(path);
     }
 }

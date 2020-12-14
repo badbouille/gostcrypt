@@ -13,14 +13,14 @@ ComboBox {
         width: control.width
         contentItem: Text {
             text: modelData + Translation.tr
-            color: palette.green
+            color: custompalette.green
             font: control.font
             elide: Text.ElideRight
             verticalAlignment: Text.AlignVCenter
         }
         background: Rectangle {
             anchors.fill: parent
-            color: item.highlighted ? palette.darkSecond : palette.dark
+            color: item.highlighted ? custompalette.darkSecond : custompalette.dark
         }
         highlighted: control.highlightedIndex == index
     }
@@ -75,17 +75,17 @@ ComboBox {
             }
 
             background: Rectangle {
-                color: palette.darkInput
-                border.color: palette.darkInput
+                color: custompalette.darkInput
+                border.color: custompalette.darkInput
                 radius: 2
             }
         }
 
     background: Rectangle {
-        color: palette.darkInput
+        color: custompalette.darkInput
         implicitWidth: 120
         implicitHeight: 40
-        border.color: control.pressed ? palette.darkInput : palette.darkInput
+        border.color: control.pressed ? custompalette.darkInput : custompalette.darkInput
         border.width: control.visualFocus ? 2 : borderWidth
         radius: 2
     }

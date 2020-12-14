@@ -12,7 +12,7 @@ Item {
     Text {
         id:title
         font.pixelSize: 25
-        color: palette.text
+        color: custompalette.text
         anchors.horizontalCenter: parent.horizontalCenter
         y: 20
         text: qsTr("System") + Translation.tr

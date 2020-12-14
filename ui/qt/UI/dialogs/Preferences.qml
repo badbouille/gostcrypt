@@ -46,7 +46,7 @@ Item {
                 id: block
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 55
@@ -56,7 +56,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Default mount options") + Translation.tr
                     font.pointSize: 11
                 }
@@ -107,7 +107,7 @@ Item {
                 id: block2
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 55
@@ -117,7 +117,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("GostCrypt Background Task") + Translation.tr
                     font.pointSize: 11
                 }
@@ -168,7 +168,7 @@ Item {
                 id: block3
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 85
@@ -178,7 +178,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Explorer") + Translation.tr
                     font.pointSize: 11
                 }
@@ -226,7 +226,7 @@ Item {
                 id: block4
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 110
@@ -236,7 +236,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Password Cache") + Translation.tr
                     font.pointSize: 11
                 }
@@ -300,7 +300,7 @@ Item {
                 id: block5
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 140
@@ -310,7 +310,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Password Cache") + Translation.tr
                     font.pointSize: 11
                 }
@@ -325,7 +325,7 @@ Item {
                             id: textDismountWhen
                             height: 25
                             y: 13
-                            color: palette.text
+                            color: custompalette.text
                             text: qsTr("Dismount all when :") + Translation.tr
                             font.pointSize: 10
                         }
@@ -414,7 +414,7 @@ Item {
                         }
                         Text {
                             height: 25
-                            color: palette.text
+                            color: custompalette.text
                             text: qsTr("minutes") + Translation.tr
                             font.pointSize: 10
                         }
@@ -452,7 +452,7 @@ Item {
             text: qsTr("Save changes") + Translation.tr
             width: 120
             onClicked: top.update()
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
     }

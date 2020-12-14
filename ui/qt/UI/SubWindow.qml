@@ -25,7 +25,7 @@ Item {
         height: app.height
         x: -parent.x
         y: -parent.y+40
-        color: palette.shadow
+        color: custompalette.shadow
         opacity: 0.7
         MouseArea {
             anchors.fill: parent
@@ -40,7 +40,7 @@ Item {
             when: closeButton_Area.containsMouse && !closeButton_Area.pressed
             PropertyChanges {
                 target: closeButton
-                border.color: palette.blueHover
+                border.color: custompalette.blueHover
             }
         },
         State {
@@ -48,7 +48,7 @@ Item {
             when: closeButton_Area.pressed
             PropertyChanges {
                 target: closeButton
-                border.color: palette.bluePress
+                border.color: custompalette.bluePress
             }
         },
         State {
@@ -56,7 +56,7 @@ Item {
             when: !closeButton_Area.containsMouse
             PropertyChanges {
                 target: closeButton
-                border.color: palette.blue
+                border.color: custompalette.blue
             }
         }
     ]
@@ -92,7 +92,7 @@ Item {
                         text: title + Translation.tr
                         font.family: "Helvetica"
                         font.pointSize: 14
-                        color: palette.text
+                        color: custompalette.text
                     }
 
                 }
@@ -102,8 +102,8 @@ Item {
                 topPadding: 5
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 20
-                text: "<font color=\""+palette.blue+"\"><a href=\"home\">"+qsTr("Home") + Translation.tr+"</font></a> > "+ name + Translation.tr
-                color: palette.blue
+                text: "<font color=\""+custompalette.blue+"\"><a href=\"home\">"+qsTr("Home") + Translation.tr+"</font></a> > "+ name + Translation.tr
+                color: custompalette.blue
                 font.pixelSize: 12
 
                 MouseArea {
@@ -120,14 +120,14 @@ Item {
             id: closeWizard
             width:40
             height:40
-            color: palette.grayWizard
+            color: custompalette.grayWizard
             radius: 5
             anchors.right: parent.right
             anchors.rightMargin: 10
             y: 50
             anchors.topMargin: 10
             Text{
-                color: palette.text
+                color: custompalette.text
                 text: "×"
                 anchors.centerIn: parent
                 font.pointSize: 15
@@ -136,14 +136,14 @@ Item {
                 width: parent.width
                 height: parent.height
                 hoverEnabled: true
-                onEntered: closeWizard.color = palette.darkInput
-                onExited: closeWizard.color = palette.grayWizard
+                onEntered: closeWizard.color = custompalette.darkInput
+                onExited: closeWizard.color = custompalette.grayWizard
                 onClicked: catchClose()
             }
         }
         Rectangle {
             id: contentWizard
-            color: palette.grayWizard
+            color: custompalette.grayWizard
             width: parent.width
             height: 270
             anchors.top: imgWizard.bottom
@@ -152,7 +152,7 @@ Item {
                 width: parent.width
                 height: 50
                 anchors.bottom: parent.bottom
-                color: palette.grayWizardDark
+                color: custompalette.grayWizardDark
             }
         }
 
@@ -161,7 +161,7 @@ Item {
     //Normal subwindow
     Rectangle {
         id: containerSub
-        color: palette.shadow
+        color: custompalette.shadow
         anchors.centerIn: parent
         width: parent.width - 80
         height: parent.height
@@ -174,27 +174,27 @@ Item {
             x:1
             y:1
             height: 70
-            color: palette.darkThird
+            color: custompalette.darkThird
         }
         Rectangle {
             width:parent.width-2
             x:1
             y:70
             height: parent.height-71
-            color: palette.dark
+            color: custompalette.dark
         }
         Rectangle {
             id: close
             width:40
             height:40
-            color: palette.border
+            color: custompalette.border
             radius: 5
             anchors.right: parent.right
             anchors.rightMargin: 10
             anchors.top: parent.top
             anchors.topMargin: 10
             Text{
-                color: palette.text
+                color: custompalette.text
                 text: "×"
                 anchors.centerIn: parent
                 font.pointSize: 15
@@ -203,8 +203,8 @@ Item {
                 width: parent.width
                 height: parent.height
                 hoverEnabled: true
-                onEntered: close.color = palette.darkInput
-                onExited: close.color = palette.border
+                onEntered: close.color = custompalette.darkInput
+                onExited: close.color = custompalette.border
                 onClicked: catchClose()
             }
         }
@@ -213,7 +213,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 5
                 text: "<font color=\"#719c24\"><a href=\"home\">"+qsTr("Home") + Translation.tr+"</font></a> > "+ name + Translation.tr
-                color: palette.text
+                color: custompalette.text
                 font.pixelSize: 12
                 MouseArea {
                     anchors.fill: parent
@@ -231,7 +231,7 @@ Item {
                 text: title + Translation.tr
                 font.family: "Helvetica"
                 font.pointSize: 17
-                color: palette.green
+                color: custompalette.green
                 y: containerSub.y + 10
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter

@@ -12,7 +12,7 @@ Item {
         font.family: "Helvetica"
         text: qsTr("Please choose the type of volume you want:") + Translation.tr
         anchors.horizontalCenter: parent.horizontalCenter
-        color: palette.text
+        color: custompalette.text
         wrapMode: Text.WordWrap
     }
 
@@ -48,7 +48,7 @@ Item {
                 width: 150
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
-                color: palette.text
+                color: custompalette.text
                 font.pointSize: 13
                 anchors.horizontalCenter: img1.horizontalCenter
                 y: 100
@@ -121,7 +121,7 @@ Item {
                 width: 150
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignHCenter
-                color: palette.text
+                color: custompalette.text
                 font.pointSize: 13
                 anchors.horizontalCenter: img2.horizontalCenter
                 y: 100
@@ -179,7 +179,7 @@ Item {
         width: bottomBar.width- 40
         height: bottomBar.height
         horizontalAlignment: Text.AlignHCenter
-        color: palette.textLowOpacity
+        color: custompalette.textLowOpacity
         font.pointSize: 9
     }
 }

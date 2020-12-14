@@ -11,7 +11,7 @@ Item {
         y: 30
         text: qsTr("Please choose a language :")  + Translation.tr
         font.pixelSize: 14
-        color: palette.text
+        color: custompalette.text
     }
 
     Component {
@@ -23,15 +23,15 @@ Item {
                 id: element
                 anchors.fill:parent
                 radius:2
-                color: palette.darkInput
+                color: custompalette.darkInput
                 border{
                     width:1
-                    color:palette.border
+                    color:custompalette.border
                 }
                 Text {
                     anchors.centerIn: parent
                     text: name
-                    color: palette.text
+                    color: custompalette.text
                     font.pixelSize: 14
                 }
             }
@@ -51,7 +51,7 @@ Item {
                     when: languageArea.containsMouse && !languageArea.pressed
                     PropertyChanges {
                         target: element
-                        color : palette.darkThird
+                        color : custompalette.darkThird
                     }
                 },
                 State {
@@ -63,7 +63,7 @@ Item {
                     when: !languageArea.containsMouse
                     PropertyChanges {
                         target: element
-                        color: palette.darkInput
+                        color: custompalette.darkInput
                     }
                 }
             ]

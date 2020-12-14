@@ -29,7 +29,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         y: 10
         anchors.bottomMargin: 30
-        color: palette.text
+        color: custompalette.text
         font.pointSize: 11
         text: {
             volumePath = volumePath.replace(/^(file:\/{2})/,"");
@@ -47,7 +47,7 @@ Item {
             Text {
                 id: text_
                 text: qsTr("Volume name : ") + Translation.tr
-                color: palette.text
+                color: custompalette.text
                 font.pointSize: 11
                 verticalAlignment: Text.AlignVCenter
                 height: 40
@@ -115,7 +115,7 @@ Item {
         text: qsTr("Save changes") + Translation.tr
         width: 120
         onClicked: top.updateVolume()
-        color_: palette.blue
+        color_: custompalette.blue
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: 10

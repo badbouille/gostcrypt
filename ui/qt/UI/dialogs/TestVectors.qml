@@ -43,7 +43,7 @@ Item {
                 Text {
                     y:5
                     height: 30
-                    color: palette.text
+                    color: custompalette.text
                     font.pointSize: 11
                     text: qsTr("Cipher :") + Translation.tr
                 }
@@ -59,7 +59,7 @@ Item {
                     size_: 20
                     sizeText: 10
                     height: 30
-                    textColor: palette.green
+                    textColor: custompalette.green
                     checked: (UserSettings.getSetting("XTS-mode") === "1") ? true : false
                     onCheckedChanged: {
                         if(xtsmode.checked == true)
@@ -74,7 +74,7 @@ Item {
                 id: block1
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 110
@@ -85,7 +85,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Key (hexadecimal)") + Translation.tr
                     font.pointSize: 11
                 }
@@ -111,7 +111,7 @@ Item {
                     Text {
                         y:5
                         height: 30
-                        color: palette.text
+                        color: custompalette.text
                         text: qsTr("Key size:") + Translation.tr
                         font.pointSize: 11
                     }
@@ -124,7 +124,7 @@ Item {
                     Text {
                         y:5
                         height: 30
-                        color: palette.text
+                        color: custompalette.text
                         text: qsTr("bits.") + Translation.tr
                         font.pointSize: 11
                     }
@@ -136,7 +136,7 @@ Item {
                 id: block2
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 200
@@ -147,7 +147,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("XTS mode") + Translation.tr
                     font.pointSize: 11
                 }
@@ -158,7 +158,7 @@ Item {
                     height: 30
                     anchors.top: text2.bottom
                     anchors.topMargin: 5
-                    color: palette.text
+                    color: custompalette.text
                     text: qsTr("Secondary key (hexadecimal)") + Translation.tr
                     font.pointSize: 11
                 }
@@ -179,7 +179,7 @@ Item {
                     anchors.top: secondarykey.bottom
                     anchors.topMargin: 5
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: palette.text
+                    color: custompalette.text
                     text: qsTr("Data unit number (64-bit hexadecimal, data unit size is 512 bytes) :") + Translation.tr
                     font.pointSize: 11
                 }
@@ -203,7 +203,7 @@ Item {
                         Text {
                             y:5
                             height: 30
-                            color: palette.text
+                            color: custompalette.text
                             text: qsTr("Block number: ") + Translation.tr
                             font.pointSize: 11
                         }
@@ -221,7 +221,7 @@ Item {
                 id: block3
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 110
@@ -232,7 +232,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Plaintext (hexadecimal)") + Translation.tr
                     font.pointSize: 11
                 }
@@ -260,7 +260,7 @@ Item {
                             Text {
                                 y:5
                                 height: 30
-                                color: palette.text
+                                color: custompalette.text
                                 text: qsTr("Plain text size:") + Translation.tr
                                 font.pointSize: 11
                             }
@@ -273,7 +273,7 @@ Item {
                             Text {
                                 y:5
                                 height: 30
-                                color: palette.text
+                                color: custompalette.text
                                 text: qsTr("bits.") + Translation.tr
                                 font.pointSize: 11
                             }
@@ -289,7 +289,7 @@ Item {
                 id: block4
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 80
@@ -300,7 +300,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Ciphertext (hexadecimal)") + Translation.tr
                     font.pointSize: 11
                 }
@@ -332,7 +332,7 @@ Item {
             text: qsTr("Encrypt") + Translation.tr
             width: 120
             //onClicked: top.update() //TODO
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
         UI.ButtonBordered {
@@ -341,7 +341,7 @@ Item {
             text: qsTr("Decrypt") + Translation.tr
             width: 120
             //onClicked: top.update() //TODO
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
 
@@ -351,7 +351,7 @@ Item {
             text: qsTr("Auto-Test All") + Translation.tr
             width: 120
             //onClicked: top.update() //TODO
-            color_: palette.green
+            color_: custompalette.green
             anchors.bottomMargin: 10
         }
 
@@ -361,7 +361,7 @@ Item {
             text: qsTr("Reset") + Translation.tr
             width: 120
             //onClicked: top.update() //TODO
-            color_: palette.green
+            color_: custompalette.green
             anchors.bottomMargin: 10
         }
     }

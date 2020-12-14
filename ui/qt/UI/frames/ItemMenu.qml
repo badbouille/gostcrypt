@@ -12,17 +12,17 @@ Item {
         anchors.fill: rect_
         glowRadius: 10
         spread: 0.2
-        color: palette.darkThird
+        color: custompalette.darkThird
         cornerRadius: rect_.radius + glowRadius
     }
     Rectangle {
         id:rect_
         anchors.fill:parent
-        color: palette.dark
+        color: custompalette.dark
         radius:5
-        border.color: palette.darkThird
+        border.color: custompalette.darkThird
         border.width: 1
-        ColorAnimation on color { from: palette.darkThird; duration: 1000 }
+        ColorAnimation on color { from: custompalette.darkThird; duration: 1000 }
     }
     Rectangle {
         id: textAlign
@@ -34,12 +34,12 @@ Item {
     }
     Rectangle {
         id: descriptionAlign
-        color: palette.hoverItemMenu
+        color: custompalette.hoverItemMenu
         x:0
         y:55
         height: 35
         width: 128
-        border.color: palette.darkThird
+        border.color: custompalette.darkThird
         border.width: 1
     }
 
@@ -49,14 +49,14 @@ Item {
         anchors.verticalCenter: textAlign.verticalCenter
         lineHeight: 0.75
         horizontalAlignment: Text.AlignHCenter
-        color: palette.text
+        color: custompalette.text
         font.pixelSize: 13
         width: 110
         wrapMode: Text.WordWrap
     }
     Text {
         text: description_ + Translation.tr
-        color: palette.darkInput
+        color: custompalette.darkInput
         font.pixelSize: 11
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: descriptionAlign.verticalCenter
@@ -78,7 +78,7 @@ Item {
             when: area.containsMouse && !area.pressed
             PropertyChanges {
                 target: rect_
-                color : palette.hoverItemMenu
+                color : custompalette.hoverItemMenu
             }
         },
         State {
@@ -86,7 +86,7 @@ Item {
             when: area.pressed
             PropertyChanges {
                 target: rect_
-                color : palette.dark
+                color : custompalette.dark
             }
         },
         State {
@@ -94,7 +94,7 @@ Item {
             when: !area.containsMouse
             PropertyChanges {
                 target: rect_
-                color : palette.dark
+                color : custompalette.dark
             }
         }
     ]

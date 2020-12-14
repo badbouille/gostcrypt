@@ -8,7 +8,7 @@ ControlsOld.TextField {
     property bool type: false
     property int radius_: 5
     property int height_: 24
-    property color bordercolor: palette.borderInput
+    property color bordercolor: custompalette.borderInput
     signal validated()
     signal shiftPressed(bool isPressed)
     id: top
@@ -16,7 +16,7 @@ ControlsOld.TextField {
     echoMode: (type === false) ? TextInput.Password : TextInput.Normal
     focus: true
     style: TextFieldStyle {
-        textColor: palette.text
+        textColor: custompalette.text
         background: Rectangle {
             id: password_value_style
             radius: radius_
@@ -24,7 +24,7 @@ ControlsOld.TextField {
             implicitHeight: height_
             border.color: bordercolor
             border.width: 1
-            color: palette.darkInput
+            color: custompalette.darkInput
         }
     }
 

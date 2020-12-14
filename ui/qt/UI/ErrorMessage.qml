@@ -83,7 +83,7 @@ Item {
             id: exitButton
             visible: (type) ? false : true
             text: qsTr("OK") + Translation.tr
-            color_: palette.blue
+            color_: custompalette.blue
             onClicked: {
                 closeErrorMessage();
             }
@@ -93,7 +93,7 @@ Item {
             id: button1
             visible: (type) ? true : false
             text: button1Name
-            color_: palette.blue
+            color_: custompalette.blue
             onClicked: {
                 closeErrorMessage();
             }
@@ -103,7 +103,7 @@ Item {
             id: button2
             visible: (type) ? true : false
             text: button2Name + Translation.tr
-            color_: palette.blue
+            color_: custompalette.blue
             onClicked: {
                 closeErrorMessage();
             }

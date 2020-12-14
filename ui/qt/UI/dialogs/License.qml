@@ -46,7 +46,7 @@ Item {
              onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
              font.family: "Helvetica"
              font.pointSize: 10
-             color: palette.text
+             color: custompalette.text
              readOnly: true
              text:
                  "                    GNU GENERAL PUBLIC LICENSE
@@ -737,7 +737,7 @@ Item {
             text: qsTr("Close") + Translation.tr
             width: 120
             onClicked: top.close()
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
     }

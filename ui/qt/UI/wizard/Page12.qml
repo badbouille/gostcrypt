@@ -19,7 +19,7 @@ Item {
                    + "next steps you will set the options, the size, and the password "
                    + "for the hidden volume.") + Translation.tr
         y: 25
-        color: palette.text
+        color: custompalette.text
         horizontalAlignment: Text.AlignJustify
         wrapMode: Text.WordWrap
     }

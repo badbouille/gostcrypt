@@ -58,7 +58,7 @@ Item {
     Rectangle {
         id: form
         y: 11
-        color: palette.border
+        color: custompalette.border
         width:parent.width
         height: parent.height
         Text {
@@ -67,7 +67,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             y: 0
             height: 30
-            color: palette.text
+            color: custompalette.text
             lineHeight: 30
             verticalAlignment: Text.AlignVCenter
         }
@@ -86,7 +86,7 @@ Item {
     Rectangle {
         id: form2
         y: 42
-        color: palette.darkSecond
+        color: custompalette.darkSecond
         width: 248
         x: 1
         height: parent.height -31
@@ -103,7 +103,7 @@ Item {
                         id: body
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.fill: parent
-                        color: palette.darkSecond
+                        color: custompalette.darkSecond
                         height: 80
                         Text {
                             id: delegateText
@@ -115,7 +115,7 @@ Item {
                             clip: true
                             x: (Number(Notif_percent) !== -1) ? 60 : 0
                             anchors.verticalCenter: parent.verticalCenter
-                            color: palette.text
+                            color: custompalette.text
                         }
 
                         CircleLoadingBar {
@@ -140,7 +140,7 @@ Item {
                         height:1
                         width: 248
                         anchors.bottom: parent.bottom
-                        color: palette.border
+                        color: custompalette.border
                     }
                 }
 
@@ -167,7 +167,7 @@ Item {
                         anchors.right: parent.right
 
                         background: Rectangle {
-                            color: palette.darkInput
+                            color: custompalette.darkInput
                         }
                     }
                 }
@@ -230,7 +230,7 @@ Item {
         y: parent.height+4
         width: 248
         x:1
-        color: palette.green
+        color: custompalette.green
         height: 7
     }
 

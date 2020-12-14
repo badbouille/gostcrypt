@@ -78,13 +78,13 @@ Item {
             style: TableViewStyle {
                 frame: Rectangle {
                     border{
-                        color: palette.darkInput
+                        color: custompalette.darkInput
                     }
                 }
                 headerDelegate: Rectangle {
                     height: textItem.implicitHeight * 1.2
                     width: textItem.implicitWidth
-                    color: palette.darkInput
+                    color: custompalette.darkInput
                     Text {
                         id: textItem
                         anchors.fill: parent
@@ -93,7 +93,7 @@ Item {
                         anchors.leftMargin: 12
                         text: styleData.value
                         elide: Text.ElideRight
-                        color: palette.text
+                        color: custompalette.text
                         renderType: Text.NativeRendering
                     }
                     Rectangle {
@@ -103,21 +103,21 @@ Item {
                         anchors.bottomMargin: 1
                         anchors.topMargin: 1
                         width: 1
-                        color: palette.darkInput
+                        color: custompalette.darkInput
                     }
                 }
                 rowDelegate: Rectangle {
                     color: {
-                        var baseColor = styleData.alternate ? palette.darkSecond : palette.darkThird
-                        return styleData.selected ? palette.dark : baseColor
+                        var baseColor = styleData.alternate ? custompalette.darkSecond : custompalette.darkThird
+                        return styleData.selected ? custompalette.dark : baseColor
                     }
                 }
 
                 activateItemOnSingleClick : true
-                alternateBackgroundColor : palette.darkSecond
-                backgroundColor : palette.darkThird
-                highlightedTextColor : palette.blue
-                textColor : palette.text
+                alternateBackgroundColor : custompalette.darkSecond
+                backgroundColor : custompalette.darkThird
+                highlightedTextColor : custompalette.blue
+                textColor : custompalette.text
 
 
             }
@@ -131,7 +131,7 @@ Item {
             }
         }
         Text {
-            color: palette.text
+            color: custompalette.text
             width: 200
             wrapMode: Text.WordWrap
             text: qsTr("WARNING: If you lose a keyfile or if any bit of its first 1024 kilobytes changes, "
@@ -154,7 +154,7 @@ Item {
                 text: qsTr("Add Files...") + Translation.tr
                 width: 100
                 onClicked: addKeyfile.open()
-                color_: palette.green
+                color_: custompalette.green
                 anchors.bottomMargin: 10
             }
             UI.ButtonBordered {
@@ -163,7 +163,7 @@ Item {
                 text: qsTr("Add Path...") + Translation.tr
                 width: 100
                 onClicked: addFolder.open()
-                color_: palette.green
+                color_: custompalette.green
                 anchors.bottomMargin: 10
             }
             UI.ButtonBordered {
@@ -172,7 +172,7 @@ Item {
                 text: qsTr("Add Token Files...") + Translation.tr
                 width: 120
                 onClicked: addTokenFile.open()
-                color_: palette.green
+                color_: custompalette.green
                 anchors.bottomMargin: 10
             }
             UI.ButtonBordered {
@@ -181,7 +181,7 @@ Item {
                 text: qsTr("Remove") + Translation.tr
                 width: 80
                 onClicked: { if(table.currentRow != -1) { UserSettings.removeKeyfile(table.model.get(table.currentRow).path); updateTableview() } }
-                color_: palette.blue
+                color_: custompalette.blue
                 anchors.bottomMargin: 10
             }
             UI.ButtonBordered {
@@ -190,13 +190,13 @@ Item {
                 text: qsTr("Remove All") + Translation.tr
                 width: 100
                 onClicked: { UserSettings.removeAllKeyfile(); updateTableview(); }
-                color_: palette.blue
+                color_: custompalette.blue
                 anchors.bottomMargin: 10
             }
         }
 
         Text {
-            color: palette.text
+            color: custompalette.text
             width: parent.width
             wrapMode: Text.WordWrap
             text: qsTr("Any kind of file (for example, .mp3, .jpg, .zip, .avi) may be used as "
@@ -221,7 +221,7 @@ Item {
             y: 5
             size_: 30
             sizeText: 12
-            textColor: palette.green
+            textColor: custompalette.green
             checked: {
                 var isChecked = UserSettings.getSetting("MountV-UseKeyFile")
                 return (isChecked === "1") ? true : false;
@@ -239,7 +239,7 @@ Item {
             text: qsTr("Generate Random Keyfiles...") + Translation.tr
             width: 200
             onClicked: openSubWindow("dialogs/KeyfileGenerator.qml", qsTr("Keyfile generator"), qsTr("Keyfile generator"), 200, {"name" : "", "value" : ""})
-            color_: palette.green
+            color_: custompalette.green
             anchors.bottomMargin: 10
         }
 
@@ -249,7 +249,7 @@ Item {
             text: qsTr("Save changes") + Translation.tr
             width: 120
             onClicked: top.update()
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
     }

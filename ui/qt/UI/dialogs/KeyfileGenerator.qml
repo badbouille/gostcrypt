@@ -24,7 +24,7 @@ Item {
           spacing: 15
           Text {
               id: text2
-              color: palette.text
+              color: custompalette.text
               text: qsTr("Mixing PRF:") + Translation.tr
               font.pointSize: 11
           }
@@ -42,7 +42,7 @@ Item {
           text: qsTr("Generate and save keyfile...") + Translation.tr
           width: 230
           onClicked: fileDialog.open()
-          color_: palette.green
+          color_: custompalette.green
           anchors.bottomMargin: 10
       }
     }

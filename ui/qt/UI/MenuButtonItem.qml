@@ -30,7 +30,7 @@ Button {
     contentItem: Text {
         text: buttonMenu.text + Translation.tr
         font.pixelSize: 12
-        color: palette.text
+        color: custompalette.text
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
@@ -41,7 +41,7 @@ Button {
     //Fond + icon
     background: Rectangle {
         id: buttonMenu_rect
-        color: (selected_ == true) ? palette.darkInput : palette.darkThird
+        color: (selected_ == true) ? custompalette.darkInput : custompalette.darkThird
         width:parent.width
         height:59
     }
@@ -50,7 +50,7 @@ Button {
         anchors.top: buttonMenu_rect.bottom
         width: 170
         height: 1
-        color: palette.border
+        color: custompalette.border
     }
 
     //Capture du curseur
@@ -67,7 +67,7 @@ Button {
             when: buttonMenu_mouseArea.containsMouse && !buttonMenu_mouseArea.pressed
             PropertyChanges {
                 target: buttonMenu_rect
-                color : palette.border
+                color : custompalette.border
             }
         },
         State {
@@ -75,7 +75,7 @@ Button {
             when: buttonMenu_mouseArea.pressed
             PropertyChanges {
                 target: buttonMenu_rect
-                color : palette.darkInput
+                color : custompalette.darkInput
             }
         },
         State {
@@ -83,7 +83,7 @@ Button {
             when: !buttonMenu_mouseArea.containsMouse
             PropertyChanges {
                 target: buttonMenu_rect
-                color: (selected_ == true) ? palette.darkInput : palette.darkThird
+                color: (selected_ == true) ? custompalette.darkInput : custompalette.darkThird
             }
         }
     ]

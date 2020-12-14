@@ -26,7 +26,7 @@ Item {
         id: options_
         color: "transparent"
         border.width: 1
-        border.color: palette.border
+        border.color: custompalette.border
         radius: 5
         width: top.width-100
         height: 80
@@ -36,7 +36,7 @@ Item {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             y:5
-            color: palette.text
+            color: custompalette.text
             text: qsTr("Options") + Translation.tr
         }
 
@@ -44,7 +44,7 @@ Item {
             id: fileSystem
             x:20
             y:35
-            color: palette.text
+            color: custompalette.text
             text: qsTr("Filesystem") + Translation.tr
         }
 
@@ -64,7 +64,7 @@ Item {
             id: cluster
             x:typeFilesystem.x + typeFilesystem.width +10
             y: fileSystem.y
-            color: palette.text
+            color: custompalette.text
             text: qsTr("Cluster") + Translation.tr
         }
 
@@ -94,7 +94,7 @@ Item {
         y: options_.y + options_.height + 20
         color: "transparent"
         border.width: 1
-        border.color: palette.border
+        border.color: custompalette.border
         radius: 5
         width: top.width-100
         height: 80
@@ -115,7 +115,7 @@ Item {
             id: randomPool_
             x: 20
             y: 10
-            color: palette.text
+            color: custompalette.text
             text: qsTr("Random Pool:") + Translation.tr
         }
         Text {
@@ -124,14 +124,14 @@ Item {
             y: randomPool_.y
             width: pool_.width-10-randomPool_.width - 65
             elide: Text.ElideRight
-            color: palette.text
+            color: custompalette.text
             text: ""
         }
         Text {
             id: headerKey_
             x: 20
             y: randomPool_.y + 20
-            color: palette.text
+            color: custompalette.text
             text: qsTr("Header key:") + Translation.tr
         }
         Text {
@@ -139,7 +139,7 @@ Item {
             x: headerKey_.x + headerKey_.width + 10
             y: headerKey_.y
             width: pool_.width-10-headerKey_.width - 60
-            color: palette.text
+            color: custompalette.text
             elide: Text.ElideRight
             text: ""
         }
@@ -147,7 +147,7 @@ Item {
             id: masterKey_
             x: 20
             y: headerKey_.y + 20
-            color: palette.text
+            color: custompalette.text
             text: qsTr("Master key:") + Translation.tr
         }
         Text {
@@ -155,7 +155,7 @@ Item {
             x: masterKey_.x + masterKey_.width + 10
             y: masterKey_.y
             width: pool_.width-10-masterKey_.width - 60
-            color: palette.text
+            color: custompalette.text
             elide: Text.ElideRight
             text: ""
         }

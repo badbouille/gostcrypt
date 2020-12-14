@@ -12,7 +12,7 @@ Button {
         leftPadding: 37
         text: buttonGreenIcon.text + Translation.tr
         font.pixelSize: 13
-        color: palette.textVeryLight
+        color: custompalette.textVeryLight
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
@@ -31,12 +31,12 @@ Button {
             smooth: false
             source: "ressource/buttonGreenLeft.png"
         }
-        color: palette.dark
+        color: custompalette.dark
         implicitWidth: 160
         implicitHeight: 37
         border.width: 1
         radius: 2
-        border.color: palette.green
+        border.color: custompalette.green
     }
 
     //Capture du curseur
@@ -53,7 +53,7 @@ Button {
             when: buttonGreenIcon_mouseArea.containsMouse && !buttonGreenIcon_mouseArea.pressed
             PropertyChanges {
                 target: buttonGreenIcon_rect
-                color : palette.greenHover
+                color : custompalette.greenHover
             }
         },
         State {
@@ -61,7 +61,7 @@ Button {
             when: buttonGreenIcon_mouseArea.pressed
             PropertyChanges {
                 target: buttonGreenIcon_rect
-                color : palette.greenDark
+                color : custompalette.greenDark
             }
         },
         State {
@@ -69,7 +69,7 @@ Button {
             when: !buttonGreenIcon_mouseArea.containsMouse
             PropertyChanges {
                 target: buttonGreenIcon_rect
-                color: palette.dark
+                color: custompalette.dark
             }
         }
     ]

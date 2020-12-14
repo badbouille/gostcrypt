@@ -20,7 +20,7 @@ Item {
                 y:5
                 font.pointSize: 11
                 font.family: "Helvetica"
-                color: palette.text
+                color: custompalette.text
                 text: qsTr("Encryption Algorithm :") + Translation.tr
             }
 
@@ -45,7 +45,7 @@ Item {
 
                 UI.ButtonBordered {
                     id: testbutton
-                    color_: palette.green
+                    color_: custompalette.green
                     text: qsTr("Test") + Translation.tr
                     width: 70
                     height: 40
@@ -56,7 +56,7 @@ Item {
 
                 UI.ButtonBordered {
                     id: benchmarkButton
-                    color_: palette.green
+                    color_: custompalette.green
                     text: qsTr("Benchmark") + Translation.tr
                     width: 90
                     height: 40
@@ -72,7 +72,7 @@ Item {
                 wrapMode: Text.WordWrap
                 width: parent.width - 20
                 text: "Algo description here";
-                color: palette.text
+                color: custompalette.text
                 font.pointSize: 10
                 font.family: "Helvetica"
                 anchors.top: buttons.bottom
@@ -96,7 +96,7 @@ Item {
                 y:5
                 font.pointSize: 11
                 font.family: "Helvetica"
-                color: palette.text
+                color: custompalette.text
                 text: qsTr("Hash Algorithm") + Translation.tr
             }
 
@@ -118,7 +118,7 @@ Item {
                 wrapMode: Text.WordWrap
                 width: parent.width - 20
                 text: qsTr("<font color='#719c24'><a href='#'>Information on hash algorithms</a></font>") + Translation.tr
-                color: palette.text
+                color: custompalette.text
                 font.family: "Helvetica"
                 anchors.top: hash.bottom
                 anchors.topMargin: 20

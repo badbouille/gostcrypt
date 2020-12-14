@@ -107,7 +107,7 @@ Item {
             id: textTop
             text: qsTr("Please open a GostCrypt volume :") + Translation.tr
             font.pointSize: 11
-            color: palette.textLight
+            color: custompalette.textLight
             anchors.horizontalCenter: parent.horizontalCenter
 
             Behavior on opacity { NumberAnimation { id: animTextTop; duration: app.duration; easing.type: Easing.OutQuad; } }
@@ -164,7 +164,7 @@ Item {
                 text: qsTr("Open...") + Translation.tr
                 width: 120
                 onClicked: fileDialog.open()
-                color_: palette.green
+                color_: custompalette.green
             }
 
             UI.ButtonBordered {
@@ -172,7 +172,7 @@ Item {
                 height: combo.height
                 text: qsTr("Select Device")
                 width: 120
-                color_: palette.green
+                color_: custompalette.green
                 onClicked: {
                     qmlRequest("devices", "")
                     changeSubWindowTitle(qsTr("Please select a device"))
@@ -248,7 +248,7 @@ Item {
             radius_: 3
             width: use_Keyfiles.checked ? combo.width/2-2 : combo.width
             horizontalAlignment: TextInput.AlignHCenter
-            bordercolor: palette.darkInput
+            bordercolor: custompalette.darkInput
             height_: combo.height
             onValidated: {
                 sendInfoVolume()
@@ -300,13 +300,13 @@ Item {
                     id: itemDelegate
                     width: keyfiles_paths.width
                     background: Rectangle {
-                        color: itemDelegate.down ? palette.border : "transparent"
+                        color: itemDelegate.down ? custompalette.border : "transparent"
                         height: 40
                         width: keyfiles_paths.width
                         Text {
                             id: close
                             x: 10
-                            color: palette.text
+                            color: custompalette.text
                             text: "×"
                             width: 30
                             anchors.verticalCenter: parent.verticalCenter
@@ -319,7 +319,7 @@ Item {
                             elide: Text.ElideRight
                             anchors.verticalCenter: parent.verticalCenter
                             font.pointSize: 9
-                            color: palette.green
+                            color: custompalette.green
                         }
                         MouseArea {
                             id: delegateItem
@@ -360,18 +360,18 @@ Item {
             visible: use_Keyfiles.checked ? true : false
             anchors.left: keyfiles_paths.right
             anchors.leftMargin: 5
-            color: palette.darkInput
+            color: custompalette.darkInput
             height: 20
             width: 20
             radius: 5
             border.width: 1
             anchors.verticalCenter: keyfiles_paths.verticalCenter
-            border.color: palette.blue
+            border.color: custompalette.blue
             Text {
                 anchors.centerIn: parent;
                 text: qsTr("×")
                 font.pointSize: 15
-                color: palette.text
+                color: custompalette.text
             }
             MouseArea {
                 anchors.fill: parent
@@ -481,7 +481,7 @@ Item {
             height: 30
             text: qsTr("Keyfiles...") + Translation.tr
             width: 150
-            color_: palette.green
+            color_: custompalette.green
             onClicked: {
                 addKeyfiles.open();
             }
@@ -494,7 +494,7 @@ Item {
             height: 30
             text: qsTr("Mount Options...") + Translation.tr
             width: 150
-            color_: palette.green
+            color_: custompalette.green
             onClicked: {
                 mountOptions.opacity = 1.0
             }
@@ -519,7 +519,7 @@ Item {
         anchors.bottom: openVolume_Form.bottom
         text: qsTr("Mount Volume") + Translation.tr
         opacity: 0.0
-        color_: palette.blue
+        color_: custompalette.blue
         onClicked: {
             var password_blank = "";
             if(sudo_.isVisible === false && UserSettings.getSetting("MountV-UseKeyFiles") === "0")
@@ -543,7 +543,7 @@ Item {
         visible: false
         opacity: 0.0
         anchors.fill:parent
-        color: palette.darkSecond
+        color: custompalette.darkSecond
         Behavior on opacity { NumberAnimation { id: anim_; duration: app.duration/2; easing.type: Easing.OutQuad; onRunningChanged: {
                     if(!anim_.running) {
                         devicesSelection.visible = !devicesSelection.visible
@@ -563,7 +563,7 @@ Item {
                     id: contentDevice
                     anchors.fill: parent
                     color: '#3b3b3b'
-                    border.color: palette.darkThird
+                    border.color: custompalette.darkThird
                     border.width: 1
                     radius: 2
 
@@ -573,10 +573,10 @@ Item {
                         width: 50
                         height: 50
                         radius: 50
-                        color: palette.darkInput
+                        color: custompalette.darkInput
                         x:10
                         Text {
-                            color: palette.text
+                            color: custompalette.text
                             text: number
                             anchors.centerIn: parent
                             font.pixelSize: 15
@@ -589,17 +589,17 @@ Item {
                         Text {
                             id: infos_Path
                             font.pixelSize: 18
-                            color:palette.text;
+                            color:custompalette.text;
                             text: '<b>Path:</b> ' + path
                         }
                         Text {
                             font.pixelSize: 11
-                            color:palette.text;
+                            color:custompalette.text;
                             text: '<b>Size:</b> ' + size
                         }
                         Text {
                             font.pixelSize: 11
-                            color:palette.text;
+                            color:custompalette.text;
                             text: '<b>Mount point:</b> ' + mountPoint
                         }
                     }
@@ -659,7 +659,7 @@ Item {
         width: parent.width - 2
         x: 1
         height: parent.height
-        color: palette.darkSecond
+        color: custompalette.darkSecond
         Behavior on opacity {
             NumberAnimation {
                 id: anim2_;
@@ -684,7 +684,7 @@ Item {
             id: block5
             color: "transparent"
             border.width: 1
-            border.color: palette.border
+            border.color: custompalette.border
             radius: 5
             width: parent.width - 100
             x: 1
@@ -702,7 +702,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Mount Options") + Translation.tr
                     font.pointSize: 11
                 }
@@ -732,7 +732,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     Text {
                         text: qsTr("Volume protection :")
-                        color: palette.text
+                        color: custompalette.text
                         font.pointSize: 10
                     }
                     ExclusiveGroup { id: group }
@@ -826,7 +826,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     Text {
                         text: qsTr("Mount the volume for the specified <b>user</b> (leave empty for the current user) :")
-                        color: palette.text
+                        color: custompalette.text
                         font.pointSize: 10
                     }
 
@@ -845,7 +845,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     Text {
                         text: qsTr("Mount the volume for the specified <b>group</b> (leave empty for the current user) :")
-                        color: palette.text
+                        color: custompalette.text
                         font.pointSize: 10
                     }
 
@@ -870,7 +870,7 @@ Item {
                     UserSettings.setSetting("Pref-group", mountedForGroup.text)
                     mountOptions.opacity = 0.0
                 }
-                color_: palette.blue
+                color_: custompalette.blue
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 10
             }

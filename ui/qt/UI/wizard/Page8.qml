@@ -23,7 +23,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.family: "Helvetica"
                 text: qsTr("Set a size for your volume (10MB minimum):") + Translation.tr
-                color: palette.text
+                color: custompalette.text
                 wrapMode: Text.WordWrap
             }
 
@@ -44,7 +44,7 @@ Item {
                         implicitHeight: 24
                         border.color: "#333"
                         border.width: 1
-                        color: palette.darkInput
+                        color: custompalette.darkInput
                     }
                 }
                 Keys.onPressed: {
@@ -103,7 +103,7 @@ Item {
                 text: qsTr("Inner volume's relative size: <br>(") + Translation.tr + Math.floor(slider.value*100) + "%)"
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
-                color: palette.text
+                color: custompalette.text
                 wrapMode: Text.WordWrap
             }
 
@@ -119,15 +119,15 @@ Item {
                     groove: Rectangle {
                                 implicitWidth: 250
                                 implicitHeight: 8
-                                color: palette.darkInput
+                                color: custompalette.darkInput
                                 radius: 8
                                 border.width: 1
-                                border.color: palette.shadow
+                                border.color: custompalette.shadow
                             }
                             handle: Rectangle {
                                 anchors.centerIn: parent
-                                color: control.pressed ? palette.darkSecond : palette.green
-                                border.color: palette.shadow
+                                color: control.pressed ? custompalette.darkSecond : custompalette.green
+                                border.color: custompalette.shadow
                                 border.width: 2
                                 implicitWidth: 20
                                 implicitHeight: 20
@@ -149,7 +149,7 @@ Item {
         text: ""
         y: 150
         x: 60
-        color: palette.text
+        color: custompalette.text
         horizontalAlignment: Text.AlignJustify
         wrapMode: Text.WordWrap
     }
@@ -163,7 +163,7 @@ Item {
         width: bottomBar.width- 40
         height: bottomBar.height
         horizontalAlignment: Text.AlignHCenter
-        color: palette.textLowOpacity
+        color: custompalette.textLowOpacity
         font.pointSize: 9
     }
 

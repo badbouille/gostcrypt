@@ -13,7 +13,7 @@ Button {
         text: buttonBordered.text + Translation.tr
         //font: buttonBorderedIcon.font
         font.pixelSize: 13
-        color: (buttonBordered.enabled) ? palette.textLight : palette.text
+        color: (buttonBordered.enabled) ? custompalette.textLight : custompalette.text
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight
@@ -22,7 +22,7 @@ Button {
     //Fond + icon
     background: Rectangle {
         id: buttonBordered_rect
-        color: palette.darkSecond
+        color: custompalette.darkSecond
         implicitWidth: 160
         implicitHeight: 37
         border.width: 2
@@ -44,7 +44,7 @@ Button {
             when: buttonBordered_mouseArea.containsMouse && !buttonBordered_mouseArea.pressed
             PropertyChanges {
                 target: buttonBordered_rect
-                color : palette.darkThird
+                color : custompalette.darkThird
             }
         },
         State {
@@ -60,8 +60,8 @@ Button {
             when: !buttonBordered_mouseArea.containsMouse
             PropertyChanges {
                 target: buttonBordered_rect
-                color : (buttonBordered.enabled) ? palette.darkSecond : palette.dark
-                border.color: (buttonBordered.enabled) ? color_ : palette.border
+                color : (buttonBordered.enabled) ? custompalette.darkSecond : custompalette.dark
+                border.color: (buttonBordered.enabled) ? color_ : custompalette.border
             }
         }
     ]
@@ -73,7 +73,7 @@ Button {
     function setDisable(bool)
     {
         if(bool){
-            buttonBordered_rect.border.color = palette.darkThird
+            buttonBordered_rect.border.color = custompalette.darkThird
         }else{
             buttonBordered_rect.border.color = color_
         }

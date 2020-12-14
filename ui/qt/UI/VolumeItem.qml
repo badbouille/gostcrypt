@@ -35,7 +35,7 @@ Component {
             color: '#3b3b3b'
             radius: 2
             border.width: 1
-            border.color: palette.darkInput
+            border.color: custompalette.darkInput
 
         }
         Rectangle {
@@ -44,13 +44,13 @@ Component {
             y:0
             height:80
             width: 240-85
-            color: palette.dark
+            color: custompalette.dark
             Item {
                 id:rightPartTexts
                 anchors.fill: parent
                 Text {
                     text: { return mountPoint_ + Translation.tr }
-                    color: palette.textLight
+                    color: custompalette.textLight
                     font.pixelSize: 14
                     y: 7
                     width: 140
@@ -62,7 +62,7 @@ Component {
                 Text {
                     text: EncryptionAlgorithmName_ + Translation.tr
                     horizontalAlignment: Text.AlignHCenter
-                    color: palette.textLight
+                    color: custompalette.textLight
                     font.pixelSize: 10
                     anchors.horizontalCenter: rightPartTexts.horizontalCenter
                     y: 26
@@ -73,7 +73,7 @@ Component {
                 Text {
                     id: pathText
                     text: Path_ + Translation.tr
-                    color: palette.textLight
+                    color: custompalette.textLight
                     font.pixelSize: 10
                     anchors.horizontalCenter: rightPartTexts.horizontalCenter
                     y: 41
@@ -86,7 +86,7 @@ Component {
                 Text {
                     text: "Size : " + Size_ + Translation.tr
                     horizontalAlignment: Text.AlignHCenter
-                    color: palette.textLight
+                    color: custompalette.textLight
                     font.pixelSize: 11
                     anchors.horizontalCenter: rightPartTexts.horizontalCenter
                     y: 56
@@ -176,7 +176,7 @@ Component {
                             id: overlay
                             anchors.fill: image
                             source:image
-                            color: palette.blue
+                            color: custompalette.blue
                             opacity: {
                                 if(Favorite === false)
                                     return 0.0
@@ -363,10 +363,10 @@ Component {
             id: leftPart
             width: 85
             height:80
-            color: palette.darkThird
+            color: custompalette.darkThird
             radius: 2
             border.width: 1
-            border.color: palette.darkInput
+            border.color: custompalette.darkInput
         }
 
         Image {
@@ -392,7 +392,7 @@ Component {
         Text {
             id: openVolume
             text: qsTr("Open") + Translation.tr
-            color: palette.text
+            color: custompalette.text
             opacity: 0.0
             anchors.horizontalCenter: parent.horizontalAlignment
             y: 55
@@ -425,7 +425,7 @@ Component {
                 id: dismountButton
                 anchors.centerIn: parent
                 text: "×"
-                color: palette.text
+                color: custompalette.text
                 font.pixelSize: 20
             }
 
@@ -486,10 +486,10 @@ Component {
                 y:0
                 hoverEnabled: true
                 onEntered: {
-                    dismountButton.color = palette.blue
+                    dismountButton.color = custompalette.blue
                 }
                 onExited: {
-                    dismountButton.color = palette.text
+                    dismountButton.color = custompalette.text
                 }
 
                 onClicked: {

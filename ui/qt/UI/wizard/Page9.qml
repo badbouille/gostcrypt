@@ -39,7 +39,7 @@ Item {
         font.family: "Helvetica"
         text: qsTr("Please enter a password twice or use a Keyfile:") + Translation.tr
         anchors.horizontalCenter: parent.horizontalCenter
-        color: palette.text
+        color: custompalette.text
         wrapMode: Text.WordWrap
     }
 
@@ -63,7 +63,7 @@ Item {
                 height: 40
                 focus: true
                 Keys.onReleased: password[0] = password_value.text
-                bordercolor: palette.darkInput
+                bordercolor: custompalette.darkInput
                 radius_: 3
             }
 
@@ -77,7 +77,7 @@ Item {
                 echoMode: TextInput.Password
                 height: 40
                 focus: true
-                bordercolor: palette.darkInput
+                bordercolor: custompalette.darkInput
                 radius_: 3
                 Keys.onReleased: password[1] = password_value2.text
                 Keys.onReturnPressed: manageWizard(1)
@@ -96,7 +96,7 @@ Item {
                 height: 40
                 text: qsTr("Open a Keyfile...")
                 width: 150
-                color_: palette.green
+                color_: custompalette.green
                 onClicked: addKeyfiles.open()
             }
             UI.CustomComboBox {

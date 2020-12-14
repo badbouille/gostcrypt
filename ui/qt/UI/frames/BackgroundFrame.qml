@@ -8,7 +8,7 @@ Item {
         y: 0
         width: 790
         height: 74
-        color: palette.darkSecond
+        color: custompalette.darkSecond
     }
 
     Rectangle {
@@ -17,7 +17,7 @@ Item {
         y: 100
         width: 594
         height: 400
-        color: palette.darkSecond
+        color: custompalette.darkSecond
     }
 
     Text {
@@ -25,7 +25,7 @@ Item {
         anchors.right: bk.right
         y: 5
         text: "<font color=\"#e1e1e1\"><a href=\"home\">"+qsTr("Home") + Translation.tr+"</font></a> > "+ name
-        color: palette.text
+        color: custompalette.text
         font.pixelSize: 12
 
         MouseArea {

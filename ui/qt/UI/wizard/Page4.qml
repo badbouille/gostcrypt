@@ -15,7 +15,7 @@ Item {
         font.family: "Helvetica"
         text: (type === 0) ? qsTr("Create a new file that will contain your volume:") + Translation.tr : qsTr("Select an existing GostCrypt volume that will contain your volume:") + Translation.tr
         anchors.horizontalCenter: parent.horizontalCenter
-        color: palette.text
+        color: custompalette.text
         wrapMode: Text.WordWrap
     }
 
@@ -28,7 +28,7 @@ Item {
         text: qsTr("Select File...")
         width: 200
         onClicked: fileDialog.open()
-        color_: palette.green
+        color_: custompalette.green
     }
 
     UI.HelpButton {

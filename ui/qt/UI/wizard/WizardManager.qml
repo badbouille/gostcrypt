@@ -199,7 +199,7 @@ Item {
             id: help_
             height: 25
             width: 80
-            color_: palette.blue
+            color_: custompalette.blue
             text: qsTr("Help")
         }
     }

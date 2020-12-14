@@ -10,7 +10,7 @@ Rectangle {
     Text {
         anchors.centerIn: parent
         text: text_ + Translation.tr
-        color: palette.text
+        color: custompalette.text
         font.pixelSize: 12
     }
     MouseArea {
@@ -27,7 +27,7 @@ Rectangle {
             when: area.containsMouse && !area.pressed
             PropertyChanges {
                 target: rect_
-                color : palette.blue
+                color : custompalette.blue
             }
         },
         State {

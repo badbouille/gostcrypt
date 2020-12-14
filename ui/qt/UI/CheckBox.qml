@@ -8,7 +8,7 @@ CheckBox {
     property int sizeText: 11
     property int leftPadding_: 5
     property int size_: 30
-    property color textColor: palette.text
+    property color textColor: custompalette.text
 
     style: CheckBoxStyle {
         label: Text {
@@ -22,13 +22,13 @@ CheckBox {
             implicitWidth: size_
             implicitHeight: size_
             radius: size_/2
-            border.color: control.activeFocus ? palette.green : palette.darkSecond
+            border.color: control.activeFocus ? custompalette.green : custompalette.darkSecond
             border.width: 1
-            color: palette.bkCheckBox
+            color: custompalette.bkCheckBox
             Rectangle {
                 visible: control.checked
-                color: palette.green
-                border.color: palette.border
+                color: custompalette.green
+                border.color: custompalette.border
                 radius: 15
                 anchors.margins: 7
                 anchors.fill: parent

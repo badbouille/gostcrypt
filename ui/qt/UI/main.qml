@@ -53,6 +53,15 @@ Window {
         type: 0
     }
 
+    /*!
+        \class QtObject
+        \brief Custom palette (debian system workaround?)
+     */
+    AbstractTheme {
+        id: custompalette
+        type: 0
+    }
+
     //Window's maximum dimension
     /*!
         \property minimumWidth
@@ -89,7 +98,7 @@ Window {
         \brief The window's default
         background color
      */
-    color: palette.dark
+    color: custompalette.dark
 
     /*!
         \property isPC
@@ -262,7 +271,7 @@ Window {
         x: 620
         height: 80
         width: 150
-        color: palette.border
+        color: custompalette.border
         opacity: 0.0
 
         property string n: ""
@@ -276,7 +285,7 @@ Window {
             rightPadding: 20
             x: 60
             anchors.verticalCenter: parent.verticalCenter
-            color: palette.text
+            color: custompalette.text
         }
 
         CircleLoadingBar {
@@ -461,7 +470,7 @@ Window {
     Rectangle{
         anchors.fill:parent
         color: "transparent"
-        border.color: palette.darkThird
+        border.color: custompalette.darkThird
         border.width: 1
     }
 

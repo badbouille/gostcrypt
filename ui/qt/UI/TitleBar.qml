@@ -7,14 +7,14 @@ Rectangle {
     property int height_
     id:titlebar
     width: parent.width
-    color: palette.border
+    color: custompalette.border
     anchors.bottomMargin: 1
 
     Rectangle {
         anchors.top: titlebar.bottom
         height: 1
         width: parent.width
-        color: palette.border
+        color: custompalette.border
     }
 
     Rectangle {
@@ -32,7 +32,7 @@ Rectangle {
             id: text
             anchors.verticalCenter: parent.verticalCenter
             text: qsTr("GostCrypt 2.0") + Translation.tr
-            color: palette.text
+            color: custompalette.text
             x:20
             font.pixelSize: 13
         }
@@ -58,9 +58,9 @@ Rectangle {
         height: height_
         width: height_
         anchors.right: parent.right
-        color: palette.border
+        color: custompalette.border
         Text{
-            color: palette.text
+            color: custompalette.text
             text: "×"
             anchors.centerIn: parent
             font.pointSize: 15
@@ -69,8 +69,8 @@ Rectangle {
             width: parent.width
             height: parent.height
             hoverEnabled: true
-            onEntered: appclose.color=palette.darkThird
-            onExited: appclose.color=palette.border
+            onEntered: appclose.color=custompalette.darkThird
+            onExited: appclose.color=custompalette.border
             onClicked: {
                 exitRequested = true
                // openErrorMessage("Information", "WARNING: Close GostCrypt dismounts all volumes currently mounted on the system. Continue anyway?")
@@ -85,9 +85,9 @@ Rectangle {
         height: height_
         width: height_
         anchors.right: appclose.left
-        color: palette.border
+        color: custompalette.border
         Text{
-            color: palette.text
+            color: custompalette.text
             text: '_'
             anchors.horizontalCenter: parent.horizontalCenter
             font.pointSize: 15
@@ -96,14 +96,14 @@ Rectangle {
             width: parent.width
             height: parent.height
             hoverEnabled: true
-            onEntered: appminimize.color=palette.darkThird
-            onExited: appminimize.color=palette.border
+            onEntered: appminimize.color=custompalette.darkThird
+            onExited: appminimize.color=custompalette.border
             onClicked: app.visibility = Window.Minimized
         }
     }
 
     Button {
-        property color backgroundColor: notifications.checked ? palette.green : notifications.hovered ? palette.green : "transparent"
+        property color backgroundColor: notifications.checked ? custompalette.green : notifications.hovered ? custompalette.green : "transparent"
         id: notifications
         y:0
         height: height_
@@ -136,7 +136,7 @@ Rectangle {
             visible: false
             width: 10
             height: 10
-            color: palette.green
+            color: custompalette.green
             radius: 10
             x:20
             y:25

@@ -34,8 +34,8 @@ Item {
         x:-231
         width: 230
         height: parent.height
-        color: palette.border
-        border.color: palette.darkInput
+        color: custompalette.border
+        border.color: custompalette.darkInput
         border.width: 1
         Behavior on x {
             NumberAnimation {
@@ -51,7 +51,7 @@ Item {
             Text {
                 id: text_
                 text: titleSubMenuText_ + Translation.tr
-                color: palette.text
+                color: custompalette.text
                 anchors.centerIn: parent
                 font.pixelSize: 15
                 font.capitalization: Font.AllUppercase
@@ -59,7 +59,7 @@ Item {
             Rectangle {
                 height: 1
                 width: parent.width-2
-                color: palette.dark
+                color: custompalette.dark
                 y:49
             }
         }
@@ -70,7 +70,7 @@ Item {
                 width: 228
                 x: 1
                 height:25
-                color:palette.darkInput
+                color:custompalette.darkInput
                 Text {
                     x:15
                     anchors.verticalCenter: parent.verticalCenter
@@ -82,7 +82,7 @@ Item {
                 Rectangle {
                     height: 1
                     width: parent.width
-                    color: palette.dark
+                    color: custompalette.dark
                     y:24
                 }
             }
@@ -115,11 +115,11 @@ Item {
                             else return parent.height - 4
                         }
                         anchors.horizontalCenter: parent.horizontalCenter
-                        color: palette.darkThird
+                        color: custompalette.darkThird
                         Text {
                             horizontalAlignment: Text.AlignLeft
                             text: message + Translation.tr
-                            color: palette.text
+                            color: custompalette.text
                             font.pixelSize: 14
                             wrapMode: Text.WordWrap
                             anchors.verticalCenter: parent.verticalCenter
@@ -155,7 +155,7 @@ Item {
                                 when: elementSubMenu_MouseArea.containsMouse && !elementSubMenu_MouseArea.pressed
                                 PropertyChanges {
                                     target: elementSubMenu
-                                    color : palette.dark
+                                    color : custompalette.dark
                                 }
                             },
                             State {
@@ -168,7 +168,7 @@ Item {
                                 when: !elementSubMenu_MouseArea.containsMouse
                                 PropertyChanges {
                                     target: elementSubMenu
-                                    color: palette.darkThird
+                                    color: custompalette.darkThird
                                 }
                             }
                         ]
@@ -189,7 +189,7 @@ Item {
                             right: elementSubMenu.right
                             top: elementSubMenu.bottom
                         }
-                        color: palette.darkThird
+                        color: custompalette.darkThird
                         Image {
                             height: parent.height
                             fillMode: Image.TileHorizontally
@@ -244,33 +244,33 @@ Item {
                 x: 1
                 width: 1
                 height:100
-                color: palette.darkThird
+                color: custompalette.darkThird
             }
             Rectangle {
                 y: subMenu.y + subMenu.height - 130
                 x: 1
                 width: parent.width-2
                 height:1
-                color: palette.dark
+                color: custompalette.dark
             }
             Rectangle {
                 x:2
                 width: parent.width-2
                 height:149
                 y: subMenu.y + subMenu.height - 129
-                color: palette.darkInput
+                color: custompalette.darkInput
                 Text {
                     y: 10
                     x: 10
                     text: "Double-click on a path to<br>mount the volume.<br>Or mount all favorite volumes :"
-                    color: palette.text
+                    color: custompalette.text
                     width: parent.width - 20
                     horizontalAlignment: Text.AlignHCenter
                     font.pixelSize: 13
                 }
                 ButtonBordered {
                     text: qsTr("Mount favorite volumes") + Translation.tr
-                    color_: palette.green
+                    color_: custompalette.green
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: 75
                     onClicked: {
@@ -286,7 +286,7 @@ Item {
                 x: parent.width-2
                 width: 1
                 height:100
-                color: palette.darkThird
+                color: custompalette.darkThird
             }
 
 
@@ -301,8 +301,8 @@ Item {
                         id: favoriteElement
                         anchors.fill:parent;
                         color: {
-                            if(mounted === false) return palette.darkThird
-                            return palette.darkInput
+                            if(mounted === false) return custompalette.darkThird
+                            return custompalette.darkInput
                         }
                         Text {
                             id: textInfos
@@ -310,7 +310,7 @@ Item {
                             x: 10
                             width: 180
                             text: (name !== undefined && name !== "") ? name + "  (\"" + path + "\")" : path
-                            color: palette.text
+                            color: custompalette.text
                             elide: Text.ElideRight
                         }
                         Text {
@@ -327,7 +327,7 @@ Item {
                             }
                             horizontalAlignment: Text.AlignRight
                             font.pixelSize: 11
-                            color: palette.text
+                            color: custompalette.text
                             opacity: 0.5
                         }
 
@@ -344,7 +344,7 @@ Item {
                             y: -5
                             anchors.rightMargin: 15
                             text: "×"
-                            color: palette.text
+                            color: custompalette.text
                             font.pixelSize: 30
                             opacity: 0.0
 
@@ -392,7 +392,7 @@ Item {
                             id: overlayImage
                             anchors.fill: propertiesFav
                             source:propertiesFav
-                            color: palette.blue
+                            color: custompalette.blue
                             visible: false
                             antialiasing: true
                         }
@@ -426,8 +426,8 @@ Item {
                             height: 30
                             x: 178
                             hoverEnabled: true
-                            onEntered: unFavButton.color = palette.blue
-                            onExited: unFavButton.color = palette.text
+                            onEntered: unFavButton.color = custompalette.blue
+                            onExited: unFavButton.color = custompalette.text
                             onClicked: {
                                 //TODO : unfav path
                                 UserSettings.setFavoritesVolumes(path);
@@ -458,8 +458,8 @@ Item {
                             PropertyChanges {
                                 target: favoriteElement
                                 color : {
-                                    if(mounted === false) return palette.dark
-                                    return palette.darkInput
+                                    if(mounted === false) return custompalette.dark
+                                    return custompalette.darkInput
                                 }
                             }
                         },
@@ -474,8 +474,8 @@ Item {
                             PropertyChanges {
                                 target: favoriteElement
                                 color: {
-                                    if(mounted === false) return palette.darkThird
-                                    return palette.darkInput
+                                    if(mounted === false) return custompalette.darkThird
+                                    return custompalette.darkInput
                                 }
                             }
                         }
@@ -639,13 +639,13 @@ Item {
      ********************/
     Rectangle {
         id: rect
-        color: palette.darkThird
+        color: custompalette.darkThird
         anchors.centerIn: parent
         width: parent.width
         height: parent.height
         radius: 0
         border {
-            color:palette.border
+            color:custompalette.border
             width: 1
         }
     }

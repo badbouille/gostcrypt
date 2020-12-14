@@ -5,10 +5,10 @@ Rectangle {
     id: top
     property bool checked: false
 
-    color: (checked === true) ? palette.roundFilled : palette.round
+    color: (checked === true) ? custompalette.roundFilled : custompalette.round
     width: 12
     height: 12
     radius: 5
     border.width: 1
-    border.color: palette.darkInput
+    border.color: custompalette.darkInput
 }

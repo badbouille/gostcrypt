@@ -40,7 +40,7 @@ Item {
             id: content
             width: parent.width
             wrapMode: Text.WordWrap
-            color: palette.text
+            color: custompalette.text
             font.pixelSize: 15
             font.family: "Helvetica"
             text: qsTr("<b>Portions of this software are based in part on the works of the following people:</b><br><br>"
@@ -48,7 +48,7 @@ Item {
             +"Lars Knudsen, Ross Anderson, Eli Biham, Joan Daemen, Vincent Rijmen, Phillip Rogaway, Hans Dobbertin, "
             +"Antoon Bosselaers, Bart Preneel, Paulo Barreto, Brian Gladman, Wei Dai, Peter Gutmann, and many others.<br><br><br>"
             +"<b>The following people are currently involved with the development of the GostCrypt project:</b><br><br>")
-            +"<font color=\""+palette.green + "\">AMICELLI Paul, "
+            +"<font color=\""+custompalette.green + "\">AMICELLI Paul, "
             +"BALK Evgeny, "
             +"BANNIER Arnaud, "
             +"BECLAIR Louis, "
@@ -89,7 +89,7 @@ Item {
             text: qsTr("OK") + Translation.tr
             width: 120
             onClicked: top.close()
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
     }

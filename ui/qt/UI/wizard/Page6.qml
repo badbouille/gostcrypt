@@ -16,7 +16,7 @@ Item {
         text: qsTr("In the next steps, you will set the options for the outer volume"
                    +" (within which the hidden volume will be created later on).") + Translation.tr
         y: 25
-        color: palette.text
+        color: custompalette.text
         horizontalAlignment: Text.AlignJustify
         wrapMode: Text.WordWrap
     }

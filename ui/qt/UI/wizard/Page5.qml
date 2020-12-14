@@ -52,7 +52,7 @@ Item {
                 height: 40
                 focus: true
                 Keys.onReleased: password = password_value.text
-                bordercolor: palette.darkInput
+                bordercolor: custompalette.darkInput
                 radius_: 3
                 Keys.onReturnPressed: manageWizard(1)
                 Keys.onEnterPressed: manageWizard(1)
@@ -117,7 +117,7 @@ Item {
         height: 40
         text: qsTr("Keyfiles...")
         width: 150
-        color_: palette.green
+        color_: custompalette.green
         onClicked: addKeyfiles.open()
     }
 
@@ -132,7 +132,7 @@ Item {
                    +" the hidden volume and therefore will limit its maximum possible size.") + Translation.tr
         y: use_Keyfiles.y + 45
         anchors.horizontalCenter: parent.horizontalCenter
-        color: palette.text
+        color: custompalette.text
         horizontalAlignment: Text.AlignJustify
         wrapMode: Text.WordWrap
     }

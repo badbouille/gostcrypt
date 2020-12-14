@@ -41,7 +41,7 @@ Item {
                 id: block
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 150
@@ -51,7 +51,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Current Volume password") + Translation.tr
                     font.pointSize: 11
                 }
@@ -71,7 +71,7 @@ Item {
                             horizontalAlignment: Text.AlignRight
                             verticalAlignment: Text.AlignVCenter
                             lineHeight: 40
-                            color: palette.text
+                            color: custompalette.text
                         }
 
                         UI.SecureTextField {
@@ -132,7 +132,7 @@ Item {
                             height: 40
                             text: qsTr("Keyfiles...") + Translation.tr
                             width: 150
-                            color_: palette.green
+                            color_: custompalette.green
                         }
                     }
 
@@ -143,7 +143,7 @@ Item {
                 id: blockHidden
                 color: "transparent"
                 border.width: 1
-                border.color: palette.border
+                border.color: custompalette.border
                 radius: 5
                 width: top.width-100
                 height: 140
@@ -153,7 +153,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     height: 25
                     y: 5
-                    color: palette.green
+                    color: custompalette.green
                     text: qsTr("Hidden volume") + Translation.tr
                     font.pointSize: 11
                 }
@@ -170,7 +170,7 @@ Item {
                         height: 40
                         text: qsTr("The volume contains a hidden volume") + Translation.tr
                         width: 320
-                        color_: palette.green
+                        color_: custompalette.green
                         onClicked: {
                             if(password_value.text !== "")
                             {
@@ -192,7 +192,7 @@ Item {
                         anchors.horizontalCenter: parent.horizontalCenter
                         width: top.width - 130
                         y: 5
-                        color: palette.text
+                        color: custompalette.text
                         wrapMode: Text.WordWrap
                         text: qsTr("<i>Leave blank if the volume does not contain a hidden volume or you want to save the header of the outer volume.</i>") + Translation.tr
                         font.pointSize: 10
@@ -215,7 +215,7 @@ Item {
                                 horizontalAlignment: Text.AlignRight
                                 verticalAlignment: Text.AlignVCenter
                                 lineHeight: 40
-                                color: palette.text
+                                color: custompalette.text
                             }
 
                             UI.SecureTextField {
@@ -276,7 +276,7 @@ Item {
                                 height: 40
                                 text: qsTr("Keyfiles...") + Translation.tr
                                 width: 150
-                                color_: palette.green
+                                color_: custompalette.green
                             }
                         }
                     }
@@ -294,7 +294,7 @@ Item {
                     height: 40
                     text: "×"
                     width: 40
-                    color_: palette.blue
+                    color_: custompalette.blue
                     onClicked: {
                         password_value.readOnly = false
                         hiddenVolumePassword.visible = false
@@ -334,7 +334,7 @@ Item {
                 catchClose();
 
             }
-            color_: palette.blue
+            color_: custompalette.blue
             anchors.bottomMargin: 10
         }
     }

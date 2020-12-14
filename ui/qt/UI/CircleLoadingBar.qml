@@ -11,8 +11,8 @@ Item {
     property real origin: 0
     property real percent: 0 //percent
     property real lineWidth: 5
-    property color colorLine: palette.blue
-    property color colorBackground: palette.darkInput
+    property color colorLine: custompalette.blue
+    property color colorBackground: custompalette.darkInput
     property string title: ""
 
     //Animation
@@ -59,7 +59,7 @@ Item {
     Text {
         text: Math.floor(parent.percent) + "%"
         anchors.centerIn: parent
-        color: palette.text
+        color: custompalette.text
     }
 
 }
