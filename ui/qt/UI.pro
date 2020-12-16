@@ -10,10 +10,12 @@ TEMPLATE = app
 CONFIG += c++17
 CONFIG += console
 
-INCLUDEPATH += inc ../../common/ince ../../crypto/ince ../../volume/ince ../../fuse/ince ../../core/ince
+INCLUDEPATH += inc ../../common/ince ../../crypto/ince ../../volume/ince ../../fuse/ince ../../core/ince ..
 
-DEFINES += _LARGEFILE_SOURCE \
-    _LARGE_FILES
+DEFINES += FUSE_USE_VERSION=29 \
+        _FILE_OFFSET_BITS=64 \
+        _LARGEFILE_SOURCE \
+        _LARGE_FILESCFLAGS
 
 unix {
     DEFINES += GST_UNIX
@@ -62,6 +64,7 @@ LIBS += \
         ../../bin/fuse.a \
         ../../bin/volume.a \
         ../../bin/crypto.a \
+        ../../bin/common.a \
         -ldl -lfuse -lext2fs -lrt -lpthread -lcom_err
 
 TARGET = gc_qt
