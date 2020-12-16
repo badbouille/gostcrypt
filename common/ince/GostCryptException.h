@@ -30,6 +30,7 @@ namespace GostCrypt {
 	    ~GostCryptException() noexcept override= default;
 
 	    const char* what() const noexcept override { return compiledmessage.c_str(); };
+	    const char* name() const noexcept { return exceptionName.c_str(); };
 	protected:
 	    std::string msg;
 		std::string func;
