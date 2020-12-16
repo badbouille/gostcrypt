@@ -1,7 +1,7 @@
 # sub Makefile
 
 # inclusions
-INCFLAGS:= -Iinc -I../../common/ince -I../../crypto/ince -I../../volume/ince -I../../fuse/ince -I../../core/ince
+INCFLAGS:= -Iinc -I../../common/ince -I../../crypto/ince -I../../volume/ince -I../../fuse/ince -I../../core/ince -I..
 
 # Objects needed
 CXXFILES:= $(shell find src -name '*.cpp')

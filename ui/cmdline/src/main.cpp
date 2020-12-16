@@ -7,8 +7,8 @@
 
 /* Common values */
 
-const char *argp_program_version = PROGRAM_VERSION;
-const char *argp_program_bug_address = PROGRAM_ADDRESS;
+const char *argp_program_version = PROGRAM_NAME " " PROGRAM_VERSION;
+const char *argp_program_bug_address = PROGRAM_BUG_ADDRESS;
 
 /* Program documentation. */
 static char doc[] = "Command to mount an encrypted file on a virtual folder";
