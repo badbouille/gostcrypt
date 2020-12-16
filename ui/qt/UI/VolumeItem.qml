@@ -493,7 +493,7 @@ Component {
                 }
 
                 onClicked: {
-                    qmlRequest("dismount", {"volumepath": Path_});
+                    qmlRequest("DismountVolume", {"path": mountPoint_});
                 }
             }
         }

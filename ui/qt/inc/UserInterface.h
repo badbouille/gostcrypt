@@ -2,14 +2,8 @@
 #define USERINTERFACE_H
 
 #include <QObject>
-#define DEC_PRINT_SLOT(requestName) virtual void print ## requestName (QSharedPointer<GostCrypt::Core::requestName ## Response> r)
-
-// default values for creating a volume
-#define DEFAULT_ALGORITHM "Gost Grasshopper"
-#define DEFAULT_KDF "Whirlpool"
-#define DEFAULT_SIZE 10485760 // 10Mio
-#define DEFAULT_OUTER_SIZE 1.0
-#define DEFAULT_INNER_SIZE 0.7
+#include <QVariant>
+#define DEC_SEND_SLOT(requestName) virtual void send ## requestName (QVariant)
 
 /**
  * @brief Abstract class inherited by CmdLineInterface and GraphicInterface
@@ -32,7 +26,7 @@ class UserInterface : public QObject
      * @param argv Arguments of the main program
      * @return int Returns what the "exec" method returns at the end of the interface execution
      */
-    virtual int start(int argc, char** argv) = 0; //TODO : never used
+    virtual int start(int argc, char** argv) = 0;
     /**
      * @brief Converts A size in bytes into a formatted character string (or not formatted)
      *
@@ -42,6 +36,24 @@ class UserInterface : public QObject
      */
     static QString formatSize(quint64 sizeInByte, bool withFontColor);
     static quint64 parseSize(QString s, bool* ok);
+
+ private slots:  // NOLINT
+    DEC_SEND_SLOT(CreateVolume) = 0;
+    DEC_SEND_SLOT(MountVolume) = 0;
+    DEC_SEND_SLOT(DismountVolume) = 0;
+    DEC_SEND_SLOT(GetMountedVolumes) = 0;
+    DEC_SEND_SLOT(GetEncryptionAlgorithms) = 0;
+    DEC_SEND_SLOT(GetDerivationFunctions) = 0;
+    DEC_SEND_SLOT(GetHostDevices) = 0;
+    DEC_SEND_SLOT(CreateKeyFile) = 0;
+    DEC_SEND_SLOT(ChangeVolumePassword) = 0;
+    DEC_SEND_SLOT(BenchmarkAlgorithms) = 0;
+
+    /**
+     * @brief Update the progress for the corresponding request in the user interface
+     */
+    virtual void printProgressUpdate(quint32 requestId, qreal progress) = 0;
+
 };
 
 #endif // USERINTERFACE_H

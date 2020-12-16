@@ -13,10 +13,10 @@ Item {
 
         onConnectFinished: {
             //Getting the list of mounted volumes, algorithm(s), filesystem(s) and hash(s)
-            qmlRequest("mountedvolumes", "");
-            qmlRequest("algorithms", "");
-            qmlRequest("hashs", "");
-            qmlRequest("filesystems", "");
+            qmlRequest("GetMountedVolumes", "");
+            qmlRequest("GetEncryptionAlgorithms", "");
+            qmlRequest("GetDerivationFunctions", "");
+            qmlRequest("GetFilesystems", "");
         }
 
         onSprintGetMountedVolumes: {
@@ -27,16 +27,12 @@ Item {
             manageModel(l);
         }
 
-        onGetSudoPassword: {
-            app.toggleSudo(1)
-        }
-
         onSprintDismountVolume: {
-            qmlRequest("mountedvolumes", "")
+            qmlRequest("GetMountedVolumes", "")
         }
 
         onSprintMountVolume: {
-            qmlRequest("mountedvolumes", "")
+            qmlRequest("GetMountedVolumes", "")
         }
 
         onSprintSendError: {

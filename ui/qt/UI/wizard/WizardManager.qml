@@ -327,7 +327,7 @@ Item {
                 switch (content.item.type) {
                 case 0:
                     changePage(qsTr("Encryption Options"), currentPage)
-                    qmlRequest("algorithms", "")
+                    qmlRequest("GetEncryptionAlgorithms", "")
                     break;
                 case 1:
                     changePage(qsTr("Volume Password"), currentPage)
@@ -383,7 +383,7 @@ Item {
             {
                 path.position += 1
                 changePage(qsTr("Encryption Options"), currentPage)
-                qmlRequest("algorithms", "")
+                qmlRequest("GetEncryptionAlgorithms", "")
                 content.item.type = 1
             }else{
                 path.type = pathBase; path.position = 3;
@@ -475,12 +475,12 @@ Item {
                 if(typeBranch !== 3 && typeBranch !== 2) {
                     changePage(qsTr("Encryption Options"), currentPage)
                     content.item.type = typeBranch
-                    qmlRequest("algorithms", "")
+                    qmlRequest("GetEncryptionAlgorithms", "")
                 }
                 else {
                     changePage(qsTr("Hidden Volume Encryption Options"), currentPage)
                     content.item.type = typeBranch
-                    qmlRequest("algorithms", "")
+                    qmlRequest("GetEncryptionAlgorithms", "")
                 }
                 content.item.type = typeBranch
             }
@@ -568,7 +568,7 @@ Item {
             {
                 path.position += 1;
                 changePage(qsTr("Hidden Volume Encryption Options"), currentPage)
-                qmlRequest("algorithms", "")
+                qmlRequest("GetEncryptionAlgorithms", "")
                 content.item.type = typeBranch
                  manageButtons(true, true)
             }
@@ -647,7 +647,7 @@ Item {
         {
             //TODO : Devices
         }
-        qmlRequest("createvolume", param);
+        qmlRequest("CreateVolume", param);
     }
 
     /*!

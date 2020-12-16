@@ -168,8 +168,20 @@ Window {
     */
     property bool exitRequested: false
 
-    signal sendQmlRequest(string command, variant params)
-    signal sendSudoPassword(string password)
+    signal sendCreateVolume(variant params)
+    signal sendMountVolume(variant params)
+    signal sendDismountVolume(variant params)
+    signal sendGetMountedVolumes(variant params)
+    signal sendGetEncryptionAlgorithms(variant params)
+    signal sendGetDerivationFunctions(variant params)
+    signal sendGetFilesystems(variant params)
+    signal sendGetHostDevices(variant params)
+    signal sendCreateKeyFile(variant params)
+    signal sendChangeVolumePassword(variant params)
+    signal sendBenchmarkAlgorithms(variant params)
+
+    signal sendAction(string name, variant params)
+
     signal appQuit()
 
     /*************************************
@@ -589,7 +601,53 @@ Window {
         if(content.name !== undefined && content.desc !== undefined && content.name !== "")
             content.id = addNotification("progress", content.name, content.desc);
 
-        sendQmlRequest(type, content);
+        switch (type) {
+            case "CreateVolume":
+                sendCreateVolume(content);
+                break;
+            case "MountVolume":
+                sendMountVolume(content);
+                break;
+            case "DismountVolume":
+                sendDismountVolume(content);
+                break;
+            case "GetMountedVolumes":
+                sendGetMountedVolumes(content);
+                break;
+            case "GetEncryptionAlgorithms":
+                sendGetEncryptionAlgorithms(content);
+                break;
+            case "GetDerivationFunctions":
+                sendGetDerivationFunctions(content);
+                break;
+            case "GetFilesystems":
+                sendGetFilesystems(content);
+                break;
+            case "GetHostDevices":
+                sendGetHostDevices(content);
+                break;
+            case "CreateKeyFile":
+                sendCreateKeyFile(content);
+                break;
+            case "ChangeVolumePassword":
+                sendChangeVolumePassword(content);
+                break;
+            case "BenchmarkAlgorithms":
+                sendBenchmarkAlgorithms(content);
+                break;
+
+            /* Not linked to C++ code */
+            case "website":
+                Qt.openUrlExternally("http://www.gostcrypt.org/")
+                break;
+
+            /* When unknown, we let C++ handle it */
+            default:
+                sendAction(type, content);
+                break;
+
+        }
+
     }
 
     function addNotification(type, title, description)

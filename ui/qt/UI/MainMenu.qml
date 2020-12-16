@@ -569,7 +569,7 @@ Item {
             loaderFavoriteSub.visible = true
             titleSubMenuText_ = qsTr("favorite")
             updateFavorites();
-            qmlRequest("mountedvolumes", "");
+            qmlRequest("GetMountedVolumes", "");
             break;
         case menus.TOOLS:
             titleSubMenuText_ = qsTr("tools")

@@ -58,7 +58,7 @@ Item {
             param["keyfile"] = fileDialog.fileUrl
             param["name"] = qsTr("Keyfile Generator");
             param["desc"] = qsTr("Generating ") + fileDialog.fileUrl
-            qmlRequest("createkeyfiles", param);
+            qmlRequest("CreateKeyFile", param);
             top.update();
         }
         onRejected: {

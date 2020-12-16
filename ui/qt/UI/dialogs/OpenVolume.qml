@@ -44,7 +44,7 @@ Item {
                     params["group"] = UserSettings.getSetting("Pref-group")
                 }
 
-                qmlRequest("mount", params);
+                qmlRequest("MountVolume", params);
                 var password_blank = new Array(password_value.length+1).join('#');
                 password_value.text = password_blank
                 password_value.text = "" //TODO: stock password in C++
@@ -77,7 +77,7 @@ Item {
                 for(var i in listKeyfiles)
                     request["keyfile"+i] = listKeyfiles[i].path;
 
-                qmlRequest("mount", request);
+                qmlRequest("MountVolume", request);
 
                 //Empties values
                 var password_blank = new Array(password_value.length+1).join('#');
@@ -174,7 +174,7 @@ Item {
                 width: 120
                 color_: custompalette.green
                 onClicked: {
-                    qmlRequest("devices", "")
+                    qmlRequest("GetHostDevices", "")
                     changeSubWindowTitle(qsTr("Please select a device"))
                     devicesSelection.opacity = 1.0
                 }
