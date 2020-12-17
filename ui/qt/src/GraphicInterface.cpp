@@ -114,7 +114,8 @@ void GraphicInterface::sendMountVolume(QVariant aContent)
     QString canonicalPath = GI_KEY(aContent, "path").toUrl().path();
     arguments.volumePath = canonicalPath.toStdString();
 
-    // TODO : add mountpoint
+    QString mountpointPath = GI_KEY(aContent, "mountpoint").toUrl().path();
+    arguments.mountPoint = mountpointPath.toStdString();
 
     QByteArray *a = new QByteArray(GI_KEY(aContent,"password").toString().toUtf8()); //Setting the outer volume password
     GostCrypt::SecureBufferPtr passptr((const uint8_t *)a->data(), a->length());
@@ -126,6 +127,7 @@ void GraphicInterface::sendMountVolume(QVariant aContent)
     }catch (GostCrypt::VolumePasswordException& e)
     {
         emit volumePasswordIncorrect();
+        return;
     }
     catch (GostCrypt::GostCryptException &e) {
         QVariantList r;
