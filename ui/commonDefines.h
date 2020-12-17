@@ -17,7 +17,7 @@
 /* Default values */
 
 /** Default filesystem is no-filesystem */ // TODO change this to ext2
-#define DEFAULT_FILESYSTEMID "none"
+#define DEFAULT_FILESYSTEMID "ext2"
 
 /** Default sectorsize is 2048bits (256bytes) */
 #define DEFAULT_SECTORSIZE (256*B)
