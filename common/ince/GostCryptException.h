@@ -41,44 +41,44 @@ namespace GostCrypt {
 		
 	};
 
-	#define GOSTCRYPTEXCEPTION(msg) GostCryptException(msg, __FUNCTION__, __FILE__, __LINE__)
+	#define GOSTCRYPTEXCEPTION(msg) GostCrypt::GostCryptException(msg, __FUNCTION__, __FILE__, __LINE__)
 
 
 	BUILD_EXCEPTION(FileNotFoundException, GostCryptException);
-	#define FILENOTFOUNDEXCEPTION(file) FileNotFoundException("File " + std::string(file) + " not found", __FUNCTION__, __FILE__, __LINE__)
+	#define FILENOTFOUNDEXCEPTION(file) GostCrypt::FileNotFoundException("File " + std::string(file) + " not found", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(MountpointNotFoundException, GostCryptException);
-    #define MOUNTPOINTNOTFOUNDEXCEPTION(folder) MountpointNotFoundException("Mountpoint " + folder + " not found. Is the volume mounted?", __FUNCTION__, __FILE__, __LINE__)
+    #define MOUNTPOINTNOTFOUNDEXCEPTION(folder) GostCrypt::MountpointNotFoundException("Mountpoint " + folder + " not found. Is the volume mounted?", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(UmountFailedException, GostCryptException);
-    #define UMOUNTFAILEDEXCEPTION(folder) UmountFailedException("Mountpoint " + folder + " could not be unmounted.", __FUNCTION__, __FILE__, __LINE__)
+    #define UMOUNTFAILEDEXCEPTION(folder) GostCrypt::UmountFailedException("Mountpoint " + folder + " could not be unmounted.", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(CantCreateFileException, GostCryptException);
-    #define CANTCREATEFILEEXCEPTION(file) CantCreateFileException("File " + std::string(file) + " could not be created", __FUNCTION__, __FILE__, __LINE__)
+    #define CANTCREATEFILEEXCEPTION(file) GostCrypt::CantCreateFileException("File " + std::string(file) + " could not be created", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(InvalidParameterException, GostCryptException);
-    #define INVALIDPARAMETEREXCEPTION(msg) InvalidParameterException(msg, __FUNCTION__, __FILE__, __LINE__)
+    #define INVALIDPARAMETEREXCEPTION(msg) GostCrypt::InvalidParameterException(msg, __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(DataNotMutableException, GostCryptException);
-    #define DATANOTMUTABLEEXCEPTION() DataNotMutableException("Can't modify data of unmutable ptr", __FUNCTION__, __FILE__, __LINE__)
+    #define DATANOTMUTABLEEXCEPTION() GostCrypt::DataNotMutableException("Can't modify data of unmutable ptr", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(FailedMemoryAllocationException, GostCryptException);
-    #define FAILEDMEMORYALLOCATIONEXCEPTION() DataNotMutableException("Can't allocate memory", __FUNCTION__, __FILE__, __LINE__)
+    #define FAILEDMEMORYALLOCATIONEXCEPTION() GostCrypt::DataNotMutableException("Can't allocate memory", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(BufferAlreadyFreedException, GostCryptException);
-    #define BUFFERALREADYFREEDEXCEPTION() BufferAlreadyFreedException("Memory already freed", __FUNCTION__, __FILE__, __LINE__)
+    #define BUFFERALREADYFREEDEXCEPTION() GostCrypt::BufferAlreadyFreedException("Memory already freed", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(AlgorithmUnititializedException, GostCryptException);
-    #define ALGORITHMUNITITILIZEDEXCEPTION() AlgorithmUnititializedException("Algorithm has not been initialized", __FUNCTION__, __FILE__, __LINE__)
+    #define ALGORITHMUNITITILIZEDEXCEPTION() GostCrypt::AlgorithmUnititializedException("Algorithm has not been initialized", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(ProgramTooOldException, GostCryptException);
-    #define PROGRAMTOOOLDEXCEPTION() ProgramTooOldException("GostCrypt needs an update to perform this operation.", __FUNCTION__, __FILE__, __LINE__)
+    #define PROGRAMTOOOLDEXCEPTION() GostCrypt::ProgramTooOldException("GostCrypt needs an update to perform this operation.", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(Unsupported64BitsException, GostCryptException);
-    #define UNSUPPORED64BITSEXCEPTION() Unsupported64BitsException("This operation is supported only by the 64Bits version of Gostcrypt", __FUNCTION__, __FILE__, __LINE__)
+    #define UNSUPPORED64BITSEXCEPTION() GostCrypt::Unsupported64BitsException("This operation is supported only by the 64Bits version of Gostcrypt", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(VolumePasswordException, GostCryptException);
-    #define VOLUMEPASSWORDEXCEPTION() VolumePasswordException("Could not open volume. Double check the password ?", __FUNCTION__, __FILE__, __LINE__)
+    #define VOLUMEPASSWORDEXCEPTION() GostCrypt::VolumePasswordException("Could not open volume. Double check the password ?", __FUNCTION__, __FILE__, __LINE__)
 
 
 }
