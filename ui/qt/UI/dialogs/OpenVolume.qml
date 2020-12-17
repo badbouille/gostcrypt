@@ -12,7 +12,8 @@ import gostcrypt.ui.secureInput 1.0
 Item {
     id: openVolume_Form
 
-    property url volumePath
+    property url volumePath: ""
+    property url mountpoint: ""
     property variant devices
     property variant listKeyfiles: []
     signal incorrectPassword()
@@ -26,6 +27,7 @@ Item {
             {
                 var params = {
                     "path": volumePath,
+                    "mountpoint": mountpoint,
                     "password": password_value.text,
                     "nb-keyfiles": 0,
                     "name": qsTr("Mount volume"),
@@ -106,7 +108,7 @@ Item {
         Text {
             id: textTop
             text: qsTr("Please open a GostCrypt volume :") + Translation.tr
-            font.pointSize: 11
+            font.pointSize: 10
             color: custompalette.textLight
             anchors.horizontalCenter: parent.horizontalCenter
 
@@ -116,23 +118,54 @@ Item {
         UI.CustomComboBox {
             id: combo
             anchors.horizontalCenter: parent.horizontalCenter
-            width: openVolume_Form.width - 250
+            width: openVolume_Form.width - 100
             y: textTop.y + textTop.height + 10
-            height: 40
+            height: 30
             model: {
-                var paths = UserSettings.getVolumePaths(1)
+                var paths = []
                 return paths;
             }
             onActivated: {
-                if(currentText != "")
-                    openVolume_Form.moving(currentText)
+                if(currentText != ""){
+                    openVolume_Form.volumePath = currentText;
+                    openVolume_Form.moving()
+                }
+            }
+        }
+
+        Text {
+            id: textMountpoint
+            text: qsTr("Into a mountpoint :") + Translation.tr
+            font.pointSize: 10
+            y: combo.y + combo.height + 10
+            color: custompalette.textLight
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            Behavior on opacity { NumberAnimation { id: animTextMountpoint; duration: app.duration; easing.type: Easing.OutQuad; } }
+        }
+
+        UI.CustomComboBox {
+            id: mountpointbox
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: textMountpoint.y + textMountpoint.height + 10
+            height: combo.height
+            width: combo.width
+            model: {
+                var paths = []
+                return paths;
+            }
+            onActivated: {
+                if(currentText != "") {
+                    openVolume_Form.mountpoint = currentText;
+                    openVolume_Form.moving()
+                }
             }
         }
 
         UI.CheckBox {
             id: historique
             text_: qsTr("Never save history")
-            y: combo.y + combo.height + 5
+            y: mountpointbox.y + mountpointbox.height + 5
             height: combo.height
             anchors.horizontalCenter: parent.horizontalCenter
             size_: 20
@@ -161,23 +194,19 @@ Item {
             UI.ButtonBordered {
                 id: buttonOpen
                 height: combo.height
-                text: qsTr("Open...") + Translation.tr
+                text: qsTr("Select file") + Translation.tr
                 width: 120
                 onClicked: fileDialog.open()
                 color_: custompalette.green
             }
 
             UI.ButtonBordered {
-                id: buttonDevide
+                id: buttonFolder
                 height: combo.height
-                text: qsTr("Select Device")
+                text: qsTr("Select folder") + Translation.tr
                 width: 120
+                onClicked: folderDialog.open()
                 color_: custompalette.green
-                onClicked: {
-                    qmlRequest("GetHostDevices", "")
-                    changeSubWindowTitle(qsTr("Please select a device"))
-                    devicesSelection.opacity = 1.0
-                }
             }
         }
 
@@ -186,10 +215,27 @@ Item {
             title: qsTr("Please choose a file") + Translation.tr
             folder: shortcuts.home
             onAccepted: {
-                if(historique.pressed === false)
-                    UserSettings.addVolumePath(fileDialog.fileUrl)
-                openVolume_Form.moving(fileDialog.fileUrl)
-                combo.model = UserSettings.getVolumePaths(0)
+                var path = fileDialog.fileUrl.toString();
+                path = path.replace(/^(file:\/\/\/)/, "/");
+                combo.model = [ path ]
+                openVolume_Form.volumePath = path
+                openVolume_Form.moving()
+            }
+            onRejected: {
+            }
+        }
+
+        FileDialog {
+            id: folderDialog
+            title: qsTr("Please choose a folder") + Translation.tr
+            folder: shortcuts.home
+            selectFolder: true
+            onAccepted: {
+                var path = folderDialog.folder.toString();
+                path = path.replace(/^(file:\/\/\/)/, "/");
+                mountpointbox.model = [ path ]
+                openVolume_Form.mountpoint = path
+                openVolume_Form.moving()
             }
             onRejected: {
             }
@@ -877,14 +923,18 @@ Item {
         }
     }
 
-    function moving(url) {
+    function moving() {
+        if (openVolume_Form.volumePath.toString() === "" || openVolume_Form.mountpoint.toString() === "") {
+            return
+        }
         password_value.focus = true;
         textTop.opacity = 0.0
+        textMountpoint.opacity = 0.0
         combo.y = 15
+        mountpointbox.y = combo.y + combo.height + 5
         item.anchors.centerIn = undefined;
         item.y = 0
         item.height = 155
-        volumePath = url
     }
 
     function appendPassword() {
