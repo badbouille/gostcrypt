@@ -6,9 +6,11 @@
 #include <VolumeStandard.h>
 #include <iostream>
 #include <zconf.h>
+#include <wait.h>
 #include "FuseFileSystem.h"
 #include "FuseFileSystemNone.h"
 #include "FuseFileSystemExt2.h"
+#include "GostCryptException.h"
 #include "fuse.h"
 
 
@@ -150,8 +152,20 @@ extern "C" {
         new_op.read = fusefs_super_read;
         new_op.release = fusefs_super_release;
 
-        /* Calling real main */
-        return fuse_main(argc, argv, &new_op, private_data);
+        pid_t pid = fork();
+        int status = 0;
+
+        /* Calling real fuse main by forking since it exits instead of returning */
+        if ( pid == 0 ) {
+            return fuse_main(argc, argv, &new_op, private_data);
+        }
+
+        /* Waiting for child to mount the raw volume */
+        if (waitpid(pid, &status, 0) == -1 ) {
+            throw GOSTCRYPTEXCEPTION("waitpid failed in fuse_main.");
+        }
+
+        return status;
     }
 
 }
