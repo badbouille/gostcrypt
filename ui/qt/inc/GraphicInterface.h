@@ -19,6 +19,8 @@
 #define CONNECT_QML_SIGNAL(requestName) connect(qml, SIGNAL(send ## requestName (QVariant)), this, SLOT(send ## requestName (QVariant)));
 #define QML_SIGNAL(requestName, params) s ## requestName (params);
 
+extern const char *g_prog_path;
+
 class GraphicInterface;
 
 /**

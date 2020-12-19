@@ -1,4 +1,5 @@
 #include <Core.h>
+#include <ForkableCore.h>
 #include "GraphicInterface.h"
 #include "commonDefines.h"
 
@@ -118,12 +119,14 @@ void GraphicInterface::sendMountVolume(QVariant aContent)
     arguments.mountPoint = mountpointPath.toStdString();
 
     QByteArray *a = new QByteArray(GI_KEY(aContent,"password").toString().toUtf8()); //Setting the outer volume password
-    GostCrypt::SecureBufferPtr passptr((const uint8_t *)a->data(), a->length());
+    GostCrypt::SecureBufferPtr passptr((uint8_t *)a->data(), a->length());
     arguments.password.copyFrom(passptr);
+    passptr.erase();
 
     try
     {
-        GostCrypt::Core::mount(&arguments);
+        ForkableCore_api_callMount(&arguments);
+        arguments.password.erase();
     }catch (GostCrypt::VolumePasswordException& e)
     {
         emit volumePasswordIncorrect();
