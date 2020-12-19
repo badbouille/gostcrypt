@@ -157,7 +157,7 @@ extern "C" {
 
         /* Calling real fuse main by forking since it exits instead of returning */
         if ( pid == 0 ) {
-            return fuse_main(argc, argv, &new_op, private_data);
+            exit(fuse_main(argc, argv, &new_op, private_data));
         }
 
         /* Waiting for child to mount the raw volume */
