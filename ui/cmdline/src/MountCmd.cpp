@@ -30,11 +30,17 @@ static error_t parse_opt_mount (int key, char *arg, struct argp_state *state) {
     /* Get the input argument from argp_parse, which we
        know is a pointer to our arguments structure. */
     Core::MountParams_t *arguments = (Core::MountParams_t *)state->input;
+    int tmp;
 
     switch (key)
     {
         case 'p':
+            tmp = strlen(arg);
+            if (tmp > 64) { // Checking against buffer size
+                return 1;
+            }
             strcpy((char *)arguments->password.get(), arg);
+            arguments->password.set(arguments->password.get(), tmp); // Usually very illegal but here we know the buffer is big enough
             break;
         case 'f':
             arguments->fileSystemID = arg;
@@ -75,7 +81,7 @@ int cmd_mount(int argc, char **argv) {
     SecureBuffer pass(64);
 
     arguments.mountPoint = "";
-    arguments.password = SecureBufferPtr(pass.get(), pass.size());
+    arguments.password = SecureBufferPtr(pass.get(), 0);
     arguments.fileSystemID = DEFAULT_FILESYSTEMID;
     arguments.volumePath = "";
 
