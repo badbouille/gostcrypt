@@ -14,7 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: 'Install libfuse-dev e2fslibs-dev'
+        # This job installs the required libraries to build the core (FUSE + E2FS)
         run: sudo apt install libfuse-dev e2fslibs-dev
+      - name: 'Install Qt5 libs and modules'
+        # This job installs the required libraries to build the Qt interface (Qt5 qml quick labs ++)
+        run: sudo apt install qt5-default qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings
       - name: 'Building whole project'
         run: make
       - name: 'Upload common test binary'
