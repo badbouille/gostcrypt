@@ -50,10 +50,11 @@ endif
 
 # bin directory where the binaries and libraries are put
 BD:=bin
+BDLIB:=$(BD)/lib
 BDUT:=$(BD)/ut
 
 # Unity variables for special rule
-UNITY_STATIC_LIB:=$(BDUT)/unity.a
+UNITY_STATIC_LIB:=$(BDLIB)/unity.a
 UNITY_DIR:=ut/unity/
 
 # Components that can be built (folders)
@@ -105,7 +106,7 @@ $(BINARY): $(COBJS) $(CXXOBJS)
 # Component maker
 $(COMPONENTS):
 	@echo "-------- Building component $@ --------"
-	$(MAKE) -C $@ OD=../$(OD)/$@ ../$(BD)/$@.a
+	$(MAKE) -C $@ OD=../$(OD)/$@ ../$(BDLIB)/$@.a
 
 # unit testing
 $(UNIT_TESTS): ut_% : $(COMPONENTS) $(UNITY_STATIC_LIB)

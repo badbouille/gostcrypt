@@ -62,11 +62,11 @@ SOURCES += \
     src/UserInterface.cpp
 
 LIBS += \
-        ../../bin/core.a \
-        ../../bin/fuse.a \
-        ../../bin/volume.a \
-        ../../bin/crypto.a \
-        ../../bin/common.a \
+        ../../bin/lib/core.a \
+        ../../bin/lib/fuse.a \
+        ../../bin/lib/volume.a \
+        ../../bin/lib/crypto.a \
+        ../../bin/lib/common.a \
         -ldl -lfuse -lext2fs -lrt -lpthread -lcom_err
 
 TARGET = gc_qt
