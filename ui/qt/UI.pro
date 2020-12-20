@@ -87,32 +87,32 @@ TRANSLATIONS =  translations/gostcrypt_en.ts \
                 translations/gostcrypt_ar.ts
 
 translation {
-    SOURCES += UI/* \
-               UI/dialogs/* \
-               UI/frames/* \
-               UI/ressource/* \
-               UI/wizard/* \
+    SOURCES += qml/* \
+               qml/dialogs/* \
+               qml/frames/* \
+               qml/ressource/* \
+               qml/wizard/* \
 }
 
 DISTFILES += \
-    UI/ressource/separator.png \
-    UI/dialogs/GSLanguage.qml \
-    UI/SecureTextField.qml \
-    UI/wizard/StepComponent.qml \
-    UI/SubWindow.qml \
-    UI/wizard/NextPreviousButton.qml \
-    UI/dialogs/FavoriteVolumeOptions.qml \
-    UI/dialogs/OpenVolume.qml \
-    UI/dialogs/Performance.qml \
-    UI/dialogs/Preferences.qml \
-    UI/dialogs/DefaultKeyfile.qml \
-    UI/dialogs/Contributors.qml \
-    UI/dialogs/ChangePassword.qml \
-    UI/dialogs/Benchmark.qml \
-    UI/dialogs/License.qml \
-    UI/dialogs/KeyfileGenerator.qml \
-    UI/dialogs/TestVectors.qml \
+    qml/ressource/separator.png \
+    qml/dialogs/GSLanguage.qml \
+    qml/SecureTextField.qml \
+    qml/wizard/StepComponent.qml \
+    qml/SubWindow.qml \
+    qml/wizard/NextPreviousButton.qml \
+    qml/dialogs/FavoriteVolumeOptions.qml \
+    qml/dialogs/OpenVolume.qml \
+    qml/dialogs/Performance.qml \
+    qml/dialogs/Preferences.qml \
+    qml/dialogs/DefaultKeyfile.qml \
+    qml/dialogs/Contributors.qml \
+    qml/dialogs/ChangePassword.qml \
+    qml/dialogs/Benchmark.qml \
+    qml/dialogs/License.qml \
+    qml/dialogs/KeyfileGenerator.qml \
+    qml/dialogs/TestVectors.qml \
     translations/gostcrypt_ar.ts \
-    UI/dialogs/RestoreHeaderVolume.qml \
-    UI/dialogs/BackupHeaderVolume.qml \
-    UI/AbstractTheme.qml
+    qml/dialogs/RestoreHeaderVolume.qml \
+    qml/dialogs/BackupHeaderVolume.qml \
+    qml/AbstractTheme.qml

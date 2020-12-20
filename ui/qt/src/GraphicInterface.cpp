@@ -28,7 +28,7 @@ int GraphicInterface::start(int argc, char** argv)
     ctx->setContextProperty("Translation", (QObject*)&mTranslation);
     qmlRegisterType<SecureTextField>("gostcrypt.ui.secureInput", 1, 0, "SecureTextField");
 
-    mEngine.load(QUrl(QStringLiteral("qrc:/UI/main.qml")));
+    mEngine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     /* Connecting all signals */
     QMetaObject::invokeMethod((QObject *)this, "connectSignals", Qt::QueuedConnection);
