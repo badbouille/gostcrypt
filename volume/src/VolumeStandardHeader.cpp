@@ -3,6 +3,7 @@
 //
 
 #include <VolumeStandardHeader.h>
+#include <PRNGSystem.h>
 
 void GostCrypt::VolumeStandardHeader::Serialize(GostCrypt::SecureBufferPtr &dest)
 {
@@ -173,11 +174,22 @@ bool GostCrypt::VolumeStandardHeader::Deserialize(const GostCrypt::SecureBufferP
 void GostCrypt::VolumeStandardHeader::SerializeFake(GostCrypt::SecureBufferPtr &dest)
 {
     VolumeStandardHeader fakeHeader;
+
+    fakeHeader.headerVersion = STANDARD_HEADER_VERSION;
+    fakeHeader.minProgramVersion = STANDARD_MIN_PROG_VERSION;
+
     fakeHeader.sectorsize = 512;
     fakeHeader.dataStartOffset = 2*STANDARD_HEADER_SIZE;
     fakeHeader.dataSize = 100*STANDARD_HEADER_SIZE;
 
-    // TODO fill master key and salt with PRNG
+    PRNGSystem fastprng;
+    SecureBufferPtr sptr;
+
+    fakeHeader.masterkey.getRange(sptr, 0, fakeHeader.masterkey.size());
+    fastprng.Get(sptr);
+
+    fakeHeader.salt.getRange(sptr, 0, fakeHeader.salt.size());
+    fastprng.Get(sptr);
 
     return fakeHeader.Serialize(dest);
 
