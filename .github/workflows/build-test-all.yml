@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: 'Apt update'
+        run: sudo apt update
       - name: 'Install libfuse-dev e2fslibs-dev'
         # This job installs the required libraries to build the core (FUSE + E2FS)
         run: sudo apt install libfuse-dev e2fslibs-dev
