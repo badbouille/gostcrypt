@@ -11,7 +11,7 @@ CXXFILES:= $(shell find src -name '*.cpp')
 CXXFILES+= mainTests.cpp
 
 # external components needed
-EXTERNAL_STATIC_LIBS=../../$(BD)/crypto.a ../../$(BD)/common.a ../../$(BDUT)/unity.a
+EXTERNAL_STATIC_LIBS=../../$(BDLIB)/crypto.a ../../$(BDLIB)/common.a ../../$(BDLIB)/unity.a
 
 # actual compilation
 include ../../Makefile

@@ -36,12 +36,19 @@ static error_t parse_opt_create (int key, char *arg, struct argp_state *state) {
        know is a pointer to our arguments structure. */
     Core::CreateParams_t *arguments = (Core::CreateParams_t *)state->input;
     char *unit;
+    int tmp;
 
     switch (key)
     {
         case 'p':
             // password
+            tmp = strlen(arg);
+            if (tmp > 64) { // Checking against buffer size
+                return 1;
+            }
             strcpy((char *)arguments->password.get(), arg);
+            arguments->password.set(arguments->password.get(), tmp); // Usually very illegal but here we know the buffer is big enough
+            arguments->afterCreationMount.password.set(arguments->afterCreationMount.password.get(), tmp);
             break;
         case 'f':
             // filesystem
@@ -148,12 +155,12 @@ int cmd_create(int argc, char **argv) {
     SecureBuffer pass(64);
 
     /* Default init */
-    arguments.afterCreationMount.password = SecureBufferPtr(pass.get(), pass.size());
+    arguments.afterCreationMount.password = SecureBufferPtr(pass.get(), 0);
     arguments.afterCreationMount.volumePath = "";
     arguments.afterCreationMount.mountPoint = "";
     arguments.afterCreationMount.fileSystemID = DEFAULT_FILESYSTEMID;
 
-    arguments.password = SecureBufferPtr(pass.get(), pass.size());
+    arguments.password = SecureBufferPtr(pass.get(), 0);
     arguments.volumePath = "";
 
     arguments.dataSize = DEFAULT_VOLUMESIZE;

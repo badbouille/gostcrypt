@@ -83,7 +83,8 @@ namespace GostCrypt
         /**
          * Constructor. No parameters
          */
-        FuseFileSystem() {};
+        FuseFileSystem() = default;
+        virtual ~FuseFileSystem() = default;
 
         /**
          * Function to get the available implementations of this class

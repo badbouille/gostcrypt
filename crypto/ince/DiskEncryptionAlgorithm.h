@@ -137,6 +137,9 @@ namespace GostCrypt
 
     protected:
 
+        /** Deprecated value of this algorithm. Should not change during execution. */
+        bool Deprecated;
+
         /**
          * State of the algorithm. Default is NOT_INIT.
          * Uninitialized algorithms might be used to get description, ID, name, etc..
@@ -149,9 +152,6 @@ namespace GostCrypt
 
         /** Current state of the algorithm */
         AlgoState currentState;
-
-        /** Deprecated value of this algorithm. Should not change during execution. */
-        bool Deprecated;
 
         /** Assertion used to check if this algorithm is ready to encrypt or decrypt. */
         void assertInit() const { if(currentState == NOT_INIT) throw ALGORITHMUNITITILIZEDEXCEPTION(); }

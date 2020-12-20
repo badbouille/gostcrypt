@@ -64,32 +64,32 @@ setup
 
 # ECB XOR NONE
 
-$GC create "${DIR}v_std_ecbxor_none" "$MOUNTPOINT" -s1K
+$GC create "${DIR}v_std_ecbxor_none" "$MOUNTPOINT" -fnone -s1K
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_none_b1k" "$MOUNTPOINT" -s1K -b1K
+$GC create "${DIR}v_std_ecbxor_none_b1k" "$MOUNTPOINT" -fnone -s1K -b1K
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_none_b16" "$MOUNTPOINT" -s1K -b16
+$GC create "${DIR}v_std_ecbxor_none_b16" "$MOUNTPOINT" -fnone -s1K -b16
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_none_p" "$MOUNTPOINT" -s1K -p$PASS_A
+$GC create "${DIR}v_std_ecbxor_none_p" "$MOUNTPOINT" -fnone -s1K -p$PASS_A
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_none_sbp" "$MOUNTPOINT" -s2K -p$PASS_A -b512
+$GC create "${DIR}v_std_ecbxor_none_sbp" "$MOUNTPOINT" -fnone -s2K -p$PASS_A -b512
 cleanup
 
 # ECB XOR EXT2
 
-$GC create "${DIR}v_std_ecbxor_ext2" "$MOUNTPOINT" -fext2 -s100K
+$GC create "${DIR}v_std_ecbxor_ext2" "$MOUNTPOINT" -s100K
 createfolder
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_ext2_b10k" "$MOUNTPOINT" -fext2 -s100K -b10K
+$GC create "${DIR}v_std_ecbxor_ext2_b10k" "$MOUNTPOINT" -s100K -b10K
 createfolder
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_ext2_sbp" "$MOUNTPOINT" -fext2 -s100K -p$PASS_A -b16
+$GC create "${DIR}v_std_ecbxor_ext2_sbp" "$MOUNTPOINT" -s100K -p$PASS_A -b16
 createfolder
 cleanup
 

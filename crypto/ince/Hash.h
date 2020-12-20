@@ -20,7 +20,8 @@ namespace GostCrypt
     class Hash
     {
     public:
-        Hash() {};
+        Hash() = default;
+        virtual ~Hash() = default;
 
         /**
          * @brief This method processes the given data. Multiple calls to this function can be made before GetDigest is called.

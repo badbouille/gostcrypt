@@ -50,16 +50,17 @@ endif
 
 # bin directory where the binaries and libraries are put
 BD:=bin
+BDLIB:=$(BD)/lib
 BDUT:=$(BD)/ut
 
 # Unity variables for special rule
-UNITY_STATIC_LIB:=$(BDUT)/unity.a
+UNITY_STATIC_LIB:=$(BDLIB)/unity.a
 UNITY_DIR:=ut/unity/
 
 # Components that can be built (folders)
 COMPONENTS:=common core crypto fuse volume
 UNIT_TESTS:=ut_common ut_crypto ut_volume
-UI:=cmdline
+UI:=cmdline qt
 
 # Objects needed, computed from given sources
 CXXOBJS:= $(addprefix $(OD)/, $(subst .cpp,.o,$(CXXFILES)))
@@ -79,7 +80,7 @@ $(COBJS): $(OD)/%.o : %.c
 	@mkdir -p $(shell dirname $@)
 	$(CC) -c $(CFLAGS) $< -o $@
 
-.PHONY: all clean $(COMPONENTS) $(UNIT_TESTS)
+.PHONY: all clean $(COMPONENTS) $(UNIT_TESTS) $(UI)
 
 # Lib maker (actual job for submake)
 %.a: $(COBJS) $(CXXOBJS)
@@ -105,7 +106,7 @@ $(BINARY): $(COBJS) $(CXXOBJS)
 # Component maker
 $(COMPONENTS):
 	@echo "-------- Building component $@ --------"
-	$(MAKE) -C $@ OD=../$(OD)/$@ ../$(BD)/$@.a
+	$(MAKE) -C $@ OD=../$(OD)/$@ ../$(BDLIB)/$@.a
 
 # unit testing
 $(UNIT_TESTS): ut_% : $(COMPONENTS) $(UNITY_STATIC_LIB)

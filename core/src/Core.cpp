@@ -208,32 +208,8 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     // mounting using the 'none' filesystem (loop device to create the fs)
     p->afterCreationMount.fileSystemID = "none";
 
-    /* Forking to mount program */
-    pid_t pid = fork();
-    int status;
-
-    if ( pid == 0 ) {
-
-        // Mounting raw volume
-        mount(&p->afterCreationMount);
-
-        /* If fuse_main fails, exit with error code */
-        exit(127);
-    }
-
-    /* Waiting for child to mount the raw volume */
-    if (waitpid(pid, &status, 0) == -1 ) {
-        throw GOSTCRYPTEXCEPTION("waitpid failed.");
-    }
-
-    /* Checking return value */
-    if ( WIFEXITED(status) ) {
-        if (WEXITSTATUS(status) != 0) {
-            throw GOSTCRYPTEXCEPTION("Mount operation failed.");
-        }
-    } else {
-        throw GOSTCRYPTEXCEPTION("Child not exited.");
-    }
+    // Mounting raw volume
+    mount(&p->afterCreationMount);
 
     // creating filesystem in raw file
     interface->create(p->afterCreationMount.mountPoint + "/volume");
