@@ -8,6 +8,6 @@ $(BINARY):
 	$(MAKE) -f Makefile_qt
 
 # modules that have to be installed
-# qt5-default
+# qt5-default qtdeclarative5-dev
 # qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick-dialogs
 # qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings
