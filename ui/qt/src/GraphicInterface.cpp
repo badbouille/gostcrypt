@@ -65,37 +65,48 @@ void GraphicInterface::sendCreateVolume(QVariant aContent) {
     arguments.algorithmID = DEFAULT_ALGORITHM;
     arguments.keyDerivationFunctionID = DEFAULT_KDF;
 
-    //Detection of the volume type
-    int type = GI_KEY(aContent, "type").toInt(); //UI returns 0 for normal and 1 for Hidden
-    if (type == 0)
+    /****************** PARSING PARAMETERS ********************/
+
+    // type
+    arguments.volumeTypeID = GI_KEY(aContent, "type").toString().toStdString();
+
+    // path
+    arguments.volumePath = GI_KEY(aContent, "path").toString().toStdString();
+    arguments.afterCreationMount.volumePath = arguments.volumePath;
+
+    // mountpoint
+    arguments.afterCreationMount.mountPoint = GI_KEY(aContent, "mountpoint").toString().toStdString();
+
+    // size
+    arguments.dataSize = GI_KEY(aContent, "size").toULongLong();
+
+    // algos
+    arguments.algorithmID = GI_KEY(aContent, "algorithm").toString().toStdString();
+    arguments.keyDerivationFunctionID = GI_KEY(aContent, "hash").toString().toStdString();
+    arguments.afterCreationMount.fileSystemID = GI_KEY(aContent, "filesystem").toString().toStdString();
+
+    // password
+    QByteArray *a = new QByteArray(GI_KEY(aContent,"password").toString().toUtf8()); //Setting the outer volume password
+    GostCrypt::SecureBufferPtr passptr((const uint8_t *)a->data(), a->length());
+    arguments.password.copyFrom(passptr);
+    //arguments.afterCreationMount.password.copyFrom(passptr);
+
+    /************** REQUEST *****************/
+
+    try
     {
-        arguments.volumePath = GI_KEY(aContent, "path").toString().toStdString();
-        arguments.afterCreationMount.volumePath = arguments.volumePath;
-        arguments.volumeTypeID = "standard";
-        QByteArray *a = new QByteArray(GI_KEY(aContent,"password").toString().toUtf8()); //Setting the outer volume password
-        GostCrypt::SecureBufferPtr passptr((const uint8_t *)a->data(), a->length());
-        arguments.password.copyFrom(passptr);
-        arguments.afterCreationMount.password.copyFrom(passptr);
-
-        if (GI_KEY(aContent, "hash").toString() != "")
-        {
-            arguments.keyDerivationFunctionID = GI_KEY(aContent, "hash").toString().toStdString();    //Outer volume hash
-        }
-
-        if (GI_KEY(aContent, "algorithm").toString() != "")
-        {
-            arguments.algorithmID = GI_KEY(aContent,"algorithm").toString().toStdString();    //Outer volume algorithm
-        }
-
-        bool ok = false;
-
-        QString s = GI_KEY(aContent, "size").toString();
-        uint64_t v = UserInterface::parseSize(s, &ok); //Total volume file size
-        arguments.dataSize = v;
-
-        // TODO : add mountpoint and make the call
-
+        ForkableCore_api_callCreate(&arguments);
+        arguments.password.erase();
+    } catch (GostCrypt::GostCryptException &e) {
+        QVariantList r;
+        r << e.name();
+        r << e.what();
+        emit QML_SIGNAL(printSendError, r)
+        return;
     }
+
+    emit QML_SIGNAL(printCreateVolume, QVariantList())
+
 }
 
 void GraphicInterface::sendMountVolume(QVariant aContent)
@@ -213,6 +224,7 @@ void GraphicInterface::sendGetEncryptionAlgorithms(QVariant aContent)
     qDebug() << "GetEncryptionAlgorithms";
 #endif
     (void)aContent;
+    QVariantMap r;
     QVariantList l;
     GostCrypt::DiskEncryptionAlgorithmList deal;
 
@@ -226,12 +238,26 @@ void GraphicInterface::sendGetEncryptionAlgorithms(QVariant aContent)
         return;
     }
 
-    for (auto dea : deal) { // TODO send the fucking descriptions too
+    l.clear();
+    for (auto dea : deal) {
+        l << QString::fromStdString(dea->GetName());
+    }
+    r.insert("name", l);
+
+    l.clear();
+    for (auto dea : deal) {
+        l << QString::fromStdString(dea->GetDescription());
+    }
+    r.insert("description", l);
+
+    l.clear();
+    for (auto dea : deal) {
         l << QString::fromStdString(dea->GetID());
         delete dea;
     }
+    r.insert("id", l);
 
-    emit QML_SIGNAL(printGetEncryptionAlgorithms, l)
+    emit QML_SIGNAL(printGetEncryptionAlgorithms, r)
 }
 
 void GraphicInterface::sendGetDerivationFunctions(QVariant aContent)
@@ -240,6 +266,7 @@ void GraphicInterface::sendGetDerivationFunctions(QVariant aContent)
     qDebug() << "GetDerivationFunctions";
 #endif
     (void)aContent;
+    QVariantMap r;
     QVariantList l;
     GostCrypt::KDFList kdfl;
 
@@ -253,12 +280,26 @@ void GraphicInterface::sendGetDerivationFunctions(QVariant aContent)
         return;
     }
 
-    for (auto kdf : kdfl) { // TODO send the fucking descriptions too
+    l.clear();
+    for (auto kdf : kdfl) {
         l << QString::fromStdString(kdf->GetID());
+    }
+    r.insert("id", l);
+
+    l.clear();
+    for (auto kdf : kdfl) {
+        l << QString::fromStdString(kdf->GetName());
+    }
+    r.insert("name", l);
+
+    l.clear();
+    for (auto kdf : kdfl) {
+        l << QString::fromStdString(kdf->GetDescription());
         delete kdf;
     }
+    r.insert("description", l);
 
-    emit QML_SIGNAL(printGetDerivationFunctions, l)
+    emit QML_SIGNAL(printGetDerivationFunctions, r)
 }
 
 void GraphicInterface::sendGetFilesystems(QVariant aContent)
@@ -267,6 +308,7 @@ void GraphicInterface::sendGetFilesystems(QVariant aContent)
     qDebug() << "GetFilesystems";
 #endif
     (void)aContent;
+    QVariantMap r;
     QVariantList filesystem;
     GostCrypt::FuseFileSystemList fuseFileSystems;
 
@@ -280,12 +322,68 @@ void GraphicInterface::sendGetFilesystems(QVariant aContent)
         return;
     }
 
-    for (auto f : fuseFileSystems) { // TODO send the fucking descriptions too
+    filesystem.clear();
+    for (auto f : fuseFileSystems) {
         filesystem << QString::fromStdString(f->getID());
+    }
+    r.insert("id", filesystem);
+
+    filesystem.clear();
+    for (auto f : fuseFileSystems) {
+        filesystem << QString::fromStdString(f->getName());
+    }
+    r.insert("name", filesystem);
+
+    filesystem.clear();
+    for (auto f : fuseFileSystems) {
+        filesystem << QString::fromStdString(f->getDescription());
         delete f;
     }
+    r.insert("description", filesystem);
 
-    emit QML_SIGNAL(printGetFileSystem, filesystem)
+    emit QML_SIGNAL(printGetFileSystem, r)
+}
+
+void GraphicInterface::sendGetVolumeTypes(QVariant aContent)
+{
+#ifdef QT_DEBUG
+    qDebug() << "GetVolumeTypes";
+#endif
+    (void)aContent;
+    QVariantMap r;
+    QVariantList l;
+    GostCrypt::VolumeList volumes;
+
+    try {
+        volumes = GostCrypt::Core::GetVolumeTypes();
+    } catch (GostCrypt::GostCryptException &e) {
+        QVariantList r;
+        r << e.name();
+        r << e.what();
+        emit QML_SIGNAL(printSendError, r)
+        return;
+    }
+
+    l.clear();
+    for (auto v : volumes) {
+        l << QString::fromStdString(v->GetID());
+    }
+    r.insert("id", l);
+
+    l.clear();
+    for (auto v : volumes) {
+        l << QString::fromStdString(v->GetName());
+    }
+    r.insert("name", l);
+
+    l.clear();
+    for (auto v : volumes) {
+        l << QString::fromStdString(v->GetDescription());
+        delete v;
+    }
+    r.insert("description", l);
+
+    emit QML_SIGNAL(printGetVolumeTypes, r)
 }
 
 void GraphicInterface::sendGetHostDevices(QVariant aContent)
@@ -339,6 +437,47 @@ void GraphicInterface::sendAction(QString name, QVariant aContent)
 #endif
 }
 
+void GraphicInterface::sendGetAvailableSpace(QVariant p)
+{
+#ifdef QT_DEBUG
+    qDebug() << "GetAvailableSpace";
+#endif
+    QString path = p.toString();
+    QFileInfo file(path);
+    path = file.dir().absolutePath();
+
+    struct statvfs64 stats = {0};
+
+    statvfs64(path.toStdString().c_str(), &stats);
+
+    QString prefix = "B";
+    uint64_t free_space = stats.f_bavail * stats.f_bsize;
+
+    if (free_space > 1024) {
+        prefix = "KB";
+        free_space >>= 10;
+    }
+
+    if (free_space > 1024) {
+        prefix = "MB";
+        free_space >>= 10;
+    }
+
+    if (free_space > 1024) {
+        prefix = "GB";
+        free_space >>= 10;
+    }
+
+    if (free_space > 1024) {
+        prefix = "TB";
+        free_space >>= 10;
+    }
+
+    prefix = QString::number(free_space) + prefix;
+
+    emit QML_SIGNAL(printGetAvailableSpace, prefix);
+}
+
 void GraphicInterface::printProgressUpdate(quint32 requestId, qreal progress)
 {
     QVariantList list;
@@ -373,10 +512,13 @@ void GraphicInterface::connectSignals()
     CONNECT_QML_SIGNAL(GetEncryptionAlgorithms);
     CONNECT_QML_SIGNAL(GetDerivationFunctions);
     CONNECT_QML_SIGNAL(GetFilesystems);
+    CONNECT_QML_SIGNAL(GetVolumeTypes);
     CONNECT_QML_SIGNAL(GetHostDevices);
     CONNECT_QML_SIGNAL(CreateKeyFile);
     CONNECT_QML_SIGNAL(ChangeVolumePassword);
     CONNECT_QML_SIGNAL(BenchmarkAlgorithms);
+
+    CONNECT_QML_SIGNAL(GetAvailableSpace);
 
     connect(qml, SIGNAL(sendAction(QString, QVariant)), this, SLOT(sendAction(QString, QVariant)));
 

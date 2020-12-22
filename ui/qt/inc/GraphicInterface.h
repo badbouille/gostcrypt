@@ -15,7 +15,7 @@
 #include <QString>
 
 #define GI_KEY(variant, key) variant.toMap().value(key)
-#define DEC_QML_PRINT_SIGNAL(requestName) void sprint ## requestName (QVariantList l);
+#define DEC_QML_PRINT_SIGNAL(requestName) void sprint ## requestName (QVariant l);
 #define CONNECT_QML_SIGNAL(requestName) connect(qml, SIGNAL(send ## requestName (QVariant)), this, SLOT(send ## requestName (QVariant)));
 #define QML_SIGNAL(requestName, params) s ## requestName (params);
 
@@ -112,10 +112,13 @@ class GraphicInterface : public UserInterface
     DEC_SEND_SLOT(GetEncryptionAlgorithms);
     DEC_SEND_SLOT(GetDerivationFunctions);
     DEC_SEND_SLOT(GetFilesystems);
+    DEC_SEND_SLOT(GetVolumeTypes);
     DEC_SEND_SLOT(GetHostDevices);
     DEC_SEND_SLOT(CreateKeyFile);
     DEC_SEND_SLOT(ChangeVolumePassword);
     DEC_SEND_SLOT(BenchmarkAlgorithms);
+
+    DEC_SEND_SLOT(GetAvailableSpace);
 
     /* Additional slots */
     virtual void sendAction(QString, QVariant);
@@ -141,12 +144,15 @@ class GraphicInterface : public UserInterface
     DEC_QML_PRINT_SIGNAL(GetDerivationFunctions)
     DEC_QML_PRINT_SIGNAL(GetHostDevices)
     DEC_QML_PRINT_SIGNAL(GetFileSystem)
+    DEC_QML_PRINT_SIGNAL(GetVolumeTypes)
     DEC_QML_PRINT_SIGNAL(CreateKeyFile)
     DEC_QML_PRINT_SIGNAL(ChangeVolumePassword)
     DEC_QML_PRINT_SIGNAL(ProgressUpdate)
     DEC_QML_PRINT_SIGNAL(SendError)
     DEC_QML_PRINT_SIGNAL(BenchmarkAlgorithms)
     DEC_QML_PRINT_SIGNAL(BackupHeaderComplete)
+
+    DEC_QML_PRINT_SIGNAL(GetAvailableSpace)
 
     /**
      * @brief

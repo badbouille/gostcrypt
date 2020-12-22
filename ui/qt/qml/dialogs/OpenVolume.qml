@@ -347,7 +347,7 @@ Item {
                     width: keyfiles_paths.width
                     background: Rectangle {
                         color: itemDelegate.down ? custompalette.border : "transparent"
-                        height: 40
+                        height: 10
                         width: keyfiles_paths.width
                         Text {
                             id: close

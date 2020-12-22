@@ -17,6 +17,7 @@ Item {
             qmlRequest("GetEncryptionAlgorithms", "");
             qmlRequest("GetDerivationFunctions", "");
             qmlRequest("GetFilesystems", "");
+            qmlRequest("GetVolumeTypes", "");
         }
 
         onSprintGetMountedVolumes: {
@@ -35,22 +36,38 @@ Item {
             qmlRequest("GetMountedVolumes", "")
         }
 
+        onSprintCreateVolume: {
+            qmlRequest("GetMountedVolumes", "")
+        }
+
         onSprintSendError: {
             //openErrorMessage(l[0], l[1]);
             addNotification("error", l[0], l[1])
         }
 
         onSprintGetFileSystem: {
-            app.filesystems = l
+            app.filesystems.id = l.id
+            app.filesystems.name = l.name
+            app.filesystems.description = l.description
+        }
+
+        onSprintGetVolumeTypes: {
+            app.volumetypes.id = l.id
+            app.volumetypes.name = l.name
+            app.volumetypes.description = l.description
         }
 
         onSprintGetDerivationFunctions: {
-            app.hashs = l.reverse()
+            app.hashs.id = l.id
+            app.hashs.name = l.name
+            app.hashs.description = l.description
         }
 
         onSprintGetEncryptionAlgorithms:
         {
-            app.algorithms = l.reverse()
+            app.algorithms.id = l.id
+            app.algorithms.name = l.name
+            app.algorithms.description = l.description
         }
 
         onSprintGetHostDevices:
@@ -94,6 +111,12 @@ Item {
         {
             subWindow.getLoader().item.updateTableview(l);
         }
+
+        onSprintGetAvailableSpace:
+        {
+            subWindow.getLoader().item.updateAvailableSpace(l)
+        }
+
     }
 
     function manageModel(volumes)

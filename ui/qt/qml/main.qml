@@ -148,19 +148,36 @@ Window {
       \property hashs
       \brief Table of hashes usable in the current version of gostcrypt
     */
-    property variant hashs: []
+    property variant hashs: {
+        "id": [],
+        "name": [],
+        "description": []
+    }
 
     /*!
       \property algorithms
       \brief Table of algorithms usable in the current version of gostcrypt
     */
-    property variant algorithms: []
-
+    property variant algorithms: {
+         "id": [],
+         "name": [],
+         "description": []
+     }
     /*!
       \property filesystems
       \brief Table of filesystems usable in the current version of gostcrypt
     */
-    property variant filesystems: []
+    property var filesystems: {
+         "id": [],
+         "name": [],
+         "description": []
+     }
+
+    property var volumetypes: {
+         "id": [],
+         "name": [],
+         "description": []
+    }
 
     /*!
       \property exit requested
@@ -175,6 +192,7 @@ Window {
     signal sendGetEncryptionAlgorithms(variant params)
     signal sendGetDerivationFunctions(variant params)
     signal sendGetFilesystems(variant params)
+    signal sendGetVolumeTypes(variant params)
     signal sendGetHostDevices(variant params)
     signal sendCreateKeyFile(variant params)
     signal sendChangeVolumePassword(variant params)
@@ -183,6 +201,8 @@ Window {
     signal sendAction(string name, variant params)
 
     signal appQuit()
+
+    signal sendGetAvailableSpace(variant path)
 
     /*************************************
      **********  Window content **********
@@ -623,6 +643,9 @@ Window {
             case "GetFilesystems":
                 sendGetFilesystems(content);
                 break;
+            case "GetVolumeTypes":
+                sendGetVolumeTypes(content);
+                break;
             case "GetHostDevices":
                 sendGetHostDevices(content);
                 break;
@@ -650,14 +673,15 @@ Window {
 
     }
 
-    function addNotification(type, title, description)
+    function addNotification(type, t, description)
     {
         if(type === "progress")
-            notifications.push([title, description, Number(notifications.length)+1, 0, 0]);
+            notifications.push([t, description, Number(notifications.length)+1, 0, 0]);
         else
-            notifications.push([title, description, Number(notifications.length)+1, -1, 0]);
+            notifications.push([t, description, Number(notifications.length)+1, -1, 0]);
 
         notifs.drawNotification();
+        if(notifs.visible === false) title.showIcon(true);
 
         return Number(notifications.length);
     }

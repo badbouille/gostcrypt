@@ -42,7 +42,6 @@
         <file>qml/frames/ItemVolumeTools.qml</file>
         <file>qml/wizard/WizardManager.qml</file>
         <file>qml/wizard/Page1.qml</file>
-        <file>qml/wizard/Page8.qml</file>
         <file>qml/wizard/Page2.qml</file>
         <file>qml/wizard/Page3.qml</file>
         <file>qml/wizard/Page4.qml</file>
@@ -50,9 +49,6 @@
         <file>qml/wizard/Page6.qml</file>
         <file>qml/wizard/Page7.qml</file>
         <file>qml/CheckBox.qml</file>
-        <file>qml/wizard/Page9.qml</file>
-        <file>qml/wizard/Page10.qml</file>
-        <file>qml/wizard/Page11.qml</file>
         <file>qml/HelpButton.qml</file>
         <file>qml/wizard/PageEnd.qml</file>
         <file>qml/ressource/separator.png</file>
@@ -75,7 +71,6 @@
         <file>qml/ressource/wizard.png</file>
         <file>qml/wizard/StepComponent.qml</file>
         <file>qml/wizard/NextPreviousButton.qml</file>
-        <file>qml/wizard/Page12.qml</file>
         <file>qml/ressource/direct_hidden.png</file>
         <file>qml/ressource/normal_hidden.png</file>
         <file>qml/dialogs/OpenVolume.qml</file>

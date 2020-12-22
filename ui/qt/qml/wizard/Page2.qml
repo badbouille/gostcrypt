@@ -1,183 +1,149 @@
 import QtQuick 2.7
-import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.2
 import "../" as UI
 
 Item {
     id: top
-    property int type: 0
+    property string path: ""
+    property string message: qsTr("A GostCrypt volume can reside in a file (called GostCrypt container),"
+                                    +" which can reside on a hard disk, on a USB flash drive, etc. A GostCrypt"
+                                    +" container is just like any normal file (it can be, for example, moved or deleted as"
+                                    +" any normal file). Click 'Select File' to choose a filename for the container and"
+                                    +" to select the location where you wish the container to be created.<br><br><b>WARNING</b>: If you select"
+                                    +" an existing file, GostCrypt will NOT encrypt it; the file will be deleted and replaced with"
+                                    +" the newly created GostCrypt container. You will be able to encrypt existing files (later"
+                                    +" on) by moving them to the GostCrypt container that you are about to create now.")
 
     Text {
         id:titre
+        y: 10
         font.pointSize: 13
         font.family: "Helvetica"
-        text: qsTr("Please choose the type of volume you want:") + Translation.tr
+        text: qsTr("Create a new file that will contain your volume:") + Translation.tr
         anchors.horizontalCenter: parent.horizontalCenter
         color: custompalette.text
         wrapMode: Text.WordWrap
     }
 
-    Row {
-        id: choice
-        spacing: 30
-        anchors.horizontalCenter: parent.horizontalCenter
+    UI.ButtonBordered {
+        id: buttonOpen
         anchors.top: titre.bottom
         anchors.topMargin: 20
-        Rectangle {
-            id: file
-            width: 220
-            height: 150
-            color: "transparent"
+        height: combo.height
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: qsTr("Select File...")
+        width: 200
+        onClicked: fileDialog.open()
+        color_: custompalette.green
+    }
 
-            Image {
-                id: img1
-                y: 0
-                anchors.rightMargin: 10
-                source: "../ressource/normal.png"
-                anchors.horizontalCenter: parent.horizontalCenter
-                scale:  fileArea.containsMouse ? 0.8 : 1.0
-                smooth: fileArea.containsMouse
-                Behavior on width {
-                    NumberAnimation {
-                        duration: app.duration/2;
-                        easing.type: Easing.OutQuad;
-                    }
-                }
-            }
-            Text {
-                text: qsTr("Standard GostCrypt volume") + Translation.tr
-                width: 150
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-                color: custompalette.text
-                font.pointSize: 13
-                anchors.horizontalCenter: img1.horizontalCenter
-                y: 100
-                anchors.topMargin: 20
-            }
-            MouseArea {
-                id: fileArea
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: {
-                    scale.start();
-                    desc.text = qsTr("Select this option if you want to create a normal GostCrypt volume.") + Translation.tr
-                }
-                onExited: {
-                    unScale.start();
-                    desc.text = ""
-                }
-                onClicked: { type = 0; manageWizard(1) }
-                cursorShape: Qt.PointingHandCursor
-            }
-
-            SequentialAnimation {
-                id: scale
-                loops: 1
-                PropertyAnimation {
-                    target: img1
-                    properties: "scale"
-                    from: 1.0
-                    to: 0.9
-                    duration: app.duration/2
-                }
-            }
-
-            SequentialAnimation {
-                id: unScale
-                loops: 1
-                PropertyAnimation {
-                    target: img1
-                    properties: "scale"
-                    from: 0.9
-                    to: 1.0
-                    duration: app.duration/2
-                }
-            }
-        }
-        Rectangle {
-            id: device
-            width: 220
-            height: 150
-            color: "transparent"
-
-            Image {
-                id: img2
-                y: 0
-                anchors.rightMargin: 10
-                source: "../ressource/hidden.png"
-                anchors.horizontalCenter: parent.horizontalCenter
-                scale:  deviceArea.containsMouse ? 0.8 : 1.0
-                smooth: deviceArea.containsMouse
-                Behavior on width {
-                    NumberAnimation {
-                        duration: app.duration/2;
-                        easing.type: Easing.OutQuad;
-                    }
-                }
-            }
-            Text {
-                text: qsTr("Hidden GostCrypt Volume") + Translation.tr
-                width: 150
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-                color: custompalette.text
-                font.pointSize: 13
-                anchors.horizontalCenter: img2.horizontalCenter
-                y: 100
-                anchors.topMargin: 20
-            }
-            MouseArea {
-                id: deviceArea
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: {
-                    scaleDevice.start();
-                    desc.text = qsTr( "A hidden GostCrypt volume allows you to create a second volume inside your main volume. Simply enter the desired volume password to access it.") + Translation.tr
-                }
-                onExited: {
-                    unScaleDevice.start();
-                    desc.text = ""
-                }
-                onClicked: { type = 1; manageWizard(1) }
-                cursorShape: Qt.PointingHandCursor
-            }
-
-            SequentialAnimation {
-                id: scaleDevice
-                loops: 1
-                PropertyAnimation {
-                    target: img2
-                    properties: "scale"
-                    from: 1.0
-                    to: 0.9
-                    duration: app.duration/2
-                }
-            }
-
-            SequentialAnimation {
-                id: unScaleDevice
-                loops: 1
-                PropertyAnimation {
-                    target: img2
-                    properties: "scale"
-                    from: 0.9
-                    to: 1.0
-                    duration: app.duration/2
-                }
-            }
+    UI.HelpButton {
+        size: combo.height
+        anchors.left: buttonOpen.right
+        anchors.leftMargin: 10
+        y: buttonOpen.y
+        onClicked: {
+            openErrorMessage("Information", message)
         }
     }
 
-    Text {
-        id: desc
-        text: ""
-        wrapMode: Text.WordWrap
-        x: bottomBar.x
-        y: bottomBar.y-2
-        width: bottomBar.width- 40
-        height: bottomBar.height
-        horizontalAlignment: Text.AlignHCenter
-        color: custompalette.textLowOpacity
-        font.pointSize: 9
+
+    UI.CustomComboBox {
+        id: combo
+        width: parent.width - 100
+        height: 30
+        anchors.top: buttonOpen.bottom
+        anchors.topMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        model: {
+            if (volumeInfos.VOLUME_PATH !== "") {
+                return [ volumeInfos.VOLUME_PATH ]
+            }
+            return []
+        }
+        onActivated: {
+            volumeInfos.VOLUME_PATH = currentText
+        }
     }
+
+    UI.ButtonBordered {
+        id: buttonMount
+        anchors.top: combo.bottom
+        anchors.topMargin: 10
+        height: combo.height
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: qsTr("Select Mountpoint...")
+        width: 200
+        onClicked: folderDialog.open()
+        color_: custompalette.green
+    }
+
+    UI.HelpButton {
+        size: combo.height
+        anchors.left: buttonMount.right
+        anchors.leftMargin: 10
+        y: buttonMount.y
+        onClicked: {
+            openErrorMessage("Information", message) // TODO change message
+        }
+    }
+
+    UI.CustomComboBox {
+        id: mountpointbox
+        width: parent.width - 100
+        height: 30
+        anchors.top: buttonMount.bottom
+        anchors.topMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        model: {
+            if (volumeInfos.VOLUME_MOUNTPOINT !== "") {
+                return [ volumeInfos.VOLUME_MOUNTPOINT ]
+            }
+            return []
+        }
+        onActivated: {
+            volumeInfos.VOLUME_MOUNTPOINT = currentText
+        }
+    }
+
+    FileDialog {
+        id: fileDialog
+        title: qsTr("Please choose a file") + Translation.tr
+        folder: shortcuts.home
+        selectExisting: false
+        onAccepted: {
+            var path = fileDialog.fileUrl.toString();
+            path = path.replace(/^(file:\/\/\/)/, "/");
+            combo.model = [ path ]
+            volumeInfos.VOLUME_PATH = path
+            if (volumeInfos.VOLUME_MOUNTPOINT !== "" && volumeInfos.VOLUME_PATH !== "") {
+                next.visible = true
+            }
+        }
+        onRejected: {
+        }
+    }
+
+    FileDialog {
+        id: folderDialog
+        title: qsTr("Please choose a folder") + Translation.tr
+        folder: shortcuts.home
+        selectFolder: true
+        onAccepted: {
+            var path = folderDialog.folder.toString();
+            path = path.replace(/^(file:\/\/\/)/, "/");
+            mountpointbox.model = [ path ]
+            volumeInfos.VOLUME_MOUNTPOINT = path
+            if (volumeInfos.VOLUME_MOUNTPOINT !== "" && volumeInfos.VOLUME_PATH !== "") {
+                next.visible = true
+            }
+        }
+        onRejected: {
+        }
+    }
+
+    function setFileDialog(bool) {
+        fileDialog.selectExisting = bool
+    }
+
 }

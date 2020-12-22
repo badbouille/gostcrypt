@@ -1,107 +1,106 @@
 import QtQuick 2.7
-import QtQuick.Dialogs 1.2
 import "../" as UI
 
 Item {
     id: top
-    property string path: ""
-    property string message: ""
-    property int type: 0
 
-    Text {
-        id:titre
-        y: 10
-        font.pointSize: 13
-        font.family: "Helvetica"
-        text: (type === 0) ? qsTr("Create a new file that will contain your volume:") + Translation.tr : qsTr("Select an existing GostCrypt volume that will contain your volume:") + Translation.tr
+    Row {
+        id: content
+        spacing: 20
         anchors.horizontalCenter: parent.horizontalCenter
-        color: custompalette.text
-        wrapMode: Text.WordWrap
-    }
-
-    UI.ButtonBordered {
-        id: buttonOpen
-        anchors.top: titre.bottom
         anchors.topMargin: 20
-        height: combo.height
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("Select File...")
-        width: 200
-        onClicked: fileDialog.open()
-        color_: custompalette.green
-    }
-
-    UI.HelpButton {
-        size: combo.height
-        anchors.left: buttonOpen.right
-        anchors.leftMargin: 10
-        y: buttonOpen.y
-        onClicked: {
-            openErrorMessage("Information", message)
-        }
-    }
-
-
-    UI.CustomComboBox {
-        id: combo
-        width: parent.width - 250
-        anchors.top: buttonOpen.bottom
-        anchors.topMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
-        model: {
-            var paths = UserSettings.getVolumePaths(1)
-            return paths;
-        }
-        onActivated: {
-            path = currentText
-        }
-    }
-
-    UI.CheckBox {
-        id: historique
-        text_: qsTr("Never save history")
-        anchors.horizontalCenter: parent.horizontalCenter
-        checked: {
-            var isChecked = UserSettings.getSetting("MountV-SaveHistory")
-            return (isChecked === "1") ? true : false;
-        }
-        x: combo.x
-        y: combo.y + 50
-        height: combo.height
-        onCheckedChanged: {
-            if(historique.checked == true)
-                UserSettings.setSetting("MountV-SaveHistory", 1)
-            else
-                UserSettings.setSetting("MountV-SaveHistory", 0)
-            if(historique.checked === true) {
-                UserSettings.erasePaths()
-                UserSettings.getVolumePaths(1)
+        Item {
+            width: 250
+            height: 150
+            Text {
+                id: text
+                anchors.horizontalCenter: parent.horizontalCenter
+                y:5
+                font.pointSize: 11
+                font.family: "Helvetica"
+                color: custompalette.text
+                text: qsTr("Key Derivation Algorithm") + Translation.tr
             }
+
+            UI.CustomComboBox {
+                id: selector
+                model: app.hashs["id"]
+                currentIndex: volumeInfos.VOLUME_HASH
+                anchors.top: text.bottom
+                anchors.topMargin: 20
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width -20
+                onActivated: {
+                    volumeInfos.VOLUME_HASH = selector.currentIndex
+                }
+
+            }
+            Row {
+                id: buttons
+                spacing: 20
+                anchors.top: selector.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.topMargin: 10
+
+                UI.ButtonBordered {
+                    id: testbutton
+                    color_: custompalette.green
+                    text: qsTr("Test") + Translation.tr
+                    width: 70
+                    height: 40
+                    onClicked: {
+                        //TODO
+                    }
+                }
+
+                UI.ButtonBordered {
+                    id: benchmarkButton
+                    color_: custompalette.green
+                    text: qsTr("Benchmark") + Translation.tr
+                    width: 90
+                    height: 40
+                    onClicked: {
+                        openSubWindow("dialogs/Benchmark.qml", qsTr("Benchmark"), qsTr("Benchmark"), 429, {"name" : "", "value" : ""})
+                    }
+                }
+            }
+
+
+
+        }
+        Item {
+            width: 250
+            height: 150
+
+            Text {
+                id: text2
+                anchors.horizontalCenter: parent.horizontalCenter
+                y:5
+                font.pointSize: 11
+                font.family: "Helvetica"
+                color: custompalette.text
+                text: app.hashs["name"][selector.currentIndex]
+            }
+
+            Text {
+                id: description
+                horizontalAlignment: Text.AlignJustify
+                wrapMode: Text.WordWrap
+                width: parent.width + 20
+                text: app.hashs["description"][selector.currentIndex];
+                color: custompalette.text
+                font.pointSize: 9
+                font.family: "Helvetica"
+                anchors.top: text2.bottom
+                anchors.topMargin: 10
+                anchors.horizontalCenter: parent.horizontalCenter
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.NoButton
+                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                }
+            }
+
         }
     }
-
-    FileDialog {
-        id: fileDialog
-        title: qsTr("Please choose a file") + Translation.tr
-        folder: shortcuts.home
-        selectExisting: {
-            if(type !== 2)
-                return false
-            else
-                return true
-        }
-        onAccepted: {
-            if(historique.pressed === false)
-                UserSettings.addVolumePath(fileDialog.fileUrl)
-            combo.model = UserSettings.getVolumePaths(0)
-            path = fileDialog.fileUrl
-        }
-        onRejected: {
-        }
-    }
-
-    function setFileDialog(bool) {
-        fileDialog.selectExisting = bool
-    }
-
 }

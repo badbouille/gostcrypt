@@ -162,6 +162,7 @@ Rectangle {
             bk_notifs.enabled = true;
             notifs.printNotification();
             notifs.drawNotification();
+            unread_notifs.visible = false;
             showIcon(false);
         }
         else
