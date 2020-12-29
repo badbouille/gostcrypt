@@ -614,16 +614,28 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
 void GostCrypt::VolumeStandard::close()
 {
     // closing file
-    volumefile.close();
+    if (volumefile.is_open()) {
+        volumefile.close();
+    }
 
     // Deleting the algorithm (and keys)
-    delete EA;
-    EA = nullptr;
+    if (EA) {
+        delete EA;
+        EA = nullptr;
+    }
+
+    // Deleting the KDF
+    if (kdf) {
+        delete kdf;
+        kdf = nullptr;
+    }
 
     // deleting rw buffer
-    delete rwBuffer;
-    rwBuffer = nullptr;
-    rwBufferSectorNum = 0;
+    if (rwBuffer) {
+        delete rwBuffer;
+        rwBuffer = nullptr;
+        rwBufferSectorNum = 0;
+    }
 
 }
 

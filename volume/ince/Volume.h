@@ -39,7 +39,7 @@ namespace GostCrypt
 
         // ----- INIT -----
         Volume() = default;
-        ~Volume() = default;
+        virtual ~Volume() = default;
 
         /**
          * @brief Function to open an existing volume from a file on the disk.

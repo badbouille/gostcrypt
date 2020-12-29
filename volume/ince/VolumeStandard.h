@@ -42,7 +42,7 @@ namespace GostCrypt
     public:
 
         // ----- INIT -----
-        VolumeStandard() : rwBufferSectorNum(0), rwBuffer(nullptr) {};
+        VolumeStandard() : rwBufferSectorNum(0), rwBuffer(nullptr), EA(nullptr), kdf(nullptr) {};
         ~VolumeStandard() { close(); };
 
         /**
