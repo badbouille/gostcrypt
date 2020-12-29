@@ -219,7 +219,7 @@ void GraphicInterface::sendDismountAllVolumes(QVariant aContent)
 #ifdef QT_DEBUG
     qDebug() << "Calling DismountAll";
 #endif
-
+    (void)aContent;
     try {
         GostCrypt::Core::umountAll();
     } catch (GostCrypt::GostCryptException &e) {
