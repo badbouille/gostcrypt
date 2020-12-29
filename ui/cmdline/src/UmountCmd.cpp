@@ -41,7 +41,9 @@ static error_t parse_opt_umount (int key, char *arg, struct argp_state *state) {
             arguments->all = true;
             break;
         case ARGP_KEY_NO_ARGS:
-            argp_usage (state);
+            if (!(arguments->all)) {
+                argp_usage(state);
+            }
             break;
         case ARGP_KEY_ARG:
             if (state->arg_num == 0 && !(arguments->all)) {
@@ -52,7 +54,7 @@ static error_t parse_opt_umount (int key, char *arg, struct argp_state *state) {
             argp_usage(state);
             break;
         case ARGP_KEY_END:
-            if (state->arg_num < 1) {
+            if (state->arg_num < 1 && !(arguments->all)) {
                 /* Not enough arguments. */
                 argp_usage(state);
             }
