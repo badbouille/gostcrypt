@@ -89,10 +89,10 @@ Item {
         onSprintProgressUpdate:
         {
             if(l === undefined) return;
-            notifs.updateNotification(l[0]["id"],l[0]["progress"]*100,notifications[l[0]["id"]-1][0],notifications[l[0]["id"]-1][1]);
+            notifs.updateNotification(l["id"],l["progress"]*100);
             if(notifs.visible === false) title.showIcon(true);
-            notifPreview.n = notifications[l[0]["id"]-1][0]
-            notifPreview.p = l[0]["progress"]*100
+            notifPreview.n = notifications[l["id"]-1][0]
+            notifPreview.p = l["progress"]*100
         }
 
         onSprintBackupHeaderComplete:
