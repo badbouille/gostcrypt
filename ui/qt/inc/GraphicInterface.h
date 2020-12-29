@@ -21,6 +21,13 @@
 
 extern const char *g_prog_path;
 
+/* Callback on UI side to print progress */
+void ForkableCore_uicallback_multiple(const char *message, float percent, uint32_t id);
+
+/* Callbacks for unsynchronised status check */
+int ForkableCore_mountcallback(uint32_t status, uint32_t id);
+int ForkableCore_createcallback(uint32_t status, uint32_t id);
+
 class GraphicInterface;
 
 /**

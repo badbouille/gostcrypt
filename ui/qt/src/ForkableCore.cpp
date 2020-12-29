@@ -9,9 +9,17 @@
 #include "Core.h"
 #include "GraphicInterface.h"
 
-int ForkableCore_api_handler(int argc, char **argv) {
+QSharedMemory g_currentprogress;
 
-    if (argc != 3) return 8;
+int ForkableCore_api_handler(int argc, char **argv) {
+    int ret = 8;
+
+    if (argc < 3 || argc > 4) return ret;
+    if (argc == 4) {
+        g_currentprogress.setKey(argv[3]);
+        g_currentprogress.attach();
+        GostCrypt::Core::setCallBack(ForkableCore_uicallback);
+    }
 
     if (std::string(argv[1]) == "mount") {
         // calling mount command
@@ -36,8 +44,7 @@ int ForkableCore_api_handler(int argc, char **argv) {
             return 1;
         }
         pass.erase();
-        return 0;
-
+        ret = 0;
     }
     if (std::string(argv[1]) == "create") {
         // calling mount command
@@ -60,19 +67,29 @@ int ForkableCore_api_handler(int argc, char **argv) {
             return 1;
         }
         pass.erase();
-        return 0;
-
+        ret = 0;
     }
-    return 8;
+    if (argc == 4) {
+        g_currentprogress.detach();
+    }
+    return ret;
 }
 
-int ForkableCore_api_callMount(const GostCrypt::Core::MountParams_t *p) {
+int ForkableCore_api_callMount(const GostCrypt::Core::MountParams_t *p, DoneCallBackFunction_t final, UICallBackFunction_t f, const uint32_t progress_id) {
 
     pid_t pid;
-    int status;
-    static char argvT[][256] = { "api", "mount", "" };
-    static char *argv[] = { argvT[0], argvT[1], nullptr, nullptr };
+    static char argvT[][256] = { "api", "mount", "", "" };
+    static char *argv[] = { argvT[0], argvT[1], nullptr, nullptr, nullptr };
     uint32_t len;
+    QSharedMemory currentprogress;
+
+    if (f){
+        strncpy(argvT[3], (SHARED_KEY_PREFIX + std::to_string(progress_id)).c_str(), 255 );
+        currentprogress.setKey(argvT[3]); // Note : ForkableCore uses QSharedMemory, but can be POSIX-functions instead.
+        currentprogress.create(sizeof(float));
+        *((float*)currentprogress.data()) = 0.0f;
+        argv[3] = argvT[3];
+    }
 
     pid = fork();
 
@@ -82,34 +99,29 @@ int ForkableCore_api_callMount(const GostCrypt::Core::MountParams_t *p) {
         exit(127);
     }
 
-    /* Waiting for child to build disk image */
-    if (waitpid(pid, &status, 0) == -1 ) {
-        throw GOSTCRYPTEXCEPTION("waitpid failed.");
-    }
+    ForkExecutionControl *fec = new ForkExecutionControl(argvT[3], pid, progress_id, final, f);
+    fec->start(); // TODO never freed
 
-    /* Checking return value */
-    if ( WIFEXITED(status) ) {
-        if (WEXITSTATUS(status) != 0) {
-            if (WEXITSTATUS(status) == 2) {
-                throw VOLUMEPASSWORDEXCEPTION();
-            } else {
-                throw GOSTCRYPTEXCEPTION("Unknown exception");
-            }
-        }
-    } else {
-        throw GOSTCRYPTEXCEPTION("Child not exited.");
-    }
+    currentprogress.detach();
 
     return 0;
 }
 
-int ForkableCore_api_callCreate(const GostCrypt::Core::CreateParams_t *p) {
+int ForkableCore_api_callCreate(const GostCrypt::Core::CreateParams_t *p, DoneCallBackFunction_t final, UICallBackFunction_t f, const uint32_t progress_id) {
 
     pid_t pid;
-    int status;
-    static char argvT[][256] = { "api", "create", "" };
-    static char *argv[] = { argvT[0], argvT[1], nullptr, nullptr };
+    static char argvT[][256] = { "api", "create", "", "" };
+    static char *argv[] = { argvT[0], argvT[1], nullptr, nullptr, nullptr };
     uint32_t len;
+    QSharedMemory currentprogress;
+
+    if (f){
+        strncpy(argvT[3], (SHARED_KEY_PREFIX + std::to_string(progress_id)).c_str(), 255 );
+        currentprogress.setKey(argvT[3]); // Note : ForkableCore uses QSharedMemory, but can be POSIX-functions instead.
+        currentprogress.create(sizeof(float));
+        *((float*)currentprogress.data()) = 0.0f;
+        argv[3] = argvT[3];
+    }
 
     pid = fork();
 
@@ -119,25 +131,19 @@ int ForkableCore_api_callCreate(const GostCrypt::Core::CreateParams_t *p) {
         exit(127);
     }
 
-    /* Waiting for child to build disk image */
-    if (waitpid(pid, &status, 0) == -1 ) {
-        throw GOSTCRYPTEXCEPTION("waitpid failed.");
-    }
+    ForkExecutionControl *fec = new ForkExecutionControl(argvT[3], pid, progress_id, final, f);
+    fec->start(); // TODO never freed
 
-    /* Checking return value */
-    if ( WIFEXITED(status) ) {
-        if (WEXITSTATUS(status) != 0) {
-            if (WEXITSTATUS(status) == 2) {
-                throw VOLUMEPASSWORDEXCEPTION();
-            } else {
-                throw GOSTCRYPTEXCEPTION("Unknown exception");
-            }
-        }
-    } else {
-        throw GOSTCRYPTEXCEPTION("Child not exited.");
-    }
+    currentprogress.detach();
 
     return 0;
+}
+
+void ForkableCore_uicallback(const char *message, float percent) {
+    (void)message;
+    g_currentprogress.lock();
+    *((float*)g_currentprogress.data()) = percent;
+    g_currentprogress.unlock();
 }
 
 void getChars(char *c, uint8_t b) {
@@ -514,4 +520,47 @@ int ForkableCore_api_DeserializeCreate(GostCrypt::Core::CreateParams_t *p, const
     eraser.erase();
 
     return 0;
+}
+
+ForkExecutionControl::ForkExecutionControl(const char *mem_key, pid_t pid, uint32_t id, DoneCallBackFunction_t callback_final, UICallBackFunction_t callback_function)
+{
+    mem.setKey(mem_key);
+    monitored = pid;
+    notif_id = id;
+    final = callback_final;
+    callback = callback_function;
+}
+
+void ForkExecutionControl::run()
+{
+    float lastdata = 0.0f;
+    int ret = 0, status;
+
+    if (callback)
+    {
+        mem.attach(QSharedMemory::ReadOnly);
+        do
+        {
+            mem.lock();
+            if (lastdata != *((const float *) mem.constData()))
+            {
+                lastdata = *((const float *) mem.constData());
+                // Note: Forkablecore does not support messages for now
+                callback("", lastdata, notif_id);
+            }
+            mem.unlock();
+
+            ret = waitpid(monitored, &status, WNOHANG);
+        } while (ret == 0);
+        mem.detach();
+    } else {
+        ret = waitpid(monitored, &status, 0);
+    }
+
+    /* Waiting for child to build disk image */
+    if ((ret == -1) || (WIFEXITED(status) == false)) {
+        final(-1, notif_id);
+    }
+
+    final(WEXITSTATUS(status), notif_id);
 }
