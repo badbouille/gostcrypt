@@ -188,6 +188,7 @@ Window {
     signal sendCreateVolume(variant params)
     signal sendMountVolume(variant params)
     signal sendDismountVolume(variant params)
+    signal sendDismountAllVolumes(variant params)
     signal sendGetMountedVolumes(variant params)
     signal sendGetEncryptionAlgorithms(variant params)
     signal sendGetDerivationFunctions(variant params)
@@ -630,6 +631,9 @@ Window {
                 break;
             case "DismountVolume":
                 sendDismountVolume(content);
+                break;
+            case "DismountAllVolumes":
+                sendDismountAllVolumes(content);
                 break;
             case "GetMountedVolumes":
                 sendGetMountedVolumes(content);

@@ -214,6 +214,24 @@ void GraphicInterface::sendDismountVolume(QVariant aContent)
 
 }
 
+void GraphicInterface::sendDismountAllVolumes(QVariant aContent)
+{
+#ifdef QT_DEBUG
+    qDebug() << "Calling DismountAll";
+#endif
+
+    try {
+        GostCrypt::Core::umountAll();
+    } catch (GostCrypt::GostCryptException &e) {
+        QVariantList r;
+        r << e.name();
+        r << e.what();
+        emit QML_SIGNAL(printSendError, r)
+        return;
+    }
+    emit QML_SIGNAL(printDismountVolume, QVariantList());
+}
+
 void GraphicInterface::sendBenchmarkAlgorithms(QVariant aContent)
 {
 #ifdef QT_DEBUG
@@ -515,6 +533,7 @@ void GraphicInterface::connectSignals()
     CONNECT_QML_SIGNAL(CreateVolume);
     CONNECT_QML_SIGNAL(MountVolume);
     CONNECT_QML_SIGNAL(DismountVolume);
+    CONNECT_QML_SIGNAL(DismountAllVolumes);
     CONNECT_QML_SIGNAL(GetMountedVolumes);
     CONNECT_QML_SIGNAL(GetEncryptionAlgorithms);
     CONNECT_QML_SIGNAL(GetDerivationFunctions);

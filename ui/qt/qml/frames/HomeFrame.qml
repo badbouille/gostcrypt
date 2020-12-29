@@ -493,7 +493,7 @@ Item {
             color_:custompalette.blue
             width:200
             onClicked: {
-                qmlRequest("dismountall", "dummy");
+                qmlRequest("DismountAllVolumes", "dummy");
             }
         }
         Behavior on anchors.horizontalCenterOffset { NumberAnimation { duration: app.duration; easing.type: Easing.OutQuad } }

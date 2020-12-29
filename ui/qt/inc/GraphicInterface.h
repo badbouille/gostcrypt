@@ -115,6 +115,7 @@ class GraphicInterface : public UserInterface
     DEC_SEND_SLOT(CreateVolume);
     DEC_SEND_SLOT(MountVolume);
     DEC_SEND_SLOT(DismountVolume);
+    DEC_SEND_SLOT(DismountAllVolumes);
     DEC_SEND_SLOT(GetMountedVolumes);
     DEC_SEND_SLOT(GetEncryptionAlgorithms);
     DEC_SEND_SLOT(GetDerivationFunctions);
