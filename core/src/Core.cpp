@@ -153,6 +153,15 @@ void GostCrypt::Core::umount(std::string mountPoint)
 
 }
 
+void GostCrypt::Core::umountAll()
+{
+    VolumeInfoList vl = Core::list();
+
+    for (VolumeInfo& v : vl) {
+        Core::umount(v.mountPoint);
+    }
+}
+
 void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
 {
     // TODO check input

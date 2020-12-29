@@ -82,6 +82,7 @@ namespace GostCrypt
         // MountPoints management
         static void mount(MountParams_t *p);
         static void umount(std::string mountPoint);
+        static void umountAll();
         static void create(CreateParams_t *p);
         static VolumeInfoList list();
 
