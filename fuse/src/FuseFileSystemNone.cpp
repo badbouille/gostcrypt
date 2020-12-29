@@ -189,8 +189,8 @@ void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint, Volume *
 #define ARG_NUM 5
     char params[ARG_NUM][256] = {"gostcrypt", "", "-oallow_other", "-f", "-s"};
 #else
-#define ARG_NUM 3
-    char params[ARG_NUM][256] = {"gostcrypt", "", "-oallow_other"};
+#define ARG_NUM 4
+    char params[ARG_NUM][256] = {"gostcrypt", "", "-oallow_other", "-s"};
 #endif
 
     // TODO option allow_other only allowed if 'user_allow_other' is set in /etc/fuse.conf

@@ -3890,8 +3890,8 @@ int fuse2fs_main(int argc, char *argv[], const char *fuse_additional_params)
 
 #ifdef DEBUG
     fuse_opt_add_arg(&args,"-f");
-    fuse_opt_add_arg(&args,"-s");
 #endif
+    fuse_opt_add_arg(&args,"-s");
 
 	pthread_mutex_init(&fctx.bfl, NULL);
     super_fuse_main(args.argc, args.argv, &fs_ops, &fctx);
