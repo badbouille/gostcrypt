@@ -114,8 +114,8 @@ else
   echo "All volumes mounted at once successfully"
 fi
 
-# Unmounting all volumes at once
-for volume in $(find "$datafolder" -maxdepth 1 -name "v_*"); do
+# Unmounting all volumes at once (except last three)
+for volume in $(find "$datafolder" -maxdepth 1 -name "v_*" | head -n -3); do
 
   # gettting volume name
   volumename=$(basename "$volume")
@@ -132,12 +132,31 @@ for volume in $(find "$datafolder" -maxdepth 1 -name "v_*"); do
 
 done
 
+# checking that everything is unmounted except three
+Nmounted=$($GC list | wc -l)
+
+if [ ! "$Nmounted" == "3" ]; then
+  echo "Could not unmount everything"
+  exit 4
+else
+  echo "All volumes but 3 unmounted successfully"
+fi
+
+# unmounting all remaining volumes
+$GC umount -a
+
+# Checking success
+if [ $? -ne 0 ]; then
+  echo "Could not unmount-all"
+  exit 5
+fi
+
 # checking that everything is unmounted
 Nmounted=$($GC list | wc -l)
 
 if [ ! "$Nmounted" == "0" ]; then
-  echo "Could not unmount everything"
-  exit 4
+  echo "Could not unmount-all everything"
+  exit 5
 else
   echo "All volumes unmounted successfully"
 fi

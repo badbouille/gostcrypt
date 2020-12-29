@@ -42,6 +42,7 @@ checkerr $ECODE 1 "mount_mount" "$ERR"
 checkerr $ECODE 2 "mount_check" "$ERR"
 checkerr $ECODE 3 "mount_list" "$ERR"
 checkerr $ECODE 4 "mount_umount" "$ERR"
+checkerr $ECODE 5 "mount_umount-all" "$ERR"
 
 # calling create script
 ./create.sh ../data > tmp.txt
