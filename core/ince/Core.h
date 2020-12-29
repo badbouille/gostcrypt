@@ -65,6 +65,11 @@ namespace GostCrypt
          */
         typedef std::list<VolumeInfo_t> VolumeInfoList;
 
+        /**
+         * @brief type for callback function, to report current status of jobs to the caller during execution
+         */
+        typedef void (*CallBackFunction_t)(const char *, float);
+
         // everything static. Only one instance of this class exists
         Core() = delete;
 
@@ -80,7 +85,24 @@ namespace GostCrypt
         static void create(CreateParams_t *p);
         static VolumeInfoList list();
 
+        // UI bonuses
+        static void setCallBack(CallBackFunction_t function) { callback_function = function; };
+        static void callback(const char *current, float percent) { if(callback_function && callback_enable) callback_function(current, percent); };
+        static void super_callback(const char *current, float percent) { if(callback_function && callback_enable) callback_function(current, callback_superbound_low+(callback_superbound_high-callback_superbound_low)*percent); };
+
         // Volume management
+
+    private:
+
+        // UI bonuses variables
+        static CallBackFunction_t callback_function;
+        static float callback_superbound_high;
+        static float callback_superbound_low;
+        static bool callback_enable;
+
+        // UI bonuses functions (for recursive calls)
+        static void disableCallback() { callback_enable = false; }
+        static void enableCallback() { callback_enable = true; }
 
     };
 

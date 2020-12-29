@@ -176,6 +176,35 @@ namespace GostCrypt
          */
         virtual size_t getSize() const = 0;
 
+        // Core interface (dynamic display)
+
+        /**
+         * @brief type for callback function, to report current status of jobs to the caller during execution
+         */
+        typedef void (*CallBackFunction_t)(const char *, float);
+
+        /**
+         * @brief Setter to add an optional callback function to report progress for long operations (usually create, since most operations are very fast)
+         * @param function The function to call to report progress
+         */
+        void setCallBack(CallBackFunction_t function) { callback_function = function; };
+
+        /**
+         * @brief function called by the implementation to call the given callback if it is present.
+         * @param current The current action being done, as a user-friendly string read by the UI.
+         * @param percent the current progress in percent, between 0 and 1.
+         */
+        void callback(const char *current, float percent) { if(callback_function) callback_function(current, percent); };
+
+    private:
+
+        /**
+         * @brief Current callback. This function will be called everytime needed to report progress of current call.
+         *
+         * Any implementation of this class may call 'callback' method to report progression if available.
+         */
+        CallBackFunction_t callback_function;
+
     };
 
 }
