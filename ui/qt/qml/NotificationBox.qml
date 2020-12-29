@@ -34,7 +34,7 @@ Item {
 
     }
 
-    function updateNotification(id,percent,name,desc)
+    function updateNotification(id,percent)
     {
         //Checking if the notification exists
         for(var i = 0; i < app.notifications.length; ++i)
