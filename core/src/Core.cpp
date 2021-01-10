@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <wait.h>
+#include <ContainerFile.h>
 #include "Core.h"
 #include "FuseFileSystem.h"
 
@@ -73,7 +74,7 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
         callback("Trying to open the volume", 0.05f + ((i+1)/volumeList.size())*0.75f);
 
         // trying to open volume
-        if (volumeIterator->open(p->volumePath, p->password)) {
+        if (volumeIterator->open(new ContainerFile(p->volumePath), p->password)) {
             // Worked! Header was successfully decrypted
             volume = volumeIterator;
             volumeOpened = true;
@@ -221,7 +222,7 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
         callback_superbound_high = 0.80f;
         callback_superbound_low = 0.06f;
         volume->setCallBack(super_callback);
-        volume->create(p->volumePath, p->dataSize, p->algorithmID, p->keyDerivationFunctionID, p->sectorSize, p->password);
+        volume->create(new ContainerFile(p->volumePath), p->dataSize, p->algorithmID, p->keyDerivationFunctionID, p->sectorSize, p->password);
     } catch (GostCryptException &e) {
         delete volume;
         throw;

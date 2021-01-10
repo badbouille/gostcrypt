@@ -56,6 +56,9 @@ namespace GostCrypt {
     BUILD_EXCEPTION(CantCreateFileException, GostCryptException);
     #define CANTCREATEFILEEXCEPTION(file) GostCrypt::CantCreateFileException("File " + std::string(file) + " could not be created", __FUNCTION__, __FILE__, __LINE__)
 
+    BUILD_EXCEPTION(CantOpenFileException, GostCryptException);
+    #define CANTOPENFILEEXCEPTION(file) GostCrypt::CantOpenFileException("File " + std::string(file) + " could not be opened", __FUNCTION__, __FILE__, __LINE__)
+
     BUILD_EXCEPTION(InvalidParameterException, GostCryptException);
     #define INVALIDPARAMETEREXCEPTION(msg) GostCrypt::InvalidParameterException(msg, __FUNCTION__, __FILE__, __LINE__)
 
@@ -70,6 +73,9 @@ namespace GostCrypt {
 
     BUILD_EXCEPTION(AlgorithmUnititializedException, GostCryptException);
     #define ALGORITHMUNITITILIZEDEXCEPTION() GostCrypt::AlgorithmUnititializedException("Algorithm has not been initialized", __FUNCTION__, __FILE__, __LINE__)
+
+    BUILD_EXCEPTION(ContainerUninitializedException, GostCryptException);
+    #define CONTAINERUNINITIALIZEDEXCEPTION() GostCrypt::ContainerUninitializedException("Container has not been opened", __FUNCTION__, __FILE__, __LINE__)
 
     BUILD_EXCEPTION(ProgramTooOldException, GostCryptException);
     #define PROGRAMTOOOLDEXCEPTION() GostCrypt::ProgramTooOldException("GostCrypt needs an update to perform this operation.", __FUNCTION__, __FILE__, __LINE__)

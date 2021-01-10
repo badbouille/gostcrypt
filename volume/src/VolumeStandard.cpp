@@ -13,7 +13,7 @@
 /** Compression factor of the CSPRNG: How many bytes of system random for one byte of secure random */
 #define PRNG_COMPRESSION_FACTOR 4
 
-bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPtr password)
+bool GostCrypt::VolumeStandard::open(Container *source, GostCrypt::SecureBufferPtr password)
 {
     SecureBuffer encryptedHeader(STANDARD_HEADER_SIZE);
     SecureBuffer tempDecryptedHeader(STANDARD_HEADER_SIZE);
@@ -27,16 +27,16 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
     encryptedHeader.getRange(encryptedHeaderPtr, 0, STANDARD_HEADER_SIZE);
     tempDecryptedHeader.getRange(tempDecryptedHeaderPtr, 0, STANDARD_HEADER_SIZE);
 
-    // TODO : error handling
-    // opening volume in readonly mode
-    volumefile.open(file, std::ios::binary | std::ios::in | std::ios::out);
+    if (source == nullptr) {
+        throw INVALIDPARAMETEREXCEPTION("Volume source is not initialized");
+    }
+    if (!source->isOpened()) {
+        source->open();
+    }
+    container = source;
 
-    // remembering requested file
-    volumefilepath = file;
-
-    // going to header offset (usually 0 : beginning of file)
-    volumefile.seekg(getHeaderOffset(), std::ios::beg);
-    volumefile.read((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
+    // Reading header from source
+    container->read(encryptedHeaderPtr, getHeaderOffset());
 
     // Getting list of all available algorithms to open the volume
     DiskEncryptionAlgorithmList algorithmList = GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
@@ -120,7 +120,7 @@ bool GostCrypt::VolumeStandard::open(std::string file, GostCrypt::SecureBufferPt
 
 }
 
-void GostCrypt::VolumeStandard::create(std::string file,
+void GostCrypt::VolumeStandard::create(Container *source,
                                        size_t datasize,
                                        std::string algorithmID,
                                        std::string kdfID,
@@ -145,12 +145,16 @@ void GostCrypt::VolumeStandard::create(std::string file,
     //  ---------------  OPENING FILE  ---------------
     callback("Opening target file", 0.01);
     // TODO : error handling / checks / readonly
-    // TODO : handle device files
-    volumefile.open(file, std::fstream::out | std::fstream::binary);
 
-    if (volumefile.fail()) {
-        throw CANTCREATEFILEEXCEPTION(file);
+    if (source == nullptr) {
+        throw INVALIDPARAMETEREXCEPTION("Volume source is not initialized");
     }
+    if (source->isOpened()) {
+        source->resize(STANDARD_HEADER_SIZE); // size is not important
+    } else {
+        source->create(STANDARD_HEADER_SIZE); // size is not important
+    }
+    container = source;
 
     //  ---------------  FINDING ALGORITHM  ---------------
     callback("Finding target algorithm", 0.03);
@@ -243,13 +247,11 @@ void GostCrypt::VolumeStandard::create(std::string file,
     callback("Writing headers to volume", 0.09);
 
     // standard header
-    volumefile.seekg(getHeaderOffset(), std::ios::beg);
-    volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
+    container->write(encryptedHeaderPtr, getHeaderOffset());
 
     // TODO encrypt with different sector num
     // backup header
-    volumefile.seekg(4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup(), std::ios::beg);
-    volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
+    container->write(encryptedHeaderPtr, 4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup());
 
     //  ---------------  Writing random data across data area and encrypting it  ---------------
 
@@ -274,8 +276,7 @@ void GostCrypt::VolumeStandard::create(std::string file,
         EA->Encrypt(randomBufferPtr, i/header.sectorsize, 1, header.sectorsize);
 
         // writing sector
-        volumefile.seekg(header.dataStartOffset + (i/header.sectorsize)*header.sectorsize);
-        volumefile.write((char*)randomBufferPtr.get(), header.sectorsize);
+        container->write(randomBufferPtr, header.dataStartOffset + (i/header.sectorsize)*header.sectorsize);
     }
 
     randomBuffer.erase();
@@ -302,19 +303,17 @@ void GostCrypt::VolumeStandard::create(std::string file,
     // TODO link those offsets to class VolumeStandardHidden ?
 
     // standard hidden header
-    volumefile.seekg(getHeaderOffset() + STANDARD_HEADER_SIZE, std::ios::beg);
-    volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
+    container->write(encryptedHeaderPtr, getHeaderOffset() + STANDARD_HEADER_SIZE);
 
     // TODO encrypt with different sector num
     // backup header
-    volumefile.seekg(4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup() - STANDARD_HEADER_SIZE, std::ios::beg);
-    volumefile.write((char *)(encryptedHeaderPtr.get()), STANDARD_HEADER_SIZE);
+    container->write(encryptedHeaderPtr, 4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup() - STANDARD_HEADER_SIZE);
 
     //  ---------------  CLOSING AND REOPENING VOLUME  ---------------
 
     callback("Closing file and reopening it as a volume", 0.92);
     close();
-    open(file, password);
+    open(container, password);
 
     // TODO : check for errors
 
@@ -391,13 +390,14 @@ void GostCrypt::VolumeStandard::read(GostCrypt::SecureBufferPtr buffer, size_t o
     size_t firstSectorOffset = offset % sectorSize;
     size_t lastSectorOffset = (offset+buffer.size()) % sectorSize;
 
+    // init rwBuffer to a one-sector buffer for simple cases
+    rwBuffer->getRange(rwBufferPtr, 0, sectorSize);
+
     // Case 1
     if (sectorIndexBegin == sectorIndexEnd) {
         // reading FIRST sector
-        volumefile.seekg(header.dataStartOffset + sectorIndexBegin*sectorSize);
-        volumefile.read(rwBufferPtr_char, sectorSize);
+        container->read(rwBufferPtr, header.dataStartOffset + sectorIndexBegin*sectorSize);
         // decrypting sector
-        rwBuffer->getRange(rwBufferPtr, 0, sectorSize);
         EA->Decrypt(rwBufferPtr, sectorIndexBegin, 1, sectorSize);
         // getting part to read from, from sector
         rwBufferPtr.getRange(rBufferPtr, firstSectorOffset, buffer.size());
@@ -411,10 +411,8 @@ void GostCrypt::VolumeStandard::read(GostCrypt::SecureBufferPtr buffer, size_t o
     // Case 2
     if (firstSectorOffset != 0) {
         // reading FIRST sector
-        volumefile.seekg(header.dataStartOffset + sectorIndexBegin*sectorSize);
-        volumefile.read(rwBufferPtr_char, sectorSize);
+        container->read(rwBufferPtr, header.dataStartOffset + sectorIndexBegin*sectorSize);
         // decrypting sector
-        rwBuffer->getRange(rwBufferPtr, 0, sectorSize);
         EA->Decrypt(rwBufferPtr, sectorIndexBegin, 1, sectorSize);
         // getting part to read from, from sector
         rwBufferPtr.getRange(rBufferPtr, firstSectorOffset, sectorSize - firstSectorOffset);
@@ -431,10 +429,8 @@ void GostCrypt::VolumeStandard::read(GostCrypt::SecureBufferPtr buffer, size_t o
     // Case 3
     if (lastSectorOffset != 0) {
         // reading LAST sector
-        volumefile.seekg(header.dataStartOffset + sectorIndexEnd*sectorSize);
-        volumefile.read(rwBufferPtr_char, sectorSize);
+        container->read(rwBufferPtr, header.dataStartOffset + sectorIndexEnd*sectorSize);
         // decrypting sector
-        rwBuffer->getRange(rwBufferPtr, 0, sectorSize);
         EA->Decrypt(rwBufferPtr, sectorIndexEnd, 1, sectorSize);
         // getting part to read from, from sector
         rwBufferPtr.getRange(rBufferPtr, 0, lastSectorOffset);
@@ -453,7 +449,6 @@ void GostCrypt::VolumeStandard::read(GostCrypt::SecureBufferPtr buffer, size_t o
 
     // Case 4
     // erasing and encrypting above all other sectors
-    volumefile.seekg(header.dataStartOffset + sectorIndexBegin*sectorSize);
     wBufferPtr_char = (char *)buffer.get();
     rwBuffer->getRange(rwBufferPtr, 0, rwBuffer->size());
     do {
@@ -466,7 +461,7 @@ void GostCrypt::VolumeStandard::read(GostCrypt::SecureBufferPtr buffer, size_t o
         rwBuffer->getRange(rwBufferPtr, 0, maxReadable*sectorSize);
 
         // copying data into rwBuffer
-        volumefile.read(rwBufferPtr_char, maxReadable*sectorSize);
+        container->read(rwBufferPtr, header.dataStartOffset + sectorIndexBegin*sectorSize);
 
         // Decrypting data
         EA->Decrypt(rwBufferPtr, sectorIndexBegin, maxReadable, sectorSize);
@@ -517,13 +512,14 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
     size_t firstSectorOffset = offset % sectorSize;
     size_t lastSectorOffset = (offset+buffer.size()) % sectorSize;
 
+    // init rwBuffer to a one-sector buffer for simple cases
+    rwBuffer->getRange(rwBufferPtr, 0, sectorSize);
+
     // Case 1
     if (sectorIndexBegin == sectorIndexEnd) {
         // reading FIRST sector
-        volumefile.seekg(header.dataStartOffset + sectorIndexBegin*sectorSize);
-        volumefile.read(rwBufferPtr_char, sectorSize);
+        container->read(rwBufferPtr, header.dataStartOffset + sectorIndexBegin*sectorSize);
         // decrypting sector
-        rwBuffer->getRange(rwBufferPtr, 0, sectorSize);
         EA->Decrypt(rwBufferPtr, sectorIndexBegin, 1, sectorSize);
         // getting part to write to from sector
         rwBufferPtr.getRange(wBufferPtr, firstSectorOffset, buffer.size());
@@ -532,8 +528,7 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
         // encrypting
         EA->Encrypt(rwBufferPtr, sectorIndexBegin, 1, sectorSize);
         // writing sector
-        volumefile.seekg(header.dataStartOffset + sectorIndexBegin*sectorSize);
-        volumefile.write(rwBufferPtr_char, sectorSize);
+        container->write(rwBufferPtr, header.dataStartOffset + sectorIndexBegin*sectorSize);
         // everything written, returning
         return;
     }
@@ -542,8 +537,7 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
     // Case 2
     if (firstSectorOffset != 0) {
         // reading FIRST sector
-        volumefile.seekg(header.dataStartOffset + sectorIndexBegin*sectorSize);
-        volumefile.read(rwBufferPtr_char, sectorSize);
+        container->read(rwBufferPtr, header.dataStartOffset + sectorIndexBegin*sectorSize);
         // decrypting sector
         rwBuffer->getRange(rwBufferPtr, 0, sectorSize);
         EA->Decrypt(rwBufferPtr, sectorIndexBegin, 1, sectorSize);
@@ -556,8 +550,7 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
         // encrypting
         EA->Encrypt(rwBufferPtr, sectorIndexBegin, 1, sectorSize);
         // writing sector
-        volumefile.seekg(header.dataStartOffset + sectorIndexBegin*sectorSize);
-        volumefile.write(rwBufferPtr_char, sectorSize);
+        container->write(rwBufferPtr, header.dataStartOffset + sectorIndexBegin*sectorSize);
         // adjusting input to forget what has already be done
         buffer.getRange(buffer, sectorSize - firstSectorOffset, buffer.size() - sectorSize + firstSectorOffset);
         offset += sectorSize - firstSectorOffset;
@@ -567,8 +560,7 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
     // Case 3
     if (lastSectorOffset != 0) {
         // reading LAST sector
-        volumefile.seekg(header.dataStartOffset + sectorIndexEnd*sectorSize);
-        volumefile.read(rwBufferPtr_char, sectorSize);
+        container->read(rwBufferPtr, header.dataStartOffset + sectorIndexEnd*sectorSize);
         // decrypting sector
         rwBuffer->getRange(rwBufferPtr, 0, sectorSize);
         EA->Decrypt(rwBufferPtr, sectorIndexEnd, 1, sectorSize);
@@ -581,8 +573,7 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
         // encrypting
         EA->Encrypt(rwBufferPtr, sectorIndexEnd, 1, sectorSize);
         // writing sector
-        volumefile.seekg(header.dataStartOffset + sectorIndexEnd*sectorSize);
-        volumefile.write(rwBufferPtr_char, sectorSize);
+        container->write(rwBufferPtr, header.dataStartOffset + sectorIndexEnd*sectorSize);
         // adjusting input to forget what has already be done
         buffer.getRange(buffer, 0, buffer.size() - lastSectorOffset);
     }
@@ -594,7 +585,6 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
 
     // Case 4
     // erasing and encrypting above all other sectors
-    volumefile.seekg(header.dataStartOffset + sectorIndexBegin*sectorSize);
     rBufferPtr_char = (char *)buffer.get();
     do {
         size_t maxReadable = sectorIndexEnd - sectorIndexBegin;
@@ -612,7 +602,7 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
         EA->Encrypt(rwBufferPtr, sectorIndexBegin, maxReadable, sectorSize);
 
         // Writing to disk
-        volumefile.write(rwBufferPtr_char, maxReadable*sectorSize);
+        container->write(rwBufferPtr, header.dataStartOffset + sectorIndexBegin*sectorSize);
 
         // adjusting input
         sectorIndexBegin += maxReadable;
@@ -625,8 +615,8 @@ void GostCrypt::VolumeStandard::write(GostCrypt::SecureBufferPtr buffer, size_t 
 void GostCrypt::VolumeStandard::close()
 {
     // closing file
-    if (volumefile.is_open()) {
-        volumefile.close();
+    if (container && container->isOpened()) {
+        container->close();
     }
 
     // Deleting the algorithm (and keys)
@@ -693,5 +683,5 @@ size_t GostCrypt::VolumeStandard::getSize() const
 
 std::string GostCrypt::VolumeStandard::getVolumeSource() const
 {
-    return volumefilepath;
+    return container->getSource();
 }

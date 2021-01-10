@@ -10,6 +10,7 @@
 #include <memory>
 #include <Buffer.h>
 #include <fstream>
+#include "Container.h"
 
 namespace GostCrypt
 {
@@ -50,7 +51,7 @@ namespace GostCrypt
          * @param password the user's password used to open the volume
          * @return a boolean indicating the success (or not) of this action
          */
-        virtual bool open(std::string file, SecureBufferPtr password) = 0;
+        virtual bool open(Container *source, SecureBufferPtr password) = 0;
 
         /**
          * @brief Function to create a volume on the disk.
@@ -65,7 +66,7 @@ namespace GostCrypt
          * Cannot be smaller than the BlockCipher's block size. Some algorithms only allow multiples of the cipher's blocksize.
          * @param password User's password to use to open this volume
          */
-        virtual void create(std::string file, size_t datasize, std::string algorithmID, std::string kdfID, size_t sectorsize, SecureBufferPtr password) = 0;
+        virtual void create(Container *source, size_t datasize, std::string algorithmID, std::string kdfID, size_t sectorsize, SecureBufferPtr password) = 0;
 
         // ----- RUNTIME -----
         // Filesystem interface

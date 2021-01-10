@@ -42,8 +42,8 @@ namespace GostCrypt
     public:
 
         // ----- INIT -----
-        VolumeStandard() : rwBufferSectorNum(0), rwBuffer(nullptr), EA(nullptr), kdf(nullptr) {};
-        ~VolumeStandard() { close(); };
+        VolumeStandard() : rwBufferSectorNum(0), rwBuffer(nullptr), EA(nullptr), kdf(nullptr), container(nullptr) {};
+        ~VolumeStandard() { close(); delete container; };
 
         /**
          * Opens a standard volume.
@@ -55,7 +55,7 @@ namespace GostCrypt
          *  - Informations from the header (salt, masterkey, data area, sector size) are used to set up local buffers
          *  - Ready!
          */
-        bool open(std::string file, SecureBufferPtr password) override;
+        bool open(Container *source, SecureBufferPtr password) override;
 
         /**
          * @brief Creates a standard volume
@@ -68,7 +68,7 @@ namespace GostCrypt
          *  - Written file is closed then reopened using VolumeStandard::open(), to ensure everything was done correctly.
          *  - Ready! (from open)
          */
-        void create(std::string file, size_t datasize, std::string algorithmID, std::string kdfID, size_t sectorsize, SecureBufferPtr password) override;
+        void create(Container *source, size_t datasize, std::string algorithmID, std::string kdfID, size_t sectorsize, SecureBufferPtr password) override;
 
         // ----- RUNTIME -----
         // Filesystem interface
@@ -139,17 +139,6 @@ namespace GostCrypt
         virtual size_t getHeaderOffsetBackup() { return -STANDARD_HEADER_SIZE; };
 
         /**
-         * Path of the currently opened file.
-         * Useful for user interface to remember what file is currently used.
-         */
-        std::string volumefilepath;
-
-        /**
-         * Stream pointing to the current encrypted volume file. Must be handled with care.
-         */
-        std::fstream volumefile;
-
-        /**
          * Header of this volume. Contains all the necessary data to understand the layout.
          */
         VolumeStandardHeader header;
@@ -158,6 +147,12 @@ namespace GostCrypt
          * Encryption Algorithm of this volume. Loaded with the master key, and used on the fly for encryption/decryption
          */
         DiskEncryptionAlgorithm *EA;
+
+        /**
+         * Source of this volume. Given by the user, this is the target of the volume.
+         * @warning Needs to be deleted by this class, not the user.
+         */
+        Container *container;
 
         /**
          * Key Derivation Function of this volume. Not really used after the volume is opened.
