@@ -38,7 +38,7 @@ namespace GostCrypt
     public:
 
         // ----- INIT -----
-        Volume() = default;
+        Volume() : callback_function(nullptr) {};
         virtual ~Volume() = default;
 
         /**
