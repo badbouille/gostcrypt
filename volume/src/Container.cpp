@@ -10,7 +10,7 @@ GostCrypt::ContainerList GostCrypt::Container::GetAvailableContainerTypes()
     GostCrypt::ContainerList l;
 
     // Default container type
-    l.push_back(new ContainerFile());
+    l.push_back(new ContainerFile(""));
 
     return l;
 }

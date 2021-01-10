@@ -41,19 +41,18 @@ namespace GostCrypt
 
         // Creation
 
-        /* Note: Since Containers are all different, there can't be a generic open() function.
-         * Open and create are method specific to the implementation of this abstract class
-         * For example:
-         *  - ContainerFile : open(path)
-         *  - ContainerUrl : open(url, credentials)
-         *  - ContainerSpread : open(list<paths>)
-         *
-         * After the container is opened or created or whatever, it is given to the Volume,
-         * as some kind of 'already opened file' that the volume will read and write to.
-         * But the volume will never know the source itself, meaning it can't create or edit it.
+        /**
+         * @brief Generic open function to open the Container.
+         * @note takes no parameters because they are given by the implementation.
          */
-        /* void Open(...) {} */
-        /* void Create(...) {} */
+        virtual void open() = 0;
+
+        /**
+         * @brief Generic create function to create the Container.
+         * @note takes no parameters because they are given by the implementation.
+         * @param requested size of the empty container to create
+         */
+        virtual void create(size_t size) = 0;
 
         // ----- RUNTIME -----
         // Filesystem interface
@@ -84,12 +83,6 @@ namespace GostCrypt
          * @warning The generic interface will not allow to open it again.
          */
         virtual void close() = 0;
-
-        /**
-         * Closes then opens again the container.
-         * @warning The generic interface will not allow to open it again.
-         */
-        virtual void reopen() = 0;
 
         /**
          * Resizes the container to the given size.

@@ -9,10 +9,9 @@
 /* TODO windows */
 #include <unistd.h>
 
-void GostCrypt::ContainerFile::open(const std::string& path)
+void GostCrypt::ContainerFile::open()
 {
-    volumefilepath = path;
-    volumefile.open(path.c_str(), std::ios_base::in | std::ios_base::out | std::ios_base::binary);
+    volumefile.open(volumefilepath.c_str(), std::ios_base::in | std::ios_base::out | std::ios_base::binary);
     if (volumefile.fail()) {
         throw CANTOPENFILEEXCEPTION(volumefilepath);
     }
@@ -21,16 +20,15 @@ void GostCrypt::ContainerFile::open(const std::string& path)
     volumesize = volumefile.tellg();
 }
 
-void GostCrypt::ContainerFile::create(const std::string& path, size_t size)
+void GostCrypt::ContainerFile::create(size_t size)
 {
-    volumefilepath = path;
-    volumefile.open(path.c_str(), std::ios_base::out | std::ios_base::binary);
+    volumefile.open(volumefilepath.c_str(), std::ios_base::out | std::ios_base::binary);
     if (volumefile.fail()) {
         throw CANTCREATEFILEEXCEPTION(volumefilepath);
     }
     opened = true;
     volumefile.close();
-    open(path);
+    open();
     resize(size);
 }
 
@@ -73,18 +71,12 @@ void GostCrypt::ContainerFile::close()
     opened = false;
 }
 
-void GostCrypt::ContainerFile::reopen()
-{
-    close();
-    open(volumefilepath);
-}
-
 void GostCrypt::ContainerFile::resize(size_t size)
 {
     close();
-    truncate(volumefilepath.c_str(), size);
+    truncate(volumefilepath.c_str(), size); // windows..
     volumesize = size;
-    open(volumefilepath);
+    open();
 }
 
 std::string GostCrypt::ContainerFile::getSource()

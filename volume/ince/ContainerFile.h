@@ -9,6 +9,7 @@
 #include <list>
 #include <string>
 #include <fstream>
+#include <utility>
 
 namespace GostCrypt
 {
@@ -22,25 +23,21 @@ namespace GostCrypt
     public:
 
         // ----- INIT -----
-        ContainerFile() : volumefilepath(""), volumesize(0) {};
+        ContainerFile(std::string path) : volumefilepath(std::move(path)), volumesize(0) {};
         ~ContainerFile() { ContainerFile::close(); };
 
         // Creation
         /**
          * @brief Opens a file from the given path
-         *
          * If the file is not present, the method will throw an exception
-         *
-         * @param path the path of the file
          */
-        void open(const std::string& path);
+        void open() override;
 
         /**
          * @brief Method function to create a file from a given path and size
-         * @param path the path of the non existing file
          * @param size the size of the file to create
          */
-        void create(const std::string& path, size_t size);
+        void create(size_t size) override;
 
         // ----- RUNTIME -----
         // Filesystem interface
@@ -57,9 +54,6 @@ namespace GostCrypt
          * Closes the file
          */
         void close() override;
-
-        /* Closes and opens again the file */
-        void reopen() override;
 
         void resize(size_t size) override;
 
@@ -91,8 +85,7 @@ namespace GostCrypt
     private:
 
         /**
-         * Path of the currently opened file.
-         * Useful for user interface to remember what file is currently used.
+         * Path of the target file.
          */
         std::string volumefilepath;
 
