@@ -210,4 +210,4 @@ namespace GostCrypt
 }
 
 
-#endif //_BLOCKCIPHER_H
+#endif //_VOLUME_H
