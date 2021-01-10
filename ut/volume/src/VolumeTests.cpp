@@ -9,6 +9,7 @@
 #include <fstream>
 #include <VolumeCreatorContents.h>
 #include <VolumeCreator.h>
+#include <ContainerFile.h>
 
 using namespace GostCrypt;
 
@@ -17,7 +18,7 @@ void stdtests_volume_open(Volume *v, const std::string& file, SecureBufferPtr &p
     bool opened = false;
 
     try {
-        opened = v->open(file, password);
+        opened = v->open(new ContainerFile(file), password);
 
         if (opened && !expectedresult) {
             TEST_FAIL_MESSAGE("Volume successfully opened but it shouldn't have");
@@ -116,7 +117,7 @@ void stdtests_volume_write(Volume *v, SecureBufferPtr &password, size_t headersi
 
     // opening volume
     try {
-        if(!v->open(file->filename, password)) {
+        if(!v->open(new ContainerFile(file->filename), password)) {
             TEST_FAIL_MESSAGE("Could not open volume (Case 4)");
         }
     } catch (GostCryptException &e) {
@@ -183,7 +184,7 @@ void stdtests_volume_write(Volume *v, SecureBufferPtr &password, size_t headersi
 
     // opening volume
     try {
-        if(!v->open(file->filename, password)) {
+        if(!v->open(new ContainerFile(file->filename), password)) {
             TEST_FAIL_MESSAGE("Could not open volume (Case 1)");
         }
     } catch (GostCryptException &e) {
@@ -248,7 +249,7 @@ void stdtests_volume_write(Volume *v, SecureBufferPtr &password, size_t headersi
 
     // opening volume
     try {
-        if(!v->open(file->filename, password)) {
+        if(!v->open(new ContainerFile(file->filename), password)) {
             TEST_FAIL_MESSAGE("Could not open volume (Case 2)");
         }
     } catch (GostCryptException &e) {
@@ -314,7 +315,7 @@ void stdtests_volume_write(Volume *v, SecureBufferPtr &password, size_t headersi
 
     // opening volume
     try {
-        if(!v->open(file->filename, password)) {
+        if(!v->open(new ContainerFile(file->filename), password)) {
             TEST_FAIL_MESSAGE("Could not open volume (Case 3)");
         }
     } catch (GostCryptException &e) {
@@ -380,7 +381,7 @@ void stdtests_volume_write(Volume *v, SecureBufferPtr &password, size_t headersi
 
     // opening volume
     try {
-        if(!v->open(file->filename, password)) {
+        if(!v->open(new ContainerFile(file->filename), password)) {
             TEST_FAIL_MESSAGE("Could not open volume (all Cases)");
         }
     } catch (GostCryptException &e) {

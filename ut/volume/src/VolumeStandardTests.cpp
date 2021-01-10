@@ -2,6 +2,7 @@
 // Created by badbouille on 08/11/2020.
 //
 
+#include <ContainerFile.h>
 #include "volumeTests.h"
 #include "Buffer.h"
 #include "Volume.h"
@@ -38,7 +39,7 @@ void test_volume_standard_read() {
     // opening a good volume
     v = new VolumeStandard();
     try {
-        if(!v->open(creator_files[1].filename, pass)) {
+        if(!v->open(new ContainerFile(creator_files[1].filename), pass)) {
             TEST_FAIL_MESSAGE("Could not open volume");
         }
     } catch (GostCryptException &e) {
@@ -81,7 +82,7 @@ void test_volume_standard_create() {
 
     // opening a good volume
     v = new VolumeStandard();
-    v->create(creator_files[1].filename, STANDARD_HEADER_SIZE, "ECB_{XOR128}", "XOR0-16", 32, pass);
+    v->create(new ContainerFile(creator_files[1].filename), STANDARD_HEADER_SIZE, "ECB_{XOR128}", "XOR0-16", 32, pass);
     v->close();
 
     // checking file
@@ -142,11 +143,11 @@ void test_volume_standard_checks() {
 
     // create
     v = new VolumeStandard();
-    v->create(creator_files[1].filename, STANDARD_HEADER_SIZE, "ECB_{XOR128}", "XOR0-16", 32, pass);
+    v->create(new ContainerFile(creator_files[1].filename), STANDARD_HEADER_SIZE, "ECB_{XOR128}", "XOR0-16", 32, pass);
     v->close();
 
     // open
-    v->open(creator_files[1].filename, pass);
+    v->open(new ContainerFile(creator_files[1].filename), pass);
 
     // write
     v->write(pass, 0);
