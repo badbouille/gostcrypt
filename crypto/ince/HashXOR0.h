@@ -22,6 +22,7 @@ namespace GostCrypt
         void Reset() override { pdigest.erase(); offset = 0; };
 
         size_t GetDigestSize() const override { return SIZE; };
+        size_t GetBlockSize() const override { return SIZE; };
 
         std::string GetName() const override { return "XOR-0Padding-"+std::to_string(SIZE); };
         std::string GetID() const override { return "XOR0-"+std::to_string(SIZE); };
