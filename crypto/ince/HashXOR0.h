@@ -44,7 +44,12 @@ namespace GostCrypt
 
 }
 
-/* Inclusion of all possible implementations of this template */
-#include "HashXOR0Impl.h"
+namespace GostCrypt {
+
+    /* explicit instanciation of all existing HashXOR0 classes */
+
+    template class HashXOR0<16>;
+
+}
 
 #endif //_HASHXOR0_H
