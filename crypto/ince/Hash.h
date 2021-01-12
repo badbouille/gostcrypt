@@ -49,7 +49,7 @@ namespace GostCrypt
 
         /**
          * Function to get the digest size of this Hash function.
-         * @return The BlockCipher's block size
+         * @return The hash's digest size
          */
         virtual size_t GetDigestSize() const = 0;
 
