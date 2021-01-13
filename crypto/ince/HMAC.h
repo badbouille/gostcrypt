@@ -53,6 +53,14 @@ namespace GostCrypt
         size_t GetDigestSize() const override { return IHash->GetDigestSize(); };
 
         /**
+         * Function to get the block size of this MAC function.
+         * The block size is the size of the underlying state of the function.
+         * May be used by other constructions, like HMAC / Pbkdf for example.
+         * @return The MAC's block size
+         */
+        size_t GetBlockSize() const override { return IHash->GetBlockSize(); };
+
+        /**
          * Function to get the name of the HMAC
          * @return name as a string
          */

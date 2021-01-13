@@ -58,6 +58,14 @@ namespace GostCrypt
         virtual size_t GetDigestSize() const = 0;
 
         /**
+         * Function to get the block size of this MAC function.
+         * The block size is the size of the underlying state of the function.
+         * May be used by other constructions, like HMAC / Pbkdf for example.
+         * @return The MAC's block size
+         */
+        virtual size_t GetBlockSize() const = 0;
+
+        /**
          * Function to get the name of the MAC (ex: HMAC SHA-256)
          * @return name as a string
          */
