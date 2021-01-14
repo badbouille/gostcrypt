@@ -8,43 +8,49 @@
 namespace GostCrypt {
 
     template<class H>
-    void HMAC<H>::SetKey(const SecureBufferPtr &key)
+    void HMAC<H>::InitFromCurrentKey()
     {
-        SecureBuffer blockKey(IHash->GetDigestSize());
-        SecureBufferPtr blockKeyPtr(blockKey.get(), blockKey.size());
-
-        SecureBuffer pad(blockKey.size());
+        SecureBufferPtr initvaluePtr(initvalue->get(), initvalue->size());
+        SecureBuffer pad(initvaluePtr.size());
         SecureBufferPtr padPtr(pad.get(), pad.size());
-
-        // restarting if called after other functions
-        Reset();
-
-        // key copy to a standard buffer
-        blockKey.erase();
-        if (key.size() > blockKey.size()) {
-            IHash->Process(key);
-            IHash->GetDigest(blockKeyPtr);
-            IHash->Reset();
-        } else {
-            blockKey.copyFrom(key);
-        }
 
         // i_key_pad as defined by HMAC standard
         for (uint32_t i = 0; i < pad.size(); i++) {
-            pad.get()[i] = 0x36 ^ blockKey.get()[i];
+            pad.get()[i] = 0x36 ^ initvaluePtr.get()[i];
         }
         IHash->Process(padPtr);
 
         // o_key_pad as defined by HMAC standard
         for (uint32_t i = 0; i < pad.size(); i++) {
-            pad.get()[i] = 0x5c ^ blockKey.get()[i];
+            pad.get()[i] = 0x5c ^ initvaluePtr.get()[i];
         }
         OHash->Process(padPtr);
 
         // end
         currentState = READY;
         pad.erase();
-        blockKey.erase();
+    }
+
+    template<class H>
+    void HMAC<H>::SetKey(const SecureBufferPtr &key)
+    {
+        SecureBufferPtr initvaluePtr(initvalue->get(), initvalue->size());
+
+        // restarting if called after other functions
+        IHash->Reset();
+        OHash->Reset();
+
+        // key copy to a standard buffer
+        initvaluePtr.erase();
+        if (key.size() > initvaluePtr.size()) {
+            IHash->Process(key);
+            IHash->GetDigest(initvaluePtr);
+            IHash->Reset();
+        } else {
+            initvaluePtr.copyFrom(key);
+        }
+
+        InitFromCurrentKey();
     }
 
     template<class H>
@@ -67,10 +73,10 @@ namespace GostCrypt {
     template<class H>
     void HMAC<H>::Reset()
     {
-        // TODO Reset doesn't really Resets for now since we forgot the key...
         IHash->Reset();
         OHash->Reset();
         currentState = NOT_INIT;
+        InitFromCurrentKey();
     }
 
 }

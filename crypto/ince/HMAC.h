@@ -19,7 +19,7 @@ namespace GostCrypt
     class HMAC : public MAC
     {
     public:
-        HMAC() : IHash(new H), OHash(new H) {};
+        HMAC() : IHash(new H), OHash(new H), initvalue(new SecureBuffer(IHash->GetDigestSize())) {};
         virtual ~HMAC() { delete IHash; delete OHash; };
 
         /**
@@ -90,6 +90,11 @@ namespace GostCrypt
         /** Second instantiation of the Hash function (applied to opad / IhashDigest) */
         Hash *OHash;
 
+        /** Saved key, needed to be able to reset the algorithm */
+        SecureBuffer *initvalue;
+
+        /** Initialisation from saved key */
+        void InitFromCurrentKey();
     };
 
 }
