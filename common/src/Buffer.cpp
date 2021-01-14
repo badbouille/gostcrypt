@@ -75,6 +75,28 @@ void BufferPtr::swap(BufferPtr &otherBuffer)
     }
 }
 
+void BufferPtr::Xor(BufferPtr &otherBuffer)
+{
+    size_t length = otherBuffer.size();
+    volatile uint8_t * otherbufferptr = otherBuffer.get();
+    volatile size_t i = 0;
+    if (length > dataSize) length = dataSize;
+
+    if (!dataPtrMutable)
+    {
+        throw DATANOTMUTABLEEXCEPTION();
+    }
+    if (length == 0)
+    {
+        throw INVALIDPARAMETEREXCEPTION("Length can not be null");
+    }
+
+    // TODO : 32 and 64 bit optimization ?
+    for (; i < length; i++) {
+        dataPtrMutable[i] ^= otherbufferptr[i]; // A' = A ^ B
+    }
+}
+
 /* SecureBufferPtr Implementation */
 
     bool SecureBufferPtr::isDataEqual(const BufferPtr &otherbufferptr) const
