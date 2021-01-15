@@ -28,6 +28,10 @@ const uint8_t csbuffer4[8] = { 0x88, 0x99, 0xAA, 0xBB, 0x44, 0x55, 0x66, 0x77 };
 static uint8_t  sbuffer1[8] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77 };
 static uint8_t  sbuffer2[8] = { 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
 
+static uint8_t  xbuffer1[8] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77 };
+const uint8_t  cxbuffer1[8] = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88 };
+const uint8_t  cxbuffer2[8] = { 0x99, 0xAA, 0xBB, 0xCC, 0x88, 0x88, 0x88, 0x88 };
+
 void test_bufferptr_compare() {
     const BufferPtr bufptr1(cbuffer1, sizeof(cbuffer1));
     const BufferPtr bufptr2(cbuffer2, sizeof(cbuffer2));
@@ -128,6 +132,28 @@ void test_bufferptr_swap() {
     // buffers should be half-swapped
     TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(csbuffer3, sbuffer1, sizeof(csbuffer3), "Big buffer not half-swapped!");
     TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(csbuffer4, sbuffer2, sizeof(csbuffer4), "Small buffer not half-swapped!");
+
+}
+
+void test_bufferptr_xor() {
+    BufferPtr bufptr1(xbuffer1, sizeof(xbuffer1));
+    BufferPtr bufptr2(csbuffer2, sizeof(csbuffer2));
+    BufferPtr bufptr3(cbuffer4, sizeof(cbuffer4));
+
+    // making sure buffers were not altered
+    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(csbuffer1, xbuffer1, sizeof(csbuffer1), "Buffers were altered");
+
+    // function under test
+    bufptr1.Xor(bufptr2);
+
+    // buffers should be swapped
+    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(cxbuffer1, xbuffer1, sizeof(csbuffer2), "Xor result is wrong!");
+
+    // function under test
+    bufptr1.Xor(bufptr3);
+
+    // buffers should be half-swapped
+    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(cxbuffer2, xbuffer1, sizeof(csbuffer3), "Half Xor result is wrong!");
 
 }
 

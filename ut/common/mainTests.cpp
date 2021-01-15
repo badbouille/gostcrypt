@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
     RUN_TEST(test_bufferptr_copyfrom);
     RUN_TEST(test_bufferptr_erase);
     RUN_TEST(test_bufferptr_swap);
+    RUN_TEST(test_bufferptr_xor);
     RUN_TEST(test_bufferptr_illegalinit);
     RUN_TEST(test_bufferptr_range);
     RUN_TEST(test_securebufferptr_compare);
