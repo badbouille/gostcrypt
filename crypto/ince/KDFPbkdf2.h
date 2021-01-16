@@ -6,7 +6,7 @@
 #define _KDFPBKDF2_H
 
 #include <KDF.h>
-#include "MAC.h"
+#include "HMAC.h"
 
 namespace GostCrypt
 {
@@ -36,5 +36,12 @@ namespace GostCrypt
 
 }
 
+namespace GostCrypt {
+
+    /* explicit instanciation of all existing HashXOR0 classes */
+
+    template class KDFPbkdf2<HMAC<HashXOR0<16>>, 4096>;
+
+}
 
 #endif //_KDFPBKDF2_H

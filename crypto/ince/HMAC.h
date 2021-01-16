@@ -10,10 +10,10 @@
 #include "Hash.h"
 #include "MAC.h"
 
+#include "HashXOR0.h"
+
 namespace GostCrypt
 {
-    template <class H>
-    class HMAC;
 
     template <class H>
     class HMAC : public MAC
@@ -99,5 +99,12 @@ namespace GostCrypt
 
 }
 
+namespace GostCrypt {
+
+    /* explicit instanciation of all existing HMAC classes */
+
+    template class HMAC<HashXOR0<16>>;
+
+}
 
 #endif //_HMAC_H
