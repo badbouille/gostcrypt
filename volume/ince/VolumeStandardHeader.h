@@ -22,16 +22,16 @@
 // |                                               |
 // |                                               |
 // |                                               |
-// |             M A S T E R    K E Y              |
-// |         ( 5 1 2   b i t s   m a x )           |
-// |                                               |
-// |                                               |
-// |_______________________________________________|
 // |                                               |
 // |                                               |
 // |                                               |
-// |                   S A L T                     |
-// |         ( 5 1 2   b i t s   m a x )           |
+// |                                               |
+// |           M A S T E R    K E Y (s)            |
+// |         ( 1 0 2 4  b i t s   m a x )          |
+// |                                               |
+// |                                               |
+// |                                               |
+// |                                               |
 // |                                               |
 // |                                               |
 // |_______________________________________________|
@@ -46,7 +46,6 @@
 #define STANDARD_HEADER_MASTER_KEY_START 64
 #define STANDARD_HEADER_MASTER_KEY_AREASIZE 64
 
-#define STANDARD_HEADER_SALT_START 128
 #define STANDARD_HEADER_SALT_AREASIZE 64
 
 #define STANDARD_HEADER_SIZE 192
@@ -65,8 +64,7 @@ namespace GostCrypt
                                 sectorsize(0),
                                 dataStartOffset(0),
                                 dataSize(0),
-                                masterkey(STANDARD_HEADER_MASTER_KEY_AREASIZE),
-                                salt(STANDARD_HEADER_SALT_AREASIZE) {};
+                                masterkey(STANDARD_HEADER_MASTER_KEY_AREASIZE) {};
 
         void Serialize(SecureBufferPtr &dest);
         static void SerializeFake(SecureBufferPtr &dest);
@@ -83,8 +81,6 @@ namespace GostCrypt
         size_t dataSize;
 
         SecureBuffer masterkey;
-        SecureBuffer salt;
-
     };
 
 }

@@ -67,11 +67,6 @@ void GostCrypt::VolumeStandardHeader::Serialize(GostCrypt::SecureBufferPtr &dest
     tempBufferPtr.erase();
     tempBufferPtr.copyFrom((BufferPtr)masterkey);
 
-    // salt
-    dest.getRange(tempBufferPtr, STANDARD_HEADER_SALT_START, STANDARD_HEADER_SALT_AREASIZE);
-    tempBufferPtr.erase();
-    tempBufferPtr.copyFrom((BufferPtr)salt);
-
     // CRC computation
 
     // TODO add crc module to compute this.
@@ -158,10 +153,6 @@ bool GostCrypt::VolumeStandardHeader::Deserialize(const GostCrypt::SecureBufferP
     src.getRange(tempBufferPtr, STANDARD_HEADER_MASTER_KEY_START, STANDARD_HEADER_MASTER_KEY_AREASIZE);
     masterkey.copyFrom(tempBufferPtr);
 
-    // salt
-    src.getRange(tempBufferPtr, STANDARD_HEADER_SALT_START, STANDARD_HEADER_SALT_AREASIZE);
-    salt.copyFrom(tempBufferPtr);
-
     // CRC computation
 
     // TODO add crc module to compute and verify this.
@@ -186,9 +177,6 @@ void GostCrypt::VolumeStandardHeader::SerializeFake(GostCrypt::SecureBufferPtr &
     SecureBufferPtr sptr;
 
     fakeHeader.masterkey.getRange(sptr, 0, fakeHeader.masterkey.size());
-    fastprng.Get(sptr);
-
-    fakeHeader.salt.getRange(sptr, 0, fakeHeader.salt.size());
     fastprng.Get(sptr);
 
     return fakeHeader.Serialize(dest);

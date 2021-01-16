@@ -9,6 +9,7 @@
 #include "../../crypto/ince/Hash.h"
 #include "../../crypto/ince/PRNGSecure.h"
 #include <cstring>
+#include "HashXOR0.h"
 
 /** Compression factor of the CSPRNG: How many bytes of system random for one byte of secure random */
 #define PRNG_COMPRESSION_FACTOR 4
@@ -17,8 +18,10 @@ bool GostCrypt::VolumeStandard::open(Container *source, GostCrypt::SecureBufferP
 {
     SecureBuffer encryptedHeader(STANDARD_HEADER_SIZE);
     SecureBuffer tempDecryptedHeader(STANDARD_HEADER_SIZE);
+    SecureBuffer salt(STANDARD_HEADER_SALT_AREASIZE);
     SecureBufferPtr encryptedHeaderPtr;
     SecureBufferPtr tempDecryptedHeaderPtr;
+    SecureBufferPtr saltPtr;
     DiskEncryptionAlgorithm * algorithm = nullptr;
     KDF * kdf = nullptr;
     bool headerRead = false;
@@ -26,6 +29,7 @@ bool GostCrypt::VolumeStandard::open(Container *source, GostCrypt::SecureBufferP
     // getting pointers on secure buffers
     encryptedHeader.getRange(encryptedHeaderPtr, 0, STANDARD_HEADER_SIZE);
     tempDecryptedHeader.getRange(tempDecryptedHeaderPtr, 0, STANDARD_HEADER_SIZE);
+    salt.getRange(saltPtr, 0, STANDARD_HEADER_SALT_AREASIZE);
 
     if (source == nullptr) {
         throw INVALIDPARAMETEREXCEPTION("Volume source is not initialized");
@@ -36,11 +40,12 @@ bool GostCrypt::VolumeStandard::open(Container *source, GostCrypt::SecureBufferP
     container = source;
 
     // Reading header from source
+    container->read(saltPtr, getSaltOffset());
     container->read(encryptedHeaderPtr, getHeaderOffset());
 
     // Getting list of all available algorithms to open the volume
     DiskEncryptionAlgorithmList algorithmList = GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
-    KDFList kdfList = GostCrypt::KDF::GetAvailableHashes();
+    KDFList kdfList = GostCrypt::KDF::GetAvailableKDFs();
     for (auto & algorithmIterator : algorithmList) {
         algorithm = algorithmIterator;
 
@@ -50,21 +55,11 @@ bool GostCrypt::VolumeStandard::open(Container *source, GostCrypt::SecureBufferP
         for (auto & kdfIterator : kdfList) {
             kdf = kdfIterator;
 
-            /* Checking key size against digest size */
-            if (kdf->GetDigestSize() != algorithm->GetKeySize()) {
-                /* in this case, this kdf can not be used with this algorithm,
-                 * since it doesn't generate keys fit for the algorithm. */
-                // TODO maybe check for algorithms that do not have any fitting hash
-                continue;
-            }
-
             /* Copying the header to try to decrypt it "in-place" */
             tempDecryptedHeaderPtr.copyFrom(encryptedHeaderPtr);
 
             /* Deriving Key using KDF */
-            kdf->Reset();
-            kdf->Process(password);
-            kdf->GetDigest(derivedKeyPtr);
+            kdf->Derivate(password, saltPtr,derivedKeyPtr);
 
             /* initialisation of algorithm with user password */
             algorithm->SetKey(derivedKeyPtr);
@@ -133,9 +128,12 @@ void GostCrypt::VolumeStandard::create(Container *source,
     bool kdfFound = false;
     SecureBuffer encryptedHeader(STANDARD_HEADER_SIZE);
     SecureBufferPtr encryptedHeaderPtr;
+    SecureBuffer salt(STANDARD_HEADER_SALT_AREASIZE);
+    SecureBufferPtr saltPtr;
     SecureBufferPtr tmpKeyPtr;
 
     encryptedHeader.getRange(encryptedHeaderPtr, 0, STANDARD_HEADER_SIZE);
+    salt.getRange(saltPtr, 0, STANDARD_HEADER_SALT_AREASIZE);
 
     // ----------------  FEASABILITY CHECKS ----------------
     if (datasize % sectorsize != 0) {
@@ -181,8 +179,8 @@ void GostCrypt::VolumeStandard::create(Container *source,
 
     //  ---------------  FINDING KDF  ---------------
     callback("Finding target KDF", 0.05);
-    KDFList hList = GostCrypt::KDF::GetAvailableHashes();
-    for (auto & hIterator : hList) {
+    KDFList kdfList = GostCrypt::KDF::GetAvailableKDFs();
+    for (auto & hIterator : kdfList) {
         // Checking ID
         if (hIterator->GetID() == kdfID) {
             pkdf = hIterator;
@@ -192,7 +190,7 @@ void GostCrypt::VolumeStandard::create(Container *source,
     }
 
     // cleaning unused structures
-    for (auto & hIterator : hList) {
+    for (auto & hIterator : kdfList) {
         if (pkdf != hIterator) {
             delete hIterator;
         }
@@ -202,26 +200,21 @@ void GostCrypt::VolumeStandard::create(Container *source,
         throw INVALIDPARAMETEREXCEPTION("Given kdf ID was not found. Is this a supported kdf?");
     }
 
-    // Checking if given KDF is fit
-    if (pkdf->GetDigestSize() != algorithm->GetKeySize()) {
-        // kdf was found but can't generate data fit for the wanted algorithm
-        throw INVALIDPARAMETEREXCEPTION("Given kdf has a digest size different from the algorithm's key size.");
-    }
-
     //  ---------------  FILLING AND ENCRYPTING HEADER  ---------------
     callback("Creating header", 0.07);
 
     header.sectorsize = sectorsize;
-    header.dataStartOffset = 2*STANDARD_HEADER_SIZE; // normal + hidden
+    header.dataStartOffset = 2*(STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE); // normal + hidden
     header.dataSize = datasize;
 
-    PRNGSecure csprng(pkdf, PRNG_COMPRESSION_FACTOR);
+    // TODO: let the User choose this Hash function!
+    PRNGSecure csprng(new HashXOR0<16>(), PRNG_COMPRESSION_FACTOR);
     SecureBufferPtr randTarget;
 
     randTarget.set(header.masterkey.get(), header.masterkey.size());
     csprng.Get(randTarget);
 
-    randTarget.set(header.salt.get(), header.salt.size());
+    randTarget.set(salt.get(), salt.size());
     csprng.Get(randTarget);
 
     // fill header
@@ -232,9 +225,7 @@ void GostCrypt::VolumeStandard::create(Container *source,
     SecureBufferPtr derivedKeyPtr(derivedKey.get(), derivedKey.size());
 
     /* Deriving Key using KDF */
-    pkdf->Reset();
-    pkdf->Process(password);
-    pkdf->GetDigest(derivedKeyPtr);
+    pkdf->Derivate(password, saltPtr, derivedKeyPtr);
 
     // setting password and encrypting header
     algorithm->SetKey(derivedKeyPtr);
@@ -247,11 +238,13 @@ void GostCrypt::VolumeStandard::create(Container *source,
     callback("Writing headers to volume", 0.09);
 
     // standard header
+    container->write(saltPtr, getSaltOffset());
     container->write(encryptedHeaderPtr, getHeaderOffset());
 
-    // TODO encrypt with different sector num
+    // TODO encrypt with different salt
     // backup header
-    container->write(encryptedHeaderPtr, 4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup());
+    container->write(saltPtr, 4*(STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE) + header.dataSize + getSaltOffsetBackup());
+    container->write(encryptedHeaderPtr, 4*(STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE) + header.dataSize + getHeaderOffsetBackup());
 
     //  ---------------  Writing random data across data area and encrypting it  ---------------
 
@@ -291,8 +284,9 @@ void GostCrypt::VolumeStandard::create(Container *source,
     SecureBuffer randomKey(EA->GetKeySize());
     SecureBufferPtr prandomKey(randomKey.get(), randomKey.size());
 
-    // generating random key
+    // generating random key and salt
     csprng.Get(prandomKey);
+    csprng.Get(saltPtr);
 
     // seting random key and encrypting fake header
     EA->SetKey(prandomKey);
@@ -303,11 +297,13 @@ void GostCrypt::VolumeStandard::create(Container *source,
     // TODO link those offsets to class VolumeStandardHidden ?
 
     // standard hidden header
-    container->write(encryptedHeaderPtr, getHeaderOffset() + STANDARD_HEADER_SIZE);
+    container->write(saltPtr, getHeaderOffset() + (STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE));
+    container->write(encryptedHeaderPtr, getHeaderOffset() + (2*STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE));
 
     // TODO encrypt with different sector num
     // backup header
-    container->write(encryptedHeaderPtr, 4*STANDARD_HEADER_SIZE + header.dataSize + getHeaderOffsetBackup() - STANDARD_HEADER_SIZE);
+    container->write(saltPtr, 4*(STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE) + header.dataSize + getSaltOffsetBackup() - (STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE));
+    container->write(encryptedHeaderPtr, 4*(STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE) + header.dataSize + getSaltOffsetBackup() - (STANDARD_HEADER_SIZE));
 
     //  ---------------  CLOSING AND REOPENING VOLUME  ---------------
 

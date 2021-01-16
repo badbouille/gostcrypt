@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <Buffer.h>
+#include <KDF.h>
 #include "Volume.h"
 #include "VolumeStandardHeader.h"
 #include "../../crypto/ince/DiskEncryptionAlgorithm.h"
@@ -14,10 +15,12 @@
 
 //         ------ VOLUME DESCRIPTION ------
 //  _______________________________________________
+// |__________ Header Salt ( 64 Bytes ) ___________|
 // |               STANDARD HEADER                 |
 // |________________  192 Bytes  __________________|
 // |           UNUSED SPACE (RANDOM BYTES)         |
-// |__  192 Bytes (Hypothetical Hidden header) ____|
+// |       192+64 Bytes (Maybe Hidden header)      |
+// |_______________________________________________|
 // |                                               |
 // |                                               |
 // |                                               |
@@ -27,7 +30,9 @@
 // |                                               |
 // |_______________________________________________|
 // |           UNUSED SPACE (RANDOM BYTES)         |
-// |___  192 Bytes (Hypothetical Hidden backup) ___|
+// |       192+64 Bytes (Maybe Hidden backup)      |
+// |_______________________________________________|
+// |__________ Header Salt ( 64 Bytes ) ___________|
 // |           STANDARD BACKUP HEADER              |
 // |________________  192 Bytes  __________________|
 
@@ -130,13 +135,25 @@ namespace GostCrypt
          * Function to get normal header offset. (Overriden in StandardVolumeHidden to use a different header location)
          * @return the normal header offset
          */
-        virtual size_t getHeaderOffset() { return 0; };
+        virtual size_t getHeaderOffset() { return STANDARD_HEADER_SALT_AREASIZE; };
+
+        /**
+         * Function to get normal salt offset.
+         * @return the normal salt offset
+         */
+        virtual size_t getSaltOffset() { return 0; };
 
         /**
          * Function to get backup header offset. (Overriden in StandardVolumeHidden to use a different header location)
          * @return the backup header offset
          */
         virtual size_t getHeaderOffsetBackup() { return -STANDARD_HEADER_SIZE; };
+
+        /**
+         * Function to get normal salt offset.
+         * @return the normal salt offset
+         */
+        virtual size_t getSaltOffsetBackup() { return -(STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE); };
 
         /**
          * Header of this volume. Contains all the necessary data to understand the layout.
