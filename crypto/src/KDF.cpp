@@ -12,7 +12,7 @@ namespace GostCrypt {
 
     KDFList KDF::GetAvailableKDFs()
     {
-        GostCrypt::KDFList l;
+        KDFList l;
 
         // Test algorithm
         l.push_back(new KDFPbkdf2<HMAC<HashXOR0<16>>, 4096>());
