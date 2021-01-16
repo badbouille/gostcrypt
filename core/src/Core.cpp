@@ -20,7 +20,7 @@ GostCrypt::DiskEncryptionAlgorithmList GostCrypt::Core::GetEncryptionAlgorithms(
 
 GostCrypt::KDFList GostCrypt::Core::GetDerivationFunctions()
 {
-    return GostCrypt::KDF::GetAvailableHashes();
+    return GostCrypt::KDF::GetAvailableKDFs();
 }
 
 GostCrypt::VolumeList GostCrypt::Core::GetVolumeTypes()
