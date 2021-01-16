@@ -116,13 +116,13 @@ int cmd_list(int argc, char **argv) {
     }
 
     if (item == "kdfs") {
-        HashList hlist = Core::GetDerivationFunctions();
+        KDFList kdflist = Core::GetDerivationFunctions();
         // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
         std::vector<std::string> names;
         std::vector<std::string> descs;
-        for (auto h : hlist) {
-            names.push_back(h->GetID());
-            descs.push_back("[" + h->GetName() + "]\n" + h->GetDescription());
+        for (auto kdf : kdflist) {
+            names.push_back(kdf->GetID());
+            descs.push_back("[" + kdf->GetName() + "]\n" + kdf->GetDescription());
 
             if(index >= MAX_OPTION_NUMBER) {
                 abort();
@@ -135,7 +135,7 @@ int cmd_list(int argc, char **argv) {
             list_options[index].doc = descs.back().c_str();
             index++;
 
-            delete h;
+            delete kdf;
         }
         argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
         return 0;
