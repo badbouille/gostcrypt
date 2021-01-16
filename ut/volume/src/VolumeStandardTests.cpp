@@ -47,7 +47,7 @@ void test_volume_standard_read() {
     }
 
     // read tests (these tests are hardcoded, making them generic would require a lot more time)
-    stdtests_volume_read(v, 32, STANDARD_HEADER_SIZE, volume1_content+STANDARD_HEADER_SIZE*2);
+    stdtests_volume_read(v, 32, STANDARD_HEADER_SIZE, volume1_content+(STANDARD_HEADER_SIZE+STANDARD_HEADER_SALT_AREASIZE)*2);
 
     // finish
     delete v;
@@ -63,7 +63,7 @@ void test_volume_standard_write() {
     // opening a good volume
     v = new VolumeStandard();
 
-    stdtests_volume_write(v, pass, STANDARD_HEADER_SIZE, 32, &creator_files[1]);
+    stdtests_volume_write(v, pass, STANDARD_HEADER_SIZE+STANDARD_HEADER_SALT_AREASIZE, 32, &creator_files[1]);
 
     // finish
     delete v;
@@ -82,16 +82,16 @@ void test_volume_standard_create() {
 
     // opening a good volume
     v = new VolumeStandard();
-    v->create(new ContainerFile(creator_files[1].filename), STANDARD_HEADER_SIZE, "ECB_{XOR128}", "XOR0-16", 32, pass);
+    v->create(new ContainerFile(creator_files[1].filename), STANDARD_HEADER_SIZE, "ECB_{XOR128}", "Pbkdf2-HMAC-XOR0-16", 32, pass);
     v->close();
 
     // checking file
     rfile.open(creator_files[1].filename, std::ios::binary | std::ios::in);
     // first two headers
-    bc.allocate(2*STANDARD_HEADER_SIZE);
+    bc.allocate(2*(STANDARD_HEADER_SIZE+STANDARD_HEADER_SALT_AREASIZE));
     rfile.read((char *)bc.get(), bc.size());
-    // only the first 64 elements are not random and can be verified
-    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content, bc.get(), 64, "Wrong first header");
+    // only the first 64 elements (after the salt) are not random and can be verified
+    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content+64, bc.get()+64, 64, "Wrong first header");
 
     // Not checking second header (random data)
     //TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content, bc.get(), bc.size(), "Wrong second header");
@@ -108,12 +108,12 @@ void test_volume_standard_create() {
     }
 
     // last two headers
-    bc.allocate(2*STANDARD_HEADER_SIZE);
+    bc.allocate(2*(STANDARD_HEADER_SIZE+STANDARD_HEADER_SALT_AREASIZE));
     rfile.read((char *)bc.get(), bc.size());
     // Not checking second header (random data)
     //TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content + 3*STANDARD_HEADER_SIZE, bc.get(), bc.size()/2, "Wrong first backup header");
     // only the first 64 elements are not random and can be verified
-    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content + 3*STANDARD_HEADER_SIZE + bc.size()/2, bc.get()+ bc.size()/2, 64, "Wrong second backup header");
+    TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(creator_files[1].content + 2*(STANDARD_HEADER_SIZE+STANDARD_HEADER_SALT_AREASIZE) + STANDARD_HEADER_SIZE + bc.size()/2 + 64, bc.get()+ bc.size()/2 + 64, 64, "Wrong second backup header");
 
     // checking eof
     if (rfile.eof()) {
@@ -143,7 +143,7 @@ void test_volume_standard_checks() {
 
     // create
     v = new VolumeStandard();
-    v->create(new ContainerFile(creator_files[1].filename), STANDARD_HEADER_SIZE, "ECB_{XOR128}", "XOR0-16", 32, pass);
+    v->create(new ContainerFile(creator_files[1].filename), STANDARD_HEADER_SIZE, "ECB_{XOR128}", "Pbkdf2-HMAC-XOR0-16", 32, pass);
     v->close();
 
     // open

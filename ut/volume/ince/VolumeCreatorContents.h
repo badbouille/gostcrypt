@@ -17,8 +17,8 @@ typedef struct VolumeFileCreator_s {
 #define CREATOR_FILE_NUMBER 2
 #define CREATOR_FILE_FOLDER "volumefiles"
 
-extern const uint8_t volumee_content[STANDARD_HEADER_SIZE*5];
-extern const uint8_t volume1_content[STANDARD_HEADER_SIZE*5];
+extern const uint8_t volumee_content[STANDARD_HEADER_SIZE*5+STANDARD_HEADER_SALT_AREASIZE*4];
+extern const uint8_t volume1_content[STANDARD_HEADER_SIZE*5+STANDARD_HEADER_SALT_AREASIZE*4];
 
 extern const VolumeFileCreator creator_files[CREATOR_FILE_NUMBER];
 
