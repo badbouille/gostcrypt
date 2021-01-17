@@ -60,10 +60,10 @@ void stdtest_hash_sizechecks(Hash *h) {
 
     SecureBuffer wbufa(h->GetDigestSize() + 1); // buffer of the wrong size
     SecureBuffer wbufb(h->GetDigestSize() - 1); // buffer of the wrong size
-    SecureBufferPtr wbufaptr(wbufa.get(), wbufb.size());
-    SecureBufferPtr wbufbptr(wbufa.get(), wbufb.size());
+    SecureBufferPtr wbufaptr(wbufa.get(), wbufa.size());
+    SecureBufferPtr wbufbptr(wbufb.get(), wbufb.size());
     wbufa.erase();
-    wbufa.erase();
+    wbufb.erase();
 
     /* Wrong digest size test */
     try {
