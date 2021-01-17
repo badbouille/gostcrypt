@@ -13,7 +13,9 @@ namespace GostCrypt {
                                               const SecureBufferPtr &salt,
                                               SecureBufferPtr &key)
     {
-        uint32_t l = (key.size()+prf->GetBlockSize())/prf->GetBlockSize();
+        uint32_t l = key.size() / prf->GetBlockSize();
+        if (key.size() % prf->GetBlockSize()) l++;
+
         SecureBufferPtr KeyPtr(key.get(), key.size());
 
         SecureBuffer Tn(prf->GetBlockSize());
@@ -31,7 +33,7 @@ namespace GostCrypt {
         for (uint32_t i = 0; i < l; i++) {
 
             // computing INT(i)
-            *((uint32_t*)INTPtr.get()) = htobe32(i);
+            *((uint32_t*)INTPtr.get()) = htobe32(i+1);
 
             // processing Salt || INT(i)
             prf->Process(salt);
