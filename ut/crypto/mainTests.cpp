@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
     /* XOR0-16 */
     RUN_TEST(test_hash_xor0_basic);
     RUN_TEST(test_hash_xor0_process);
+    RUN_TEST(test_hash_xor0_processmult);
     RUN_TEST(test_hash_xor0_sizechecks);
 
     /* PRNG functions */

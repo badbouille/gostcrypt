@@ -19,17 +19,39 @@ void stdtest_hash_basic(Hash *h, size_t ds, const std::string& name, const std::
 
 void stdtest_hash_process(Hash *h, size_t test_num, const HashTestData128 *testvector) {
 
-    SecureBuffer digest(16);
+    SecureBuffer digest(h->GetDigestSize());
 
     for(int i=0; i< test_num; i++) {
         SecureBufferPtr content (testvector[i].text, testvector[i].length);
         SecureBufferPtr pdigest (digest.get(), digest.size());
 
         h->Reset();
-        h->Process(content); // TODO maybe add a test where this method is called more than one time
+        h->Process(content);
         h->GetDigest(pdigest);
 
-        TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(testvector[i].expected, digest.get(), 16, "Computed digest is wrong!");
+        TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(testvector[i].expected, digest.get(), digest.size(), "Computed digest is wrong!");
+    }
+
+}
+
+void stdtest_hash_processmult(Hash *h, size_t test_num, const HashTestData128 *testvector) {
+
+    SecureBuffer digest(h->GetDigestSize());
+
+    for(int i=0; i< test_num; i++) {
+        SecureBufferPtr content (testvector[i].text, testvector[i].length);
+        SecureBufferPtr pdigest (digest.get(), digest.size());
+
+        h->Reset();
+
+        for (int j=0; j < testvector[i].length; j++) {
+            content.set(testvector[i].text + j, 1);
+            h->Process(content);
+        }
+
+        h->GetDigest(pdigest);
+
+        TEST_ASSERT_EQUAL_UINT8_ARRAY_MESSAGE(testvector[i].expected, digest.get(), digest.size(), "Computed digest is wrong!");
     }
 
 }

@@ -28,6 +28,7 @@ void stdtest_diskencryptionalgorithm_sizechecks(GostCrypt::DiskEncryptionAlgorit
 
 void stdtest_hash_basic(GostCrypt::Hash *h, size_t ds, const std::string& name, const std::string& id);
 void stdtest_hash_process(GostCrypt::Hash *h, size_t test_num, const GostCrypt::HashTestData128 *testvector);
+void stdtest_hash_processmult(GostCrypt::Hash *h, size_t test_num, const GostCrypt::HashTestData128 *testvector);
 void stdtest_hash_sizechecks(GostCrypt::Hash *h);
 
 void stdtest_prng_basic(GostCrypt::PRNG *p, const std::string& name, const std::string& id);
@@ -48,6 +49,7 @@ void test_diskencryptionalgorithm_ecb_xor_sizechecks();
 /* XOR-0Padding (XOR0) Hash tests */
 void test_hash_xor0_basic();
 void test_hash_xor0_process();
+void test_hash_xor0_processmult();
 void test_hash_xor0_sizechecks();
 
 /* System PRNG (SPRNG) tests */

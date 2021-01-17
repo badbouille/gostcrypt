@@ -62,6 +62,15 @@ void test_hash_xor0_process() {
     delete h;
 }
 
+void test_hash_xor0_processmult() {
+
+    Hash *h = new HashXOR0<16>();
+
+    stdtest_hash_processmult(h, NUM_TEST_VECTORS, hash_xor0_testvectors);
+
+    delete h;
+}
+
 void test_hash_xor0_sizechecks() {
 
     Hash *h = new HashXOR0<16>();
