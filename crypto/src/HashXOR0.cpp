@@ -12,6 +12,7 @@ namespace GostCrypt {
         for(int i=0; i< data.size(); i++) {
             digest.get()[(offset + i)%SIZE] ^= data.get()[i];
         }
+        offset = (offset + data.size()) % digest.size();
     }
 
 }
