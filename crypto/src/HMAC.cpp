@@ -68,6 +68,9 @@ namespace GostCrypt {
         IHash->GetDigest(digest);
         OHash->Process(digest);
         OHash->GetDigest(digest);
+
+        // any processing AFTER GetDigest will not work
+        currentState = NOT_INIT;
     }
 
     template<class H>
