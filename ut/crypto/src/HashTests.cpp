@@ -8,9 +8,10 @@
 
 using namespace GostCrypt;
 
-void stdtest_hash_basic(Hash *h, size_t ds, const std::string& name, const std::string& id) {
+void stdtest_hash_basic(Hash *h, size_t ds, size_t bs, const std::string& name, const std::string& id) {
 
     TEST_ASSERT_EQUAL_UINT64_MESSAGE(h->GetDigestSize(), ds, "Given digest size was not the one expected");
+    TEST_ASSERT_EQUAL_UINT64_MESSAGE(h->GetBlockSize(), bs, "Given block size was not the one expected");
 
     TEST_ASSERT_EQUAL_STRING_MESSAGE(h->GetName().c_str(), name.c_str(), "Hash name is not the one expected");
     TEST_ASSERT_EQUAL_STRING_MESSAGE(h->GetID().c_str(), id.c_str(), "Hash ID is not the one expected");

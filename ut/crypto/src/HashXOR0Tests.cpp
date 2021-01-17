@@ -48,7 +48,7 @@ void test_hash_xor0_basic() {
 
     Hash *h = new HashXOR0<16>();
 
-    stdtest_hash_basic(h, 16, "XOR-0Padding-16", "XOR0-16");
+    stdtest_hash_basic(h, 16, 16, "XOR-0Padding-16", "XOR0-16");
 
     delete h;
 }

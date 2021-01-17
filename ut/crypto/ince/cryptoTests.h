@@ -26,7 +26,7 @@ void stdtest_diskencryptionalgorithm_encrypt(GostCrypt::DiskEncryptionAlgorithm 
 void stdtest_diskencryptionalgorithm_decrypt(GostCrypt::DiskEncryptionAlgorithm *a, size_t test_num, const GostCrypt::DiskEncryptionAlgorithmTestData520 *testvector);
 void stdtest_diskencryptionalgorithm_sizechecks(GostCrypt::DiskEncryptionAlgorithm *a, size_t wrongblocksize);
 
-void stdtest_hash_basic(GostCrypt::Hash *h, size_t ds, const std::string& name, const std::string& id);
+void stdtest_hash_basic(GostCrypt::Hash *h, size_t ds, size_t bs, const std::string& name, const std::string& id);
 void stdtest_hash_process(GostCrypt::Hash *h, size_t test_num, const GostCrypt::HashTestData128 *testvector);
 void stdtest_hash_processmult(GostCrypt::Hash *h, size_t test_num, const GostCrypt::HashTestData128 *testvector);
 void stdtest_hash_sizechecks(GostCrypt::Hash *h);
