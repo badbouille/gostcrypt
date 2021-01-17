@@ -9,11 +9,13 @@
 #include "DiskEncryptionAlgorithm.h"
 #include "Hash.h"
 #include "MAC.h"
+#include "KDF.h"
 #include "PRNG.h"
 #include "BlockCipherTests.h"
 #include "DiskEncryptionAlgorithmTests.h"
 #include "HashTests.h"
 #include "MACTests.h"
+#include "KDFTests.h"
 #include <string>
 
 
@@ -37,6 +39,9 @@ void stdtest_mac_basic(GostCrypt::MAC *m, size_t ds, size_t bs, const std::strin
 void stdtest_mac_process(GostCrypt::MAC *m, size_t test_num, const GostCrypt::MACTestData256 *testvector);
 void stdtest_mac_processmult(GostCrypt::MAC *m, size_t test_num, const GostCrypt::MACTestData256 *testvector);
 void stdtest_mac_sizechecks(GostCrypt::MAC *m);
+
+void stdtest_kdf_basic(GostCrypt::KDF *k, const std::string& name, const std::string& id);
+void stdtest_kdf_derivate(GostCrypt::KDF *k, size_t test_num, const GostCrypt::KDFTestData512 *testvector);
 
 void stdtest_prng_basic(GostCrypt::PRNG *p, const std::string& name, const std::string& id);
 void stdtest_prng_entropy(GostCrypt::PRNG *p, size_t cyclecount, float precision);
@@ -64,6 +69,10 @@ void test_mac_hmac_basic();
 void test_mac_hmac_process();
 void test_mac_hmac_processmult();
 void test_mac_hmac_sizechecks();
+
+/* Pbkdf2-HMAC-XOR-0Padding (Pbkdf2-HMAC-XOR0) KDF tests */
+void test_kdf_pbkdf2_basic();
+void test_kdf_pbkdf2_derivate();
 
 /* System PRNG (SPRNG) tests */
 void test_prng_prngsystem_basic();

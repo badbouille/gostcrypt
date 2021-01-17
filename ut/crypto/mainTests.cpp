@@ -48,6 +48,12 @@ int main(int argc, char **argv) {
     RUN_TEST(test_mac_hmac_processmult);
     RUN_TEST(test_mac_hmac_sizechecks);
 
+    /* KDF functions */
+
+    /* Pbkdf2 */
+    RUN_TEST(test_kdf_pbkdf2_basic);
+    RUN_TEST(test_kdf_pbkdf2_derivate);
+
     /* PRNG functions */
 
     /* System PRNG */
