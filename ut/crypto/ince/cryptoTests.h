@@ -8,10 +8,12 @@
 #include "BlockCipher.h"
 #include "DiskEncryptionAlgorithm.h"
 #include "Hash.h"
+#include "MAC.h"
 #include "PRNG.h"
 #include "BlockCipherTests.h"
 #include "DiskEncryptionAlgorithmTests.h"
 #include "HashTests.h"
+#include "MACTests.h"
 #include <string>
 
 
@@ -30,6 +32,11 @@ void stdtest_hash_basic(GostCrypt::Hash *h, size_t ds, size_t bs, const std::str
 void stdtest_hash_process(GostCrypt::Hash *h, size_t test_num, const GostCrypt::HashTestData128 *testvector);
 void stdtest_hash_processmult(GostCrypt::Hash *h, size_t test_num, const GostCrypt::HashTestData128 *testvector);
 void stdtest_hash_sizechecks(GostCrypt::Hash *h);
+
+void stdtest_mac_basic(GostCrypt::MAC *m, size_t ds, size_t bs, const std::string& name, const std::string& id);
+void stdtest_mac_process(GostCrypt::MAC *m, size_t test_num, const GostCrypt::MACTestData256 *testvector);
+void stdtest_mac_processmult(GostCrypt::MAC *m, size_t test_num, const GostCrypt::MACTestData256 *testvector);
+void stdtest_mac_sizechecks(GostCrypt::MAC *m);
 
 void stdtest_prng_basic(GostCrypt::PRNG *p, const std::string& name, const std::string& id);
 void stdtest_prng_entropy(GostCrypt::PRNG *p, size_t cyclecount, float precision);
@@ -51,6 +58,12 @@ void test_hash_xor0_basic();
 void test_hash_xor0_process();
 void test_hash_xor0_processmult();
 void test_hash_xor0_sizechecks();
+
+/* HMAC-XOR-0Padding (HMAC-XOR0) MAC tests */
+void test_mac_hmac_basic();
+void test_mac_hmac_process();
+void test_mac_hmac_processmult();
+void test_mac_hmac_sizechecks();
 
 /* System PRNG (SPRNG) tests */
 void test_prng_prngsystem_basic();

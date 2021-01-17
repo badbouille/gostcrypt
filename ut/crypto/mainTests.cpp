@@ -40,6 +40,14 @@ int main(int argc, char **argv) {
     RUN_TEST(test_hash_xor0_processmult);
     RUN_TEST(test_hash_xor0_sizechecks);
 
+    /* MAC functions */
+
+    /* HMAC */
+    RUN_TEST(test_mac_hmac_basic);
+    RUN_TEST(test_mac_hmac_process);
+    RUN_TEST(test_mac_hmac_processmult);
+    RUN_TEST(test_mac_hmac_sizechecks);
+
     /* PRNG functions */
 
     /* System PRNG */
