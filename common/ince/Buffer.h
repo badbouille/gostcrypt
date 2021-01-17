@@ -97,7 +97,7 @@ class BufferPtr
      * If the sizes of the buffers are different, shortest size is chosen. Only the beginning of the biggest buffer is swapped.
      * @param otherBuffer the buffer to exchange memory with
      */
-    virtual void Xor(BufferPtr &otherBuffer);
+    virtual void Xor(const BufferPtr &otherBuffer);
 
     /**
      * @brief Return the raw pointer to the data of the Buffer

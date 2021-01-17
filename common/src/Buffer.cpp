@@ -75,10 +75,10 @@ void BufferPtr::swap(BufferPtr &otherBuffer)
     }
 }
 
-void BufferPtr::Xor(BufferPtr &otherBuffer)
+void BufferPtr::Xor(const BufferPtr &otherBuffer)
 {
     size_t length = otherBuffer.size();
-    volatile uint8_t * otherbufferptr = otherBuffer.get();
+    const uint8_t * otherbufferptr = otherBuffer.get();
     volatile size_t i = 0;
     if (length > dataSize) length = dataSize;
 
