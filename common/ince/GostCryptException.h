@@ -1,3 +1,6 @@
+//
+// Created by badbouille on 16/11/2020.
+//
 
 #ifndef _EXCEPTION_H_
 #define _EXCEPTION_H_

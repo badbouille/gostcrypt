@@ -1,3 +1,7 @@
+//
+// Created by seragonia on 20/01/2019.
+//
+
 #ifndef USERINTERFACE_H
 #define USERINTERFACE_H
 

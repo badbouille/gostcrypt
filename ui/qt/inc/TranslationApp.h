@@ -1,3 +1,7 @@
+//
+// Created by seragonia on 20/01/2019.
+//
+
 #ifndef TRANSLATIONAPP_H
 #define TRANSLATIONAPP_H
 

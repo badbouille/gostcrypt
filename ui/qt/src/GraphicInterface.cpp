@@ -1,3 +1,7 @@
+//
+// Created by seragonia on 20/01/2019.
+//
+
 #include <Core.h>
 #include <ForkableCore.h>
 #include "GraphicInterface.h"

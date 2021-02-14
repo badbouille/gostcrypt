@@ -1,3 +1,7 @@
+//
+// Created by seragonia on 20/01/2019.
+//
+
 #ifndef DRAGWINDOWPROVIDER_H
 #define DRAGWINDOWPROVIDER_H
 //https://stackoverflow.com/questions/39088835/dragging-frameless-window-jiggles-in-qml

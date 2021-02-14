@@ -1,3 +1,7 @@
+//
+// Created by badbouille on 16/11/2020.
+//
+
 #ifndef _BUFFER_H_
 #define _BUFFER_H_
 

@@ -1,3 +1,7 @@
+//
+// Created by seragonia on 20/01/2019.
+//
+
 #ifndef USERSETTINGS_H
 #define USERSETTINGS_H
 

@@ -1,3 +1,7 @@
+//
+// Created by seragonia on 20/01/2019.
+//
+
 #ifndef SECURETEXTFIELD_H
 #define SECURETEXTFIELD_H
 #include <QApplication>

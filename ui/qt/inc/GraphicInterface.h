@@ -1,3 +1,7 @@
+//
+// Created by seragonia on 20/01/2019.
+//
+
 #ifndef GRAPHIC_INTERFACE
 #define GRAPHIC_INTERFACE
 

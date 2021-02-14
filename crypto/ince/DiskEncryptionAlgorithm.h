@@ -1,3 +1,6 @@
+//
+// Created by badbouille on 06/08/2019.
+//
 
 #ifndef _ENCRYPTIONALGORITHM_H_
 #define _ENCRYPTIONALGORITHM_H_
