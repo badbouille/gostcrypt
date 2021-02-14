@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 13/01/2021.
-//
+/**
+ * @file MAC.h
+ * @author badbouille
+ * @date 13/01/2021
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _MAC_H
 #define _MAC_H

@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 10/01/2021.
-//
+/**
+ * @file ContainerFile.h
+ * @author badbouille
+ * @date 10/01/2021
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _CONTAINERFILE_H
 #define _CONTAINERFILE_H

@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 17/01/2021.
-//
+/**
+ * @file MACTests.h
+ * @author badbouille
+ * @date 17/01/2021
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _MACTESTS_H
 #define _MACTESTS_H

@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 08/05/2020.
-//
+/**
+ * @file FuseFileSystemExt2.h
+ * @author badbouille
+ * @date 08/05/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _FUSEFILESYSTEMEXT2_H
 #define _FUSEFILESYSTEMEXT2_H

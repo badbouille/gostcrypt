@@ -1,6 +1,10 @@
-//
-// Created by seragonia on 20/01/2019.
-//
+/**
+ * @file UserSettings.h
+ * @author seragonia
+ * @date 20/01/2019
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef USERSETTINGS_H
 #define USERSETTINGS_H

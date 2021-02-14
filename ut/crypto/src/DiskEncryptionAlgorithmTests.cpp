@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 08/11/2020.
-//
+/**
+ * @file DiskEncryptionAlgorithmTests.cpp
+ * @author badbouille
+ * @date 08/11/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include "DiskEncryptionAlgorithm.h"
 #include "DiskEncryptionAlgorithmTests.h"

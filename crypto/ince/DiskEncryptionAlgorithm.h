@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 06/08/2019.
-//
+/**
+ * @file DiskEncryptionAlgorithm.h
+ * @author badbouille
+ * @date 06/08/2019
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _ENCRYPTIONALGORITHM_H_
 #define _ENCRYPTIONALGORITHM_H_

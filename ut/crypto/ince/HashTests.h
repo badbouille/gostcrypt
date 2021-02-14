@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 09/12/2020.
-//
+/**
+ * @file HashTests.h
+ * @author badbouille
+ * @date 09/12/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _HASHTESTS_H
 #define _HASHTESTS_H

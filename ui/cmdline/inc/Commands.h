@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 15/11/2020.
-//
+/**
+ * @file Commands.h
+ * @author badbouille
+ * @date 15/11/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _COMMANDS_H
 #define _COMMANDS_H

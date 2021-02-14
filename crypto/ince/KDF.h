@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 13/01/2021.
-//
+/**
+ * @file KDF.h
+ * @author badbouille
+ * @date 13/01/2021
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _KDF_H
 #define _KDF_H

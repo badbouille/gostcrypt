@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 14/01/2021.
-//
+/**
+ * @file KDFPbkdf2.cpp
+ * @author badbouille
+ * @date 14/01/2021
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 
 #include "KDFPbkdf2.h"

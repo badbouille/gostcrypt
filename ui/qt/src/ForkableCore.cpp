@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 19/12/2020.
-//
+/**
+ * @file ForkableCore.cpp
+ * @author badbouille
+ * @date 19/12/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include <wait.h>
 #include <iostream>

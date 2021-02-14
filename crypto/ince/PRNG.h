@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 10/12/2020.
-//
+/**
+ * @file PRNG.h
+ * @author badbouille
+ * @date 10/12/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _RNG_H
 #define _RNG_H

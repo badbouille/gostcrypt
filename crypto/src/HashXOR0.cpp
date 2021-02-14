@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 07/12/2020.
-//
+/**
+ * @file HashXOR0.cpp
+ * @author badbouille
+ * @date 07/12/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include "HashXOR0.h"
 

@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 08/11/2020.
-//
+/**
+ * @file commonTests.h
+ * @author badbouille
+ * @date 08/11/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _COMMONTESTS_H
 #define _COMMONTESTS_H

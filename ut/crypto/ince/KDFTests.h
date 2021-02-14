@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 17/01/2021.
-//
+/**
+ * @file KDFTests.h
+ * @author badbouille
+ * @date 17/01/2021
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _KDFTESTS_H
 #define _KDFTESTS_H

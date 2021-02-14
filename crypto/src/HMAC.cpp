@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 12/01/2021.
-//
+/**
+ * @file HMAC.cpp
+ * @author badbouille
+ * @date 12/01/2021
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include "HMAC.h"
 #include "HashXOR0.h"

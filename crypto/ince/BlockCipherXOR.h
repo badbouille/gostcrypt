@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 30/04/2020.
-//
+/**
+ * @file BlockCipherXOR.h
+ * @author badbouille
+ * @date 30/04/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _BLOCKCIPHERXOR_H
 #define _BLOCKCIPHERXOR_H

@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 12/12/2020.
-//
+/**
+ * @file PRNGTests.cpp
+ * @author badbouille
+ * @date 12/12/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include "PRNG.h"
 #include "unity.h"

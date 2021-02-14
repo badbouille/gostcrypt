@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 16/12/2020.
-//
+/**
+ * @file commonDefines.h
+ * @author badbouille
+ * @date 16/12/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _COMMONDEFINES_H
 #define _COMMONDEFINES_H

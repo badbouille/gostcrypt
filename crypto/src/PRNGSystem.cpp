@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 10/12/2020.
-//
+/**
+ * @file PRNGSystem.cpp
+ * @author badbouille
+ * @date 10/12/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include "PRNGSystem.h"
 

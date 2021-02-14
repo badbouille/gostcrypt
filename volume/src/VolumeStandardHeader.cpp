@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 02/05/2020.
-//
+/**
+ * @file VolumeStandardHeader.cpp
+ * @author badbouille
+ * @date 02/05/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include <VolumeStandardHeader.h>
 #include <PRNGSystem.h>

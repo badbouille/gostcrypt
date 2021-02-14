@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 12/01/2021.
-//
+/**
+ * @file HMAC.h
+ * @author badbouille
+ * @date 12/01/2021
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _HMAC_H
 #define _HMAC_H

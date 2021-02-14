@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 07/12/2020.
-//
+/**
+ * @file Hash.h
+ * @author badbouille
+ * @date 07/12/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _HASH_H
 #define _HASH_H

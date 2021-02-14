@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 08/11/2020.
-//
+/**
+ * @file volumeTests.h
+ * @author badbouille
+ * @date 08/11/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _VOLUMETESTS_H
 #define _VOLUMETESTS_H

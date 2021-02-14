@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 16/11/2020.
-//
+/**
+ * @file Buffer.h
+ * @author badbouille
+ * @date 16/11/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #ifndef _BUFFER_H_
 #define _BUFFER_H_

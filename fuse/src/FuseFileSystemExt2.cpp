@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 05/05/2020.
-//
+/**
+ * @file FuseFileSystemExt2.cpp
+ * @author badbouille
+ * @date 05/05/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include <Volume.h>
 #include <wait.h>

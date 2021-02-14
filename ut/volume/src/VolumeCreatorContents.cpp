@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 08/11/2020.
-//
+/**
+ * @file VolumeCreatorContents.cpp
+ * @author badbouille
+ * @date 08/11/2020
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include "VolumeCreator.h"
 #include "VolumeCreatorContents.h"

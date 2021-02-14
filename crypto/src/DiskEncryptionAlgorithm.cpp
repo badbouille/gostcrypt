@@ -1,6 +1,10 @@
-//
-// Created by badbouille on 06/08/2019.
-//
+/**
+ * @file DiskEncryptionAlgorithm.cpp
+ * @author badbouille
+ * @date 06/08/2019
+ *
+ * This project is released under the GNU General Public License v3.0.
+ */
 
 #include "../ince/DiskEncryptionAlgorithm.h"
 #include "GostCryptException.h"
