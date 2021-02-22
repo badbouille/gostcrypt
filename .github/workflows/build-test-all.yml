@@ -27,25 +27,25 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ut_common
-          path: bin/ut/ut_common
+          path: build/linux/release/bin/ut/ut_common
           retention-days: 1
       - name: 'Upload crypto test binary'
         uses: actions/upload-artifact@v2
         with:
           name: ut_crypto
-          path: bin/ut/ut_crypto
+          path: build/linux/release/bin/ut/ut_crypto
           retention-days: 1
       - name: 'Upload volume test binary'
         uses: actions/upload-artifact@v2
         with:
           name: ut_volume
-          path: bin/ut/ut_volume
+          path: build/linux/release/bin/ut/ut_volume
           retention-days: 1
       - name: 'Upload gc_cmdline binary'
         uses: actions/upload-artifact@v2
         with:
           name: gc_cmdline
-          path: bin/gc_cmdline
+          path: build/linux/release/bin/gc_cmdline
           retention-days: 1
   ut:
     name: 'Unit tests'
@@ -91,3 +91,4 @@ jobs:
         run: sudo sed -b -i 's/#user_allow_other/user_allow_other/g' /etc/fuse.conf
       - name: 'Running cmdline integration tests'
         run: cd it/cmdline/ && ./mainTests.sh
+
