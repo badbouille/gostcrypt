@@ -1,8 +1,7 @@
 # GostCrypt .gitignore
 
-# output directories
-bin
-obj
+# output directory
+build
 
 # IDE directories
 .idea
