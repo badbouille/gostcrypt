@@ -1,7 +1,7 @@
 # sub Makefile
 
 # inclusions
-INCFLAGS:= -Iince -Iinci -I../common/ince -I../volume/ince
+INCLUDES:=ince inci ../common/ince ../volume/ince
 
 # Objects needed
 CXXFILES:= $(shell find src -name '*.cpp')
@@ -10,5 +10,5 @@ CXXFILES:= $(shell find src -name '*.cpp')
 CFILES+= src/e2fsprogs/fuse2fs.c
 
 # actual compilation
-include ../Makefile
+include rules.mk
 

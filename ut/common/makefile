@@ -1,7 +1,7 @@
 # sub Makefile
 
 # inclusions
-INCFLAGS:= -Iince -I../unity/ince -I../../common/ince
+INCLUDES:=ince ../unity/ince ../../src/common/ince
 
 # flags
 CFLAGS+=-DINCLUDE_TEST_COMMON
@@ -11,8 +11,8 @@ CXXFILES:= $(shell find src -name '*.cpp')
 CXXFILES+= mainTests.cpp
 
 # external components needed
-EXTERNAL_STATIC_LIBS=../../$(BDLIB)/common.a ../../$(BDLIB)/unity.a
+STATIC_LIBS=common.a unity.a
 
 # actual compilation
-include ../../Makefile
+include rules.mk
 

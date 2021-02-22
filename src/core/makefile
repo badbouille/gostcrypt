@@ -1,11 +1,11 @@
 # sub Makefile
 
 # inclusions
-INCFLAGS:= -Iince -Iinci -I../common/ince
+INCLUDES:= ince inci ../common/ince ../volume/ince ../crypto/ince ../fuse/ince
 
 # Objects needed
 CXXFILES:= $(shell find src -name '*.cpp')
 
 # actual compilation
-include ../Makefile
+include rules.mk
 

@@ -62,18 +62,18 @@ SOURCES += \
     src/UserInterface.cpp
 
 LIBS += \
-        ../../bin/lib/core.a \
-        ../../bin/lib/fuse.a \
-        ../../bin/lib/volume.a \
-        ../../bin/lib/crypto.a \
-        ../../bin/lib/common.a \
+        $${STATIC_LIBSD}/core.a \
+        $${STATIC_LIBSD}/fuse.a \
+        $${STATIC_LIBSD}/volume.a \
+        $${STATIC_LIBSD}/crypto.a \
+        $${STATIC_LIBSD}/common.a \
         -ldl -lfuse -lext2fs -lrt -lpthread -lcom_err
 
-TARGET = gc_qt
+TARGET = $${BNAME}
 
-DESTDIR = ../../bin
-OBJECTS_DIR = ../../obj/qt
-MOC_DIR = ../../obj/qt
+DESTDIR = $${DDIR}
+OBJECTS_DIR = $${OBJD}
+MOC_DIR = $${OBJD}
 
 lupdate_hack{
     SOURCES += qml/*.qml \
