@@ -8,7 +8,7 @@
 
 #include "Buffer.h"
 
-#include <sys/mman.h>
+#include <platform/memory.h>
 
 namespace GostCrypt
 {
@@ -280,7 +280,7 @@ void SecureBuffer::allocate(size_t size)
     erase();
     Buffer::allocate(size);
     erase(); // setting initial data to 0
-    mlock(Data->get(), Data->size()); // locking mem to RAM
+    memory_lock(Data->get(), Data->size()); // locking mem to RAM
 }
 
 void SecureBuffer::freeData()
@@ -291,7 +291,7 @@ void SecureBuffer::freeData()
     }
 
     erase();
-    munlock(Data->get(), Data->size()); // do not forget to unlock memory
+    memory_unlock(Data->get(), Data->size()); // do not forget to unlock memory
     Buffer::freeData();
 }
 
