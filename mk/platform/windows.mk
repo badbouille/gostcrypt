@@ -3,15 +3,17 @@
 ## Windows Configuration for GostCrypt project ##
 #################################################
 
-# TODO this is just a copy of the linux platform for now
-
 # Toolchain
-CXX:=g++
-CC:=gcc
-AR:=ar
+CXX:=x86_64-w64-mingw32-g++
+CC:=x86_64-w64-mingw32-gcc
+AR:=x86_64-w64-mingw32-ar
 DOX:=doxygen
 
 # C Flags
+
+# Flags to ship libraries with binaries (easier for windows)
+CFLAGS += -static-libgcc
+CFLAGS += -static-libstdc++
 
 # FUSE flags
 CFLAGS += -D_FILE_OFFSET_BITS=64
