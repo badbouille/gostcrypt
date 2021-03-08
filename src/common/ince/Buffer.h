@@ -344,6 +344,12 @@ class Buffer
 };
 
 /**
+ * @brief Declaring Buffer<SecureBufferPtr> in advance so SecureBuffer can inherit from it.
+ * GCC was able to do it itself, while mingw needs this declaration.
+ */
+template class Buffer<SecureBufferPtr>;
+
+/**
  * @brief Class handling buffer data when data is sensitive. The data will be locked into RAM using mlock and erased before beeing freed
  *
  */
