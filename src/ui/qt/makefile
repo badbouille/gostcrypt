@@ -13,7 +13,7 @@ endif
 
 # Checking if needed var is defined
 ifndef STATIC_LIBSD
-$(error "Library directory is not defined"
+$(error "Library directory is not defined")
 endif
 
 # Additional flags useful to build final binary
