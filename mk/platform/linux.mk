@@ -28,6 +28,8 @@ ifeq ($(T),release)
 CFLAGS += -O4
 endif
 
+CFLAGS += -DPLATFORM_LINUX
+
 # inclusion flags
 CFLAGS += $(addprefix -I, $(INCLUDES))
 

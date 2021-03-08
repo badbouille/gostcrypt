@@ -32,6 +32,8 @@ ifeq ($(T),release)
 CFLAGS += -O4
 endif
 
+CFLAGS += -DPLATFORM_WINDOWS
+
 # inclusion flags
 CFLAGS += $(addprefix -I, $(INCLUDES))
 
