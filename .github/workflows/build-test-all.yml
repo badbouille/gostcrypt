@@ -105,8 +105,10 @@ jobs:
         with:
           name: ut_crypto_win
       - name: 'Running common test'
+        shell: cmd
         run: .\ut_common
       - name: 'Running crypto test'
+        shell: cmd
         run: .\ut_crypto
   it:
     name: 'Integration tests'
