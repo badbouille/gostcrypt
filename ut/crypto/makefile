@@ -13,6 +13,11 @@ CXXFILES+= mainTests.cpp
 # external components needed
 STATIC_LIBS=crypto.a common.a unity.a
 
+# windows needs a link to ws2_32 for htonl only..
+ifeq ($(P),windows)
+EXTERNAL_LINK_LIBS+= -lws2_32
+endif
+
 # actual compilation
 include rules.mk
 

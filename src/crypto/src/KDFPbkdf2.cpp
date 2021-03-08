@@ -9,6 +9,7 @@
 
 #include "KDFPbkdf2.h"
 #include "GostCryptException.h"
+#include "platform/endian.h"
 
 namespace GostCrypt {
 
