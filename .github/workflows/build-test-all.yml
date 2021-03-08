@@ -27,7 +27,7 @@ jobs:
       - name: 'Building whole project'
         run: make -j4
       - name: 'Building for windows (only part of the project for now)'
-        run: make -j4 P=windows ut_common
+        run: make -j4 P=windows ut_common ut_crypto
       - name: 'Upload common test binary'
         uses: actions/upload-artifact@v2
         with:
@@ -57,6 +57,12 @@ jobs:
         with:
           name: ut_common_win
           path: build/windows/release/bin/ut/ut_common
+          retention-days: 1
+      - name: 'Upload crypto test binary for windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ut_crypto_win
+          path: build/windows/release/bin/ut/ut_crypto
           retention-days: 1
   ut:
     name: 'Unit tests'
@@ -94,8 +100,14 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ut_common_win
+      - name: 'Getting crypto built binary'
+        uses: actions/download-artifact@v2
+        with:
+          name: ut_crypto_win
       - name: 'Running common test'
         run: .\ut_common
+      - name: 'Running crypto test'
+        run: .\ut_crypto
   it:
     name: 'Integration tests'
     needs: build
