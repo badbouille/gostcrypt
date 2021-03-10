@@ -26,8 +26,8 @@ jobs:
         run: sudo apt install mingw-w64
       - name: 'Building whole project'
         run: make -j4
-      - name: 'Building for windows (only part of the project for now)'
-        run: make -j4 P=windows ut_common ut_crypto
+      - name: 'Building unit tests for windows'
+        run: make -j4 P=windows ut_common ut_crypto ut_volume
       - name: 'Upload common test binary'
         uses: actions/upload-artifact@v2
         with:
@@ -63,6 +63,12 @@ jobs:
         with:
           name: ut_crypto_win
           path: build/windows/release/bin/ut/ut_crypto
+          retention-days: 1
+      - name: 'Upload volume test binary for windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ut_volume_win
+          path: build/windows/release/bin/ut/ut_volume
           retention-days: 1
   ut:
     name: 'Unit tests'
@@ -104,6 +110,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ut_crypto_win
+      - name: 'Getting volume built binary'
+        uses: actions/download-artifact@v2
+        with:
+          name: ut_volume_win
       - name: 'Renaming files to add exe extension'
         shell: cmd
         run: ren *. *.exe
@@ -113,6 +123,9 @@ jobs:
       - name: 'Running crypto test'
         shell: cmd
         run: .\ut_crypto.exe
+      - name: 'Running volume test'
+        shell: cmd
+        run: .\ut_volume.exe
   it:
     name: 'Integration tests'
     needs: build
