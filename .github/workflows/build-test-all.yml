@@ -104,12 +104,15 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ut_crypto_win
+      - name: 'Renaming files to add exe extension'
+        shell: cmd
+        run: ren *. *.exe
       - name: 'Running common test'
         shell: cmd
-        run: .\ut_common
+        run: .\ut_common.exe
       - name: 'Running crypto test'
         shell: cmd
-        run: .\ut_crypto
+        run: .\ut_crypto.exe
   it:
     name: 'Integration tests'
     needs: build
