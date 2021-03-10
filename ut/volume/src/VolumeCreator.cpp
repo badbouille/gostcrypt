@@ -27,8 +27,11 @@ void stdtests_createvolume(const std::string& file, size_t length, const char *c
 void stdtests_createvolumes() {
 
     // creating folder for volume files
+#ifdef PLATFORM_WINDOWS
+    mkdir(CREATOR_FILE_FOLDER);
+#else
     mkdir(CREATOR_FILE_FOLDER, S_IRWXU);
-
+#endif
     // creating volume files inside
     for (const auto & creator_file : creator_files) {
         stdtests_createvolume(creator_file.filename, creator_file.size, (const char *)creator_file.content);
