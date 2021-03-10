@@ -8,6 +8,7 @@
 
 #include <VolumeStandardHeader.h>
 #include <PRNGSystem.h>
+#include "platform/endian.h"
 
 void GostCrypt::VolumeStandardHeader::Serialize(GostCrypt::SecureBufferPtr &dest)
 {

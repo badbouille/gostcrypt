@@ -18,8 +18,12 @@
 #endif
 
 #ifdef PLATFORM_WINDOWS
+#include <winsock2.h>
 #include <winsock.h>
 #define htobe32(u32_val) htonl(u32_val)
+#define be32toh(u32_val) ntohl(u32_val)
+#define htobe64(u64_val) ((1==htonl(1)) ? (u64_val) : (((uint64_t)htonl((u64_val) & 0xFFFFFFFFUL)) << 32) | htonl((uint32_t)((u64_val) >> 32)))
+#define be64toh(u64_val) ((1==htonl(1)) ? (u64_val) : (((uint64_t)ntohl((u64_val) & 0xFFFFFFFFUL)) << 32) | ntohl((uint32_t)((u64_val) >> 32)))
 #endif
 
 #endif // _MEMORY_H_
