@@ -1,0 +1,3 @@
+[submodule "src/fuse/src/fuse-lwext4"]
+	path = src/fuse/src/fuse-lwext4
+	url = https://github.com/badbouille/fuse-lwext4.git
