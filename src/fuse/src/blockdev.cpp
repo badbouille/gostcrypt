@@ -65,7 +65,7 @@ struct block_dev {
 
 /**********************BLOCKDEV INTERFACE**************************************/
 int blockdev_get(const char *fname, struct ext4_blockdev **pbdev);
-void blockdev_put(struct ext4_blockdev *bdev);
+
 static int blockdev_open(struct ext4_blockdev *bdev);
 static int blockdev_bread(struct ext4_blockdev *bdev, void *buf, uint64_t blk_id,
 						 uint32_t blk_cnt);
@@ -108,9 +108,11 @@ int blockdev_get(const char *fname, struct ext4_blockdev **pbdev)
 	return LWEXT4_ERRNO(EOK);
 }
 
+extern "C" { /* Declared extern C to be able to link it to the one in  */
 void blockdev_put(struct ext4_blockdev *bdev)
 {
-	FREE_BDEV(bdev);
+    FREE_BDEV(bdev);
+}
 }
 
 static int blockdev_open(struct ext4_blockdev *bdev)
