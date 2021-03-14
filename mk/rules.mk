@@ -54,12 +54,12 @@ ALL_DIRS=$(shell echo $(CXXOBJS_DIRS) $(COBJS_DIRS) | tr ' ' '\n' | sort | uniq)
 .SUFFIXES: .cpp .o .
 
 # global compilation rule
-$(CXXOBJS): | $(CXXOBJS_DIRS)
+$(CXXOBJS): $(OTHER_DEPS) | $(CXXOBJS_DIRS)
 $(CXXOBJS): $(OD)/%.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # global compilation rule
-$(COBJS): | $(COBJS_DIRS)
+$(COBJS): $(OTHER_DEPS) | $(COBJS_DIRS)
 $(COBJS): $(OD)/%.o : %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
