@@ -45,6 +45,12 @@
 
 #include "lwext4.h"
 
+#include "Volume.h"
+
+// weird way of giving current volume
+// TODO comment this
+GostCrypt::Volume *already_opened_volume = nullptr;
+
 /**@brief   Image block size.*/
 #define EXT4_BLOCKDEV_BSIZE 512
 
@@ -52,14 +58,13 @@ struct block_dev {
 	struct ext4_blockdev bdev;
 	struct ext4_blockdev_iface bdif;
 	unsigned char block_buf[EXT4_BLOCKDEV_BSIZE];
-	int fd;
 };
 
 #define ALLOC_BDEV() calloc(1, sizeof(struct block_dev))
 #define FREE_BDEV(p) free(p)
 
 /**********************BLOCKDEV INTERFACE**************************************/
-int blockdev_get(char *fname, struct ext4_blockdev **pbdev);
+int blockdev_get(const char *fname, struct ext4_blockdev **pbdev);
 void blockdev_put(struct ext4_blockdev *bdev);
 static int blockdev_open(struct ext4_blockdev *bdev);
 static int blockdev_bread(struct ext4_blockdev *bdev, void *buf, uint64_t blk_id,
@@ -69,61 +74,23 @@ static int blockdev_bwrite(struct ext4_blockdev *bdev, const void *buf,
 static int blockdev_close(struct ext4_blockdev *bdev);
 
 /******************************************************************************/
-static int __blockdev_get(const char *path)
-{
-	int disk_fd = open(path, O_RDWR);
-	if (disk_fd < 0) {
-		return -errno;
-	}
 
-	return disk_fd;
-}
-
-static void __blockdev_put(int fd)
-{
-	if (fd)
-		close(fd);
-}
-
-int blockdev_get(char *fname, struct ext4_blockdev **pbdev)
+int blockdev_get(const char *fname, struct ext4_blockdev **pbdev)
 {
 	struct block_dev *bdev;
-	int dev_file = __blockdev_get(fname);
 	int64_t block_cnt = 0;
-	struct stat stat = { 0 };
 
-	if (dev_file < 0)
+	if (already_opened_volume == nullptr)
 		return LWEXT4_ERRNO(EIO);
 
-	bdev = ALLOC_BDEV();
+	bdev = (struct block_dev *)ALLOC_BDEV();
 	if (!bdev) {
-		__blockdev_put(dev_file);
 		return LWEXT4_ERRNO(ENOMEM);
 	}
-	bdev->fd = dev_file;
 	bdev->bdif.ph_bsize = EXT4_BLOCKDEV_BSIZE;
-	fstat(dev_file, &stat);
-	if (S_ISBLK(stat.st_mode)) {
-#if defined(__linux__)
-		ioctl(dev_file, BLKGETSIZE64, &block_cnt);
-		block_cnt /= EXT4_BLOCKDEV_BSIZE;
-#elif defined(__APPLE__) 
-		ioctl(dev_file, DKIOCGETBLOCKCOUNT, &block_cnt);
-#elif defined(__FreeBSD__)
-	} else if (S_ISCHR(stat.st_mode)) {
-		ioctl(dev_file, DIOCGMEDIASIZE, &block_cnt);
-		block_cnt /= EXT4_BLOCKDEV_BSIZE;
-#else
- #error "Currently support Linux, FreeBSD and OS X only."
-#endif
-	} else if (S_ISREG(stat.st_mode & S_IFMT)) {
-		block_cnt = lseek(dev_file, 0, SEEK_END) / EXT4_BLOCKDEV_BSIZE;
-		lseek(dev_file, 0, SEEK_SET);
-	} else {
-		FREE_BDEV(bdev);
-		__blockdev_put(dev_file);
-		return LWEXT4_ERRNO(EINVAL);
-	}
+
+    block_cnt = already_opened_volume->getSize() / EXT4_BLOCKDEV_BSIZE;
+
 	bdev->bdif.ph_bcnt = block_cnt;
 	bdev->bdif.ph_bbuf = bdev->block_buf;
 
@@ -143,7 +110,6 @@ int blockdev_get(char *fname, struct ext4_blockdev **pbdev)
 
 void blockdev_put(struct ext4_blockdev *bdev)
 {
-	__blockdev_put(((struct block_dev *)bdev)->fd);
 	FREE_BDEV(bdev);
 }
 
@@ -157,34 +123,48 @@ static int blockdev_open(struct ext4_blockdev *bdev)
 static int blockdev_bread(struct ext4_blockdev *bdev, void *buf, uint64_t blk_id,
 						 uint32_t blk_cnt)
 {
-	int ret = pread(((struct block_dev *)bdev)->fd,
-					buf,
-					bdev->bdif->ph_bsize * blk_cnt,
-					blk_id * bdev->bdif->ph_bsize);
-	if ((size_t)ret != bdev->bdif->ph_bsize * blk_cnt)
-		return LWEXT4_ERRNO(EIO);
+    GostCrypt::SecureBufferPtr sbuf;
 
-	return LWEXT4_ERRNO(EOK);
+    try
+    {
+        // hoping computed size is alright
+        sbuf.set((uint8_t *) buf, bdev->bdif->ph_bsize * blk_cnt);
+
+        // reading
+        already_opened_volume->read(sbuf, blk_id * bdev->bdif->ph_bsize);
+    } catch(GostCrypt::GostCryptException &e)
+    {
+        // TODO handle more errors, like shortread for example.
+        return LWEXT4_ERRNO(EIO);
+    }
+
+    return LWEXT4_ERRNO(EOK);
 }
 
 /******************************************************************************/
 static int blockdev_bwrite(struct ext4_blockdev *bdev, const void *buf,
 						  uint64_t blk_id, uint32_t blk_cnt)
 {
-	int ret = pwrite(((struct block_dev *)bdev)->fd,
-					buf,
-					bdev->bdif->ph_bsize * blk_cnt,
-					blk_id * bdev->bdif->ph_bsize);
-	if ((size_t)ret != bdev->bdif->ph_bsize * blk_cnt)
-		return LWEXT4_ERRNO(EIO);
+    GostCrypt::SecureBufferPtr sbuf;
 
-	return LWEXT4_ERRNO(EOK);
+    try
+    {
+        // hoping computed size is alright
+        sbuf.set((uint8_t *) buf, bdev->bdif->ph_bsize * blk_cnt);
+
+        // reading
+        already_opened_volume->write(sbuf, blk_id * bdev->bdif->ph_bsize);
+    } catch(GostCrypt::GostCryptException &e)
+    {
+        // TODO handle more errors, like shortread for example.
+        return LWEXT4_ERRNO(EIO);
+    }
+
+    return LWEXT4_ERRNO(EOK);
 }
 /******************************************************************************/
 static int blockdev_close(struct ext4_blockdev *bdev)
 {
-	__blockdev_put(((struct block_dev *)bdev)->fd);
-	((struct block_dev *)bdev)->fd = 0;
 	return LWEXT4_ERRNO(EOK);
 }
 

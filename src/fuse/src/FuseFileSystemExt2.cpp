@@ -10,6 +10,13 @@
 #include <wait.h>
 #include "FuseFileSystemExt2.h"
 
+#include "blockdev.h"
+
+extern "C" {
+#include "ops.h"
+#include "lwext4.h"
+}
+
 void GostCrypt::FuseFileSystemExt2::create(std::string target) {
 
     /* Forking and execing the mkfs program */
@@ -58,25 +65,57 @@ void GostCrypt::FuseFileSystemExt2::create(std::string target) {
 // fuses2fs will think it's writing to a file but in reality everything will go through this volume
 extern GostCrypt::Volume *already_opened_volume;
 
-// marking extern C or else linker won't create the right symbol
-extern "C" {
-    // fuse fs main. Will setup everything and call fuse_main.
-    int fuse2fs_main(int argc, char *argv[], const char *fuse_additional_params);
-}
+static struct fuse_operations e4f_ops = {
+        .getattr = op_getattr,
+        .readlink = op_readlink,
+        .mkdir = op_mkdir,
+        .unlink = op_unlink,
+        .rmdir = op_rmdir,
+        .symlink = op_symlink,
+        .rename = op_rename,
+        .link = op_link,
+        .chmod = op_chmod,
+        .chown = op_chown,
+        .truncate = op_truncate,
+        .utime	  = op_utimes,
+        .open = op_open,
+        .read = op_read,
+        .write = op_write,
+        .release = op_release,
+        .setxattr = op_setxattr,
+        .getxattr = op_getxattr,
+        .listxattr = op_listxattr,
+        .removexattr = op_removexattr,
+        .opendir = op_opendir,
+        .readdir = op_readdir,
+        .releasedir = op_release,
+        .init = op_init,
+        .destroy = op_destroy,
+        .create = op_create,
+        .ftruncate = op_ftruncate,
+#if !defined(__FreeBSD__)
+        .utimens	= op_utimens,
+#endif
+};
 
 void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *target) {
-
-    char params[3][256] = {"gostcrypt", "gostcrypt", ""};
-    char fuse_params[256] = ",allow_other";
+    struct ext4_blockdev *bdev;
+#ifdef DEBUG
+    #define ARG_NUM 5
+    char params[ARG_NUM][256] = {"gostcrypt", "", "-oallow_other", "-f", "-s"};
+#else
+#define ARG_NUM 4
+    char params[ARG_NUM][256] = {"gostcrypt", "", "-oallow_other", "-s"};
+#endif
 
     // strcpy_s not part of c++11. Using good old strlen instead.
     if(strlen(mountpoint) > 255) {
         throw INVALIDPARAMETEREXCEPTION("mountpoint name too long for buffer.");
     }
-    strcpy(params[2], mountpoint);
+    strcpy(params[1], mountpoint);
 
-    char* args[3];
-    for (int i = 0; i < 3 ; i++)
+    char* args[ARG_NUM];
+    for (int i = 0; i < ARG_NUM; i++)
     {
         args[i] = params[i];
     }
@@ -84,10 +123,16 @@ void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *
     // binding parameters
     already_opened_volume = target;
 
+    if (blockdev_get(mountpoint, &bdev) != LWEXT4_ERRNO(EOK)) {
+        throw GOSTCRYPTEXCEPTION("Failed to open the device");
+    }
+
     // setup super fuse (info file)
     setupSuperFuse(geteuid(), getegid(), target, mountpoint);
 
-    // calling fuse2fs
-    fuse2fs_main(3, args, fuse_params);
+    /* Waiting for child to mount the raw volume */
+    if (super_fuse_main(ARG_NUM, args, &e4f_ops, bdev) != 0 ) {
+        throw GOSTCRYPTEXCEPTION("fuse_main failed.");
+    }
 }
 
