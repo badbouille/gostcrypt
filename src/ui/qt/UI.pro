@@ -67,7 +67,7 @@ LIBS += \
         $${STATIC_LIBSD}/volume.a \
         $${STATIC_LIBSD}/crypto.a \
         $${STATIC_LIBSD}/common.a \
-        -ldl -lfuse -lext2fs -lrt -lpthread -lcom_err
+        -ldl -lfuse -lpthread
 
 TARGET = $${BNAME}
 

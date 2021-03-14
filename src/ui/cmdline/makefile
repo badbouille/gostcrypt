@@ -16,7 +16,7 @@ endif
 
 # external linker components
 EXTERNAL_LINK_LIBS += -lfuse
-EXTERNAL_LINK_LIBS += -lext2fs -lrt -lpthread -lcom_err
+EXTERNAL_LINK_LIBS += -lpthread
 
 # actual compilation
 include rules.mk
