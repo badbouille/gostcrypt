@@ -49,6 +49,7 @@ ifdef CFILES
 COBJS=$(addprefix $(OD)/, $(subst .c,.o,$(CFILES)))
 COBJS_DIRS=$(shell dirname $(COBJS) | uniq)
 endif
+ALL_DIRS=$(shell echo $(CXXOBJS_DIRS) $(COBJS_DIRS) | tr ' ' '\n' | sort | uniq)
 
 .SUFFIXES: .cpp .o .
 
@@ -63,7 +64,7 @@ $(COBJS): $(OD)/%.o : %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 # Directory creation rule for objects
-$(CXXOBJS_DIRS) $(COBJS_DIRS):
+$(ALL_DIRS):
 	@mkdir -p $@
 
 # Lib maker
