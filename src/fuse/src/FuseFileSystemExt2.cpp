@@ -98,6 +98,10 @@ static struct fuse_operations e4f_ops = {
 #endif
 };
 
+extern "C" { /* Adding lwext4 options structure in extern C to be able to link it */
+struct fuse_lwext4_options fuse_lwext4_options;
+}
+
 void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *target) {
     struct ext4_blockdev *bdev;
 #ifdef DEBUG
@@ -129,6 +133,13 @@ void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *
 
     // setup super fuse (info file)
     setupSuperFuse(geteuid(), getegid(), target, mountpoint);
+
+    // setup lwext4 options (nothing for now)
+    fuse_lwext4_options.cache = 0;
+    fuse_lwext4_options.debug = 0;
+    fuse_lwext4_options.journal = 0;
+    fuse_lwext4_options.disk = nullptr;
+    fuse_lwext4_options.logfile = nullptr;
 
     /* Waiting for child to mount the raw volume */
     if (super_fuse_main(ARG_NUM, args, &e4f_ops, bdev) != 0 ) {
