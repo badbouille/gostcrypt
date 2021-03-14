@@ -70,7 +70,7 @@ $(ALL_DIRS):
 # Lib maker
 %.a: $(COBJS) $(CXXOBJS)
 	@mkdir -p $(shell dirname $@)
-	$(AR) rcs $@ $^ $(EXTERNAL_STATIC_LIBS)
+	$(AR) -rcs $@ $^ $(wildcard $(EXTERNAL_STATIC_OBJS)/*.o)
 
 # binary maker
 $(BINARY): $(COBJS) $(CXXOBJS)
