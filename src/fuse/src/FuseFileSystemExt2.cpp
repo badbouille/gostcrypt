@@ -65,38 +65,7 @@ void GostCrypt::FuseFileSystemExt2::create(std::string target) {
 // fuses2fs will think it's writing to a file but in reality everything will go through this volume
 extern GostCrypt::Volume *already_opened_volume;
 
-static struct fuse_operations e4f_ops = {
-        .getattr = op_getattr,
-        .readlink = op_readlink,
-        .mkdir = op_mkdir,
-        .unlink = op_unlink,
-        .rmdir = op_rmdir,
-        .symlink = op_symlink,
-        .rename = op_rename,
-        .link = op_link,
-        .chmod = op_chmod,
-        .chown = op_chown,
-        .truncate = op_truncate,
-        .utime	  = op_utimes,
-        .open = op_open,
-        .read = op_read,
-        .write = op_write,
-        .release = op_release,
-        .setxattr = op_setxattr,
-        .getxattr = op_getxattr,
-        .listxattr = op_listxattr,
-        .removexattr = op_removexattr,
-        .opendir = op_opendir,
-        .readdir = op_readdir,
-        .releasedir = op_release,
-        .init = op_init,
-        .destroy = op_destroy,
-        .create = op_create,
-        .ftruncate = op_ftruncate,
-#if !defined(__FreeBSD__)
-        .utimens	= op_utimens,
-#endif
-};
+extern struct fuse_operations e4f_ops;
 
 extern "C" { /* Adding lwext4 options structure in extern C to be able to link it */
 struct fuse_lwext4_options fuse_lwext4_options;

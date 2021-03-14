@@ -28,6 +28,8 @@ INCLUDES:=ince inci ../common/ince ../volume/ince src/fuse-lwext4 $(LWEXT4_BUILD
 # Objects needed
 CXXFILES:= $(shell find src -maxdepth 1 -name '*.cpp')
 
+CFILES+= src/fuse_operations.c
+
 # C files for fuse-lwext4 (extracted from its makefile)
 CFILES+= src/fuse-lwext4/op_init.c \
 		 src/fuse-lwext4/op_destroy.c \
