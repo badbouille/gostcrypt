@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 
-#define TAB_SIZE    1000000
+#define TAB_SIZE    100000
 #define REPEAT_COPY 128
 
 // degrees of freedom: 2*REPEAT_COPY-2
@@ -48,6 +48,29 @@ void test_securebufferptr_compare() {
     // constant-time comparison test
     // to make it obvious, an epic worst case scenario where the first and last byte are different in a HUGE buffer is chosen
 
+    /* This blocks makes the same computations as the real loop but results are dropped.
+     * After a while I noticed this test stopped working on linux. This is a caching problem.
+     * The first loop(s) will be way slower than the next ones because the processor will cache the requested pages.
+     * Sometimes the first loop is 100 times slower... This does not affect the mean (128 iterations) but kills
+     * the standard deviation (sum of SQUARED diff just blows up). Best workaround would be to remove the 5% top and bottom values,
+     * but just dry running the test does a great job too.
+     */
+    /* DRY RUN */
+    for(int i=0; i<REPEAT_COPY; i++) {
+        /* T0 tests */
+        T0_start = clock();
+        bufptr1.isDataEqual(bufptr2);
+        T0_end = clock();
+        T0_measures[i] = T0_end - T0_start;
+
+        /* T1 tests */
+        T1_start = clock();
+        bufptr1.isDataEqual(bufptr3);
+        T1_end = clock();
+        T1_measures[i] = T1_end - T1_start;
+    }
+
+    /* REAL RUN */
     for(int i=0; i<REPEAT_COPY; i++) {
         /* T0 tests */
         T0_start = clock();
@@ -90,7 +113,11 @@ void test_securebufferptr_compare() {
     //printf("T0 | m:%f std:%f\n", T0_mean, T0_std);
     //printf("T1 | m:%f std:%f\n", T1_mean, T1_std);
 
-    /* Checking if STDs are cloe enough */
+    /* Checking if STDs are close enough (0.5 < std0/std1 < 2).
+     * Tweaked: (0.25 < var0/var1 < 4)
+     *          -> center: (4 + 0.25) / 2
+     *          -> delta:  (4 - 0.25) / 2
+     */
     TEST_ASSERT_FLOAT_WITHIN_MESSAGE((4.0-0.25)/2.0, (4.0+0.25)/2.0, T0_std/T1_std, "Standard deviations are too different.");
 
     /* Computing Pooled standard deviation */
