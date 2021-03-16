@@ -23,7 +23,7 @@ LIBLWEXT4_A= $(LWEXT4_BUILD_PATH)/src/liblwext4.a
 OTHER_DEPS+= $(LWEXT4_BUILD_PATH)/src_objects
 EXTERNAL_STATIC_OBJS = $(LWEXT4_BUILD_PATH)/src_objects
 # inclusions
-INCLUDES:=ince inci ../common/ince ../volume/ince src/fuse-lwext4 $(LWEXT4_BUILD_PATH)/include
+INCLUDES:=ince inci ../common/ince ../volume/ince src/fuse-lwext4 $(LWEXT4_PATH)/include $(LWEXT4_BUILD_PATH)/include
 
 # Objects needed
 CXXFILES:= $(shell find src -maxdepth 1 -name '*.cpp')
