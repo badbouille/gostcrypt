@@ -36,42 +36,49 @@ jobs:
           name: ut_common_lin
           path: build/linux/release/bin/ut/ut_common
           retention-days: 1
+          if-no-files-found: error
       - name: 'Upload crypto test binary'
         uses: actions/upload-artifact@v2
         with:
           name: ut_crypto_lin
           path: build/linux/release/bin/ut/ut_crypto
           retention-days: 1
+          if-no-files-found: error
       - name: 'Upload volume test binary'
         uses: actions/upload-artifact@v2
         with:
           name: ut_volume_lin
           path: build/linux/release/bin/ut/ut_volume
           retention-days: 1
+          if-no-files-found: error
       - name: 'Upload gc_cmdline binary'
         uses: actions/upload-artifact@v2
         with:
           name: gc_cmdline_lin
           path: build/linux/release/bin/gc_cmdline
           retention-days: 1
+          if-no-files-found: error
       - name: 'Upload common test binary for windows'
         uses: actions/upload-artifact@v2
         with:
           name: ut_common_win
           path: build/windows/release/bin/ut/ut_common
           retention-days: 1
+          if-no-files-found: error
       - name: 'Upload crypto test binary for windows'
         uses: actions/upload-artifact@v2
         with:
           name: ut_crypto_win
           path: build/windows/release/bin/ut/ut_crypto
           retention-days: 1
+          if-no-files-found: error
       - name: 'Upload volume test binary for windows'
         uses: actions/upload-artifact@v2
         with:
           name: ut_volume_win
           path: build/windows/release/bin/ut/ut_volume
           retention-days: 1
+          if-no-files-found: error
   ut:
     name: 'Unit tests'
     needs: build
