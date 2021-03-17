@@ -12,7 +12,7 @@
 # still works as intended. The script is only intended for easier update of theses volumes
 
 # update path if needed
-GC=../../../bin/gc_cmdline
+GC=../../../build/linux/release/bin/gc_cmdline
 MOUNTPOINT=mountpoint
 DIR=$1
 
@@ -81,15 +81,15 @@ cleanup
 
 # ECB XOR EXT2
 
-$GC create "${DIR}v_std_ecbxor_ext2" "$MOUNTPOINT" -s100K
+$GC create "${DIR}v_std_ecbxor_ext2" "$MOUNTPOINT" -s1M
 createfolder
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_ext2_b10k" "$MOUNTPOINT" -s100K -b10K
+$GC create "${DIR}v_std_ecbxor_ext2_b10k" "$MOUNTPOINT" -s1M -b10K
 createfolder
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_ext2_sbp" "$MOUNTPOINT" -s100K -p$PASS_A -b16
+$GC create "${DIR}v_std_ecbxor_ext2_sbp" "$MOUNTPOINT" -s1M -p$PASS_A -b16
 createfolder
 cleanup
 
