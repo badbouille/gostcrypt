@@ -143,9 +143,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: gc_cmdline_lin
-          path: bin
+          path: build/linux/release/bin
       - name: 'Giving execution rights to binaries'
-        run: sudo chmod a+x ./bin/gc_*
+        run: sudo chmod a+x ./build/linux/release/bin/gc_*
       - name: 'Uncommenting allow_other to the global fuse options'
         run: sudo sed -b -i 's/#user_allow_other/user_allow_other/g' /etc/fuse.conf
       - name: 'Running cmdline integration tests'

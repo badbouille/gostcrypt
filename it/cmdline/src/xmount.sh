@@ -9,7 +9,7 @@
 # - xmount.sh is ran over our new volumes
 
 # update path if needed
-GC=../../../bin/gc_cmdline
+GC=../../../build/linux/release/bin/gc_cmdline
 
 # Passwords
 PASS_A="ASSURANCETOURIXX"
