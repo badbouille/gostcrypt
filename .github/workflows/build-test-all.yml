@@ -62,21 +62,21 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ut_common_win
-          path: build/windows/release/bin/ut/ut_common
+          path: build/windows/release/bin/ut/ut_common.exe
           retention-days: 1
           if-no-files-found: error
       - name: 'Upload crypto test binary for windows'
         uses: actions/upload-artifact@v2
         with:
           name: ut_crypto_win
-          path: build/windows/release/bin/ut/ut_crypto
+          path: build/windows/release/bin/ut/ut_crypto.exe
           retention-days: 1
           if-no-files-found: error
       - name: 'Upload volume test binary for windows'
         uses: actions/upload-artifact@v2
         with:
           name: ut_volume_win
-          path: build/windows/release/bin/ut/ut_volume
+          path: build/windows/release/bin/ut/ut_volume.exe
           retention-days: 1
           if-no-files-found: error
   ut:
@@ -123,9 +123,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ut_volume_win
-      - name: 'Renaming files to add exe extension'
-        shell: cmd
-        run: ren *. *.exe
       - name: 'Running common test'
         shell: cmd
         run: .\ut_common.exe
