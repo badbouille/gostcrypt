@@ -85,7 +85,7 @@ $GC create "${DIR}v_std_ecbxor_ext2" "$MOUNTPOINT" -s1M
 createfolder
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_ext2_b10k" "$MOUNTPOINT" -s1M -b10K
+$GC create "${DIR}v_std_ecbxor_ext2_b10k" "$MOUNTPOINT" -s1000K -b10K
 createfolder
 cleanup
 
