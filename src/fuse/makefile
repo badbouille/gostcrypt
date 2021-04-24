@@ -19,11 +19,17 @@ LWEXT4_BUILD_PATH= $(LWEXT4_PATH)/build_generic
 LWEXT4_BUILD_TOOCHAIN= $(LWEXT4_PATH)/toolchain/generic.cmake
 endif
 
+# Rule to build LWEXT4
 LIBLWEXT4_A= $(LWEXT4_BUILD_PATH)/src/liblwext4.a
 OTHER_DEPS+= $(LWEXT4_BUILD_PATH)/src_objects
 EXTERNAL_STATIC_OBJS = $(LWEXT4_BUILD_PATH)/src_objects
 # inclusions
 INCLUDES:=ince inci ../common/ince ../volume/ince src/fuse-lwext4 $(LWEXT4_PATH)/include $(LWEXT4_BUILD_PATH)/include
+
+# Windows inclusions
+ifeq ($(P),windows)
+INCLUDES+=src/winfsp/inc src/winfsp/inc/fuse src/winfsp/opt/fsext/inc
+endif
 
 # Objects needed
 CXXFILES:= $(shell find src -maxdepth 1 -name '*.cpp')
