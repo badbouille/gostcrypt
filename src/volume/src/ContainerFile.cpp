@@ -40,7 +40,7 @@ void GostCrypt::ContainerFile::write(GostCrypt::SecureBufferPtr buffer, size_t o
 {
     // no checks on input. User can write anywhere and try to extend the volume size.
     if (!isOpened())
-        CONTAINERUNINITIALIZEDEXCEPTION();
+        throw CONTAINERUNINITIALIZEDEXCEPTION();
     volumefile.seekp(offset, std::ios_base::beg);
     volumefile.write((char *)buffer.get(), buffer.size());
     volumefile.flush();
@@ -51,7 +51,7 @@ void GostCrypt::ContainerFile::write(GostCrypt::SecureBufferPtr buffer, size_t o
 void GostCrypt::ContainerFile::read(GostCrypt::SecureBufferPtr buffer, size_t offset)
 {
     if (!isOpened())
-        CONTAINERUNINITIALIZEDEXCEPTION();
+        throw CONTAINERUNINITIALIZEDEXCEPTION();
     if (offset + buffer.size() > volumesize)
         throw INVALIDPARAMETEREXCEPTION("Trying to read outside of file range");
     volumefile.seekg(offset, std::ios_base::beg);
