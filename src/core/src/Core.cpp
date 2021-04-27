@@ -11,6 +11,7 @@
 #include <ContainerFile.h>
 #include "Core.h"
 #include "FuseFileSystem.h"
+#include "ForkableCore.h"
 
 GostCrypt::Core::CallBackFunction_t GostCrypt::Core::callback_function = nullptr;
 float GostCrypt::Core::callback_superbound_high = 1.0f;
@@ -38,6 +39,37 @@ GostCrypt::FuseFileSystemList GostCrypt::Core::GetFileSystems()
 }
 
 void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
+{
+    pid_t pid;
+    static char argvT[][256] = { "api", "mount", "", "" };
+    static char *argv[] = { argvT[0], argvT[1], nullptr, nullptr, nullptr };
+    uint32_t len;
+    int ret = 0, status;
+
+    pid = fork();
+
+    if (pid == 0) {
+        ForkableCore_api_SerializeMount(p, &argv[2], &len);
+        execv(g_prog_path, argv);
+        exit(127);
+    }
+
+    ret = waitpid(pid, &status, 0);
+
+    if ((ret == -1) || (WIFEXITED(status) == false)) {
+        throw GOSTCRYPTEXCEPTION("forked process failed to execute");
+    } else {
+        if (WEXITSTATUS(status) == 2) {
+            // Password error OR volume corrupted
+            throw VOLUMEPASSWORDEXCEPTION();
+        } else if (WEXITSTATUS(status) != 0) { // TODO handle more exceptions !! user can not know the bullshit he did
+            throw GOSTCRYPTEXCEPTION("Unknown exception in forked process");
+        }
+    }
+
+}
+
+void GostCrypt::Core::directmount(GostCrypt::Core::MountParams_t *p)
 {
     // TODO check input
 

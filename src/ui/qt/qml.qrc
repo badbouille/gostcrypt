@@ -91,8 +91,6 @@
         <file>inc/DragWindowProvider.h</file>
         <file>src/GraphicInterface.cpp</file>
         <file>inc/GraphicInterface.h</file>
-        <file>src/ForkableCore.cpp</file>
-        <file>inc/ForkableCore.h</file>
         <file>gsbutton.qrc</file>
         <file>src/main.cpp</file>
         <file>qml.qrc</file>

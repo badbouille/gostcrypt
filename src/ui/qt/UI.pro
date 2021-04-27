@@ -44,7 +44,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    inc/ForkableCore.h \
     inc/UserSettings.h \
     inc/DragWindowProvider.h \
     inc/TranslationApp.h \
@@ -54,7 +53,6 @@ HEADERS += \
 
 SOURCES += \
     src/main.cpp \
-    src/ForkableCore.cpp \
     src/UserSettings.cpp \
     src/TranslationApp.cpp \
     src/GraphicInterface.cpp \

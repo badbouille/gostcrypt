@@ -27,8 +27,6 @@
 #define CONNECT_QML_SIGNAL(requestName) connect(qml, SIGNAL(send ## requestName (QVariant)), this, SLOT(send ## requestName (QVariant)));
 #define QML_SIGNAL(requestName, params) s ## requestName (params);
 
-extern const char *g_prog_path;
-
 /* Callback on UI side to print progress */
 void ForkableCore_uicallback_multiple(const char *message, float percent, uint32_t id);
 

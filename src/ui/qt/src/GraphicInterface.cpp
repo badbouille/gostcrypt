@@ -105,11 +105,7 @@ void GraphicInterface::sendCreateVolume(QVariant aContent) {
 
     try
     {
-        if (aContent.toMap().contains("id")) {
-            ForkableCore_api_callCreate(&arguments, ForkableCore_createcallback, ForkableCore_uicallback_multiple, GI_KEY(aContent,"id").toUInt());
-        } else {
-            ForkableCore_api_callCreate(&arguments, ForkableCore_createcallback);
-        }
+        GostCrypt::Core::create(&arguments);
         arguments.password.erase();
     } catch (GostCrypt::GostCryptException &e) {
         QVariantList r;
@@ -151,11 +147,7 @@ void GraphicInterface::sendMountVolume(QVariant aContent)
 
     try
     {
-        if (aContent.toMap().contains("id")) {
-            ForkableCore_api_callMount(&arguments, ForkableCore_mountcallback, ForkableCore_uicallback_multiple, GI_KEY(aContent,"id").toUInt());
-        } else {
-            ForkableCore_api_callMount(&arguments, ForkableCore_mountcallback);
-        }
+        GostCrypt::Core::mount(&arguments);
         arguments.password.erase();
     } catch (GostCrypt::GostCryptException &e) {
         QVariantList r;

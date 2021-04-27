@@ -8,6 +8,7 @@
 
 #include "Commands.h"
 #include <string>
+#include <ForkableCore.h>
 
 /* Common values */
 
@@ -25,6 +26,9 @@ static struct argp argp = { nullptr, nullptr, args_doc, doc };
 
 int main(int argc, char **argv) {
     std::string cmd = "";
+
+    /* Interception of api calls */
+    ForkableCore_api_handler(argc, argv);
 
     if (argc < 2) {
         argp_help(&argp, stdout, ARGP_HELP_STD_USAGE, argv[0]);

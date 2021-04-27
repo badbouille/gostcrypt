@@ -155,20 +155,9 @@ extern "C" {
         new_op.read = fusefs_super_read;
         new_op.release = fusefs_super_release;
 
-        pid_t pid = fork();
-        int status = 0;
+        fuse_main(argc, argv, &new_op, private_data);
 
-        /* Calling real fuse main by forking since it exits instead of returning */
-        if ( pid == 0 ) {
-            exit(fuse_main(argc, argv, &new_op, private_data));
-        }
-
-        /* Waiting for child to mount the raw volume */
-        if (waitpid(pid, &status, 0) == -1 ) {
-            throw GOSTCRYPTEXCEPTION("waitpid failed in fuse_main.");
-        }
-
-        return status;
+        throw GOSTCRYPTEXCEPTION("Could not start fuse.");
     }
 
 }
