@@ -19,9 +19,6 @@ CFLAGS += -static-libstdc++
 CFLAGS += -D_FILE_OFFSET_BITS=64
 CFLAGS += -DFUSE_USE_VERSION=29
 
-# Arch flags
-CFLAGS += -fPIC -march=native
-
 # Adding flags depending on options
 
 ifeq ($(T),debug)
@@ -29,7 +26,7 @@ CFLAGS += -O0 -g
 endif
 
 ifeq ($(T),release)
-CFLAGS += -O4
+CFLAGS += -O3
 endif
 
 CFLAGS += -DPLATFORM_WINDOWS
