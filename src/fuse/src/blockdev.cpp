@@ -48,7 +48,7 @@
 #include "Volume.h"
 
 /**@brief   Image block size.*/
-#define EXT4_BLOCKDEV_BSIZE 512
+#define EXT4_BLOCKDEV_BSIZE 1024
 
 struct block_dev {
 	struct ext4_blockdev bdev;

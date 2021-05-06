@@ -314,36 +314,14 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
 
     // filesystem init
 
-    // closing volume
-    callback("Closing created volume", 0.81f);
-    volume->close();
-    delete volume;
-
-    // mounting using the 'none' filesystem (loop device to create the fs)
-    p->afterCreationMount.fileSystemID = "none";
-
-    // Mounting raw volume
-    callback("Mounting raw volume", 0.85f);
-    disableCallback();
-    mount(&p->afterCreationMount);
-    enableCallback();
-
     // creating filesystem in raw file
     callback("Creating filesystem", 0.90f);
-    interface->create(p->afterCreationMount.mountPoint + "/volume");
-
-    // unmounting volume
-    callback("Closing and reopening final volume", 0.95f);
-    disableCallback();
-    umount(p->afterCreationMount.mountPoint);
-    enableCallback();
+    interface->create(volume);
 
     delete interface;
 
-    // restoring real filesystem asked by the user
-    p->afterCreationMount.fileSystemID = realfs;
-
-    // post-creation mount (with real filesystem this time)
+    // post-creation mount
+    callback("Mounting volume at target", 0.90f);
     disableCallback();
     mount(&p->afterCreationMount);
     enableCallback();

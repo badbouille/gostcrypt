@@ -8,6 +8,7 @@
 
 #include <Volume.h>
 #include <wait.h>
+#include <ext4_mkfs.h>
 #include "FuseFileSystemExt2.h"
 
 //#include "blockdev.h"
@@ -19,47 +20,28 @@ extern "C" {
 #include "lwext4.h"
 }
 
-void GostCrypt::FuseFileSystemExt2::create(std::string target) {
+void GostCrypt::FuseFileSystemExt2::create(Volume *target) {
+    struct ext4_blockdev *bdev;
 
-    /* Forking and execing the mkfs program */
-    pid_t pid = fork();
-    if ( pid == 0 ) {
-        static char argvT[][256] = { "/sbin/mkfs.ext2", "-q", "", ""};
-        static char *argv[] = { argvT[0], argvT[1], argvT[2], argvT[3], nullptr };
+    int fs_type = F_SET_EXT4;
+    int r = 1;
 
-        uid_t uid = geteuid();
-        snprintf(argv[2], 256, "-Eroot_owner=%d:%d", uid, uid);
+    struct ext4_fs fs;
+    struct ext4_mkfs_info info = {
+            .block_size = 1024,
+            .journal = true,
+    };
 
-        if (strlen(target.c_str()) < 256) {
-            strcpy(argv[3], target.c_str());
-        }
-
-        /* Executing basic mkfs.ext2 program */
-        execv(argv[0], argv);
-
-        /* If execv fails, exit with error code */
-        exit(127);
-
-    } else {
-        int status;
-
-        /* Waiting for child to build disk image */
-        if (waitpid(pid, &status, 0) == -1 ) {
-            throw GOSTCRYPTEXCEPTION("waitpid failed.");
-        }
-
-        /* Checking return value */
-        if ( WIFEXITED(status) ) {
-            if (WEXITSTATUS(status) != 0) {
-                throw GOSTCRYPTEXCEPTION("Wrong exit status for mkfs.ext2.");
-            }
-        } else {
-            throw GOSTCRYPTEXCEPTION("Child not exited.");
-        }
-
-        /* Formatted successfully */
-
+    if (blockdev_get_volume(target, &bdev) != LWEXT4_ERRNO(EOK)) {
+        throw GOSTCRYPTEXCEPTION("Failed to load target device");
     }
+
+    r = ext4_mkfs(&fs, bdev, &info, fs_type);
+
+    if (r != EOK) {
+        throw GOSTCRYPTEXCEPTION("ext4_mkfs failed.");
+    }
+
 }
 
 extern struct fuse_operations e4f_ops;
@@ -91,7 +73,7 @@ void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *
     }
 
     if (blockdev_get_volume(target, &bdev) != LWEXT4_ERRNO(EOK)) {
-        throw GOSTCRYPTEXCEPTION("Failed to open the device");
+        throw GOSTCRYPTEXCEPTION("Failed to load target device");
     }
 
     // setup super fuse (info file)

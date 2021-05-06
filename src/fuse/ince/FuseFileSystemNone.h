@@ -28,7 +28,7 @@ namespace GostCrypt
                                                       "of the Volume with no interpretation."; };
 
         // create
-        void create(std::string target) override {}; // none filesystem does not need to be built
+        void create(Volume *target) override {}; // none filesystem does not need to be built
 
         // Fuse entrypoint
         void start_fuse(const char * mountpoint, Volume *target);
