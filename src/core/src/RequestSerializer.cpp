@@ -1,5 +1,5 @@
 /**
- * @file ForkableCore.cpp
+ * @file RequestSerializer.cpp
  * @author badbouille
  * @date 19/12/2020
  *
@@ -8,61 +8,17 @@
 
 #include <wait.h>
 #include <iostream>
-#include "ForkableCore.h"
+#include "RequestSerializer.h"
 #include "Buffer.h"
-#include "Core.h"
 
-const char *g_prog_path;
-
-int ForkableCore_api_handler(int argc, char **argv) {
-    int ret = 8;
-
-    /* Updating program location */
-    g_prog_path = argv[0];
-
-    if (argv[0] == nullptr || std::string(argv[0]) != "api") {
-        return 0;
-    }
-
-    if (argc < 3 || argc > 4) exit(ret);
-
-    /* Only mount can be called for now */
-    if (std::string(argv[1]) == "mount") {
-        // calling mount command
-        GostCrypt::SecureBuffer pass(64); // TODO: why 64
-        GostCrypt::Core::MountParams_t p;
-
-        pass.getRange(p.password, 0, pass.size());
-        ForkableCore_api_DeserializeMount(&p, argv[2]);
-
-        // erasing all sensible data
-        GostCrypt::SecureBufferPtr dataptr((uint8_t *)argv[2], strlen(argv[2]));
-        dataptr.erase();
-
-        try {
-            /* Calling directmount, the true mount function */
-            GostCrypt::Core::directmount(&p);
-            ret = 0;
-        } catch (GostCrypt::VolumePasswordException &e) {
-            ret = 2;
-        } catch (GostCrypt::GostCryptException &e) {
-            printf(e.what());
-            ret = 1;
-        }
-        pass.erase();
-    }
-
-    exit(ret);
-}
-
-void getChars(char *c, uint8_t b) {
+void serializeByte(char *c, uint8_t b) {
     static const char chartab[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     c[0] = chartab[b >> 4];
     c[1] = chartab[b & 0x0F];
 }
 
-void getUint8(const char *c, uint8_t *b) {
+void deserializeByte(const char *c, uint8_t *b) {
     if (c[0] <= '9') {
         *b = (c[0] - '0');
     } else {
@@ -76,7 +32,7 @@ void getUint8(const char *c, uint8_t *b) {
     }
 }
 
-int ForkableCore_private_SerializeString(const std::string *s, uint8_t *b, uint32_t *len) {
+int RequestSerializer_private_SerializeString(const std::string *s, uint8_t *b, uint32_t *len) {
     uint32_t size = htobe32(s->size());
 
     *len = 4;
@@ -94,7 +50,7 @@ int ForkableCore_private_SerializeString(const std::string *s, uint8_t *b, uint3
     return 0;
 }
 
-int ForkableCore_private_DeserializeString(std::string *s, const uint8_t *b, uint32_t *len)
+int RequestSerializer_private_DeserializeString(std::string *s, const uint8_t *b, uint32_t *len)
 {
     uint32_t size = 0;
 
@@ -116,7 +72,7 @@ int ForkableCore_private_DeserializeString(std::string *s, const uint8_t *b, uin
     return 0;
 }
 
-int ForkableCore_private_SerializeBuffer(const GostCrypt::BufferPtr *s, uint8_t *b, uint32_t *len) {
+int RequestSerializer_private_SerializeBuffer(const GostCrypt::BufferPtr *s, uint8_t *b, uint32_t *len) {
     uint32_t size = htobe32(s->size());
 
     *len = 4;
@@ -134,7 +90,7 @@ int ForkableCore_private_SerializeBuffer(const GostCrypt::BufferPtr *s, uint8_t 
     return 0;
 }
 
-int ForkableCore_private_DeserializeBuffer(GostCrypt::BufferPtr *s, const uint8_t *b, uint32_t *len)
+int RequestSerializer_private_DeserializeBuffer(GostCrypt::BufferPtr *s, const uint8_t *b, uint32_t *len)
 {
     uint32_t size = 0; // TODO 64 bits
 
@@ -157,7 +113,7 @@ int ForkableCore_private_DeserializeBuffer(GostCrypt::BufferPtr *s, const uint8_
     return 0;
 }
 
-int ForkableCore_api_SerializeMount(const GostCrypt::Core::MountParams_t *p, char **d, uint32_t *len) {
+int RequestSerializer_api_SerializeMount(const GostCrypt::Core::MountParams_t *p, char **d, uint32_t *len) {
     uint8_t *tmp = nullptr;
     uint8_t *tmpid = nullptr;
     uint32_t tmplen;
@@ -173,29 +129,29 @@ int ForkableCore_api_SerializeMount(const GostCrypt::Core::MountParams_t *p, cha
     /* storing all bytes in tmp */
 
     // volumePath
-    ForkableCore_private_SerializeString(&p->volumePath, tmpid, &tmplen);
+    RequestSerializer_private_SerializeString(&p->volumePath, tmpid, &tmplen);
     tmpid += tmplen;
     *len += tmplen;
 
     // mountpoint
-    ForkableCore_private_SerializeString(&p->mountPoint, tmpid, &tmplen);
+    RequestSerializer_private_SerializeString(&p->mountPoint, tmpid, &tmplen);
     tmpid += tmplen;
     *len += tmplen;
 
     // password
-    ForkableCore_private_SerializeBuffer(&p->password, tmpid, &tmplen);
+    RequestSerializer_private_SerializeBuffer(&p->password, tmpid, &tmplen);
     tmpid += tmplen;
     *len += tmplen;
 
     // filesystemID
-    ForkableCore_private_SerializeString(&p->fileSystemID, tmpid, &tmplen);
+    RequestSerializer_private_SerializeString(&p->fileSystemID, tmpid, &tmplen);
     tmpid += tmplen;
     *len += tmplen;
 
     /* converting all bytes to char */
     uint32_t i;
     for (i = 0; i < *len; i++) {
-        getChars((*d) + 2*i, tmp[i]);
+        serializeByte((*d) + 2 * i, tmp[i]);
     }
     *((*d) + 2*i) = '\0';
 
@@ -207,7 +163,7 @@ int ForkableCore_api_SerializeMount(const GostCrypt::Core::MountParams_t *p, cha
     return 0;
 }
 
-int ForkableCore_api_DeserializeMount(GostCrypt::Core::MountParams_t *p, const char *d) {
+int RequestSerializer_api_DeserializeMount(GostCrypt::Core::MountParams_t *p, const char *d) {
     uint8_t *tmp = nullptr;
     uint8_t *tmpid = nullptr;
     uint32_t tmplen;
@@ -224,27 +180,27 @@ int ForkableCore_api_DeserializeMount(GostCrypt::Core::MountParams_t *p, const c
         if (d[i + 1] == '\0') {
             return 1;
         }
-        getUint8(d + i, tmpid++);
+        deserializeByte(d + i, tmpid++);
     }
     tmpid = tmp;
 
     /* storing all bytes in tmp */
 
     // volumePath
-    ForkableCore_private_DeserializeString(&p->volumePath, tmpid, &tmplen);
+    RequestSerializer_private_DeserializeString(&p->volumePath, tmpid, &tmplen);
 
     tmpid += tmplen;
 
     // mountpoint
-    ForkableCore_private_DeserializeString(&p->mountPoint, tmpid, &tmplen);
+    RequestSerializer_private_DeserializeString(&p->mountPoint, tmpid, &tmplen);
     tmpid += tmplen;
 
     // password
-    ForkableCore_private_DeserializeBuffer(&p->password, tmpid, &tmplen);
+    RequestSerializer_private_DeserializeBuffer(&p->password, tmpid, &tmplen);
     tmpid += tmplen;
 
     // filesystemID
-    ForkableCore_private_DeserializeString(&p->fileSystemID, tmpid, &tmplen);
+    RequestSerializer_private_DeserializeString(&p->fileSystemID, tmpid, &tmplen);
     tmpid += tmplen;
 
     GostCrypt::SecureBufferPtr eraser(tmp, tmpid - tmp);

@@ -6,13 +6,15 @@
  * This project is released under the GNU General Public License v3.0.
  */
 
-#include <ForkableCore.h>
+#include <RequestSerializer.h>
 #include "GraphicInterface.h"
 
 int main(int argc, char* argv[])
 {
     /* Interception of api calls */
-    ForkableCore_api_handler(argc, argv);
+    if (GostCrypt::Core::main_api_handler(argc, argv) != 0) {
+        return 1; // no exception needed but can't continue
+    }
 
     qSetMessagePattern("%{appname}: %{message}");
     MyGuiApplication app(argc, argv);

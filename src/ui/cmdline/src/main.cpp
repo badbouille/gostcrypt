@@ -8,7 +8,7 @@
 
 #include "Commands.h"
 #include <string>
-#include <ForkableCore.h>
+#include <RequestSerializer.h>
 
 /* Common values */
 
@@ -28,7 +28,9 @@ int main(int argc, char **argv) {
     std::string cmd = "";
 
     /* Interception of api calls */
-    ForkableCore_api_handler(argc, argv);
+    if (GostCrypt::Core::main_api_handler(argc, argv) != 0) {
+        return 1; // no exception needed but can't continue
+    }
 
     if (argc < 2) {
         argp_help(&argp, stdout, ARGP_HELP_STD_USAGE, argv[0]);

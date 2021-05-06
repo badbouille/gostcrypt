@@ -7,7 +7,7 @@
  */
 
 #include <Core.h>
-#include <ForkableCore.h>
+#include <RequestSerializer.h>
 #include "GraphicInterface.h"
 #include "commonDefines.h"
 

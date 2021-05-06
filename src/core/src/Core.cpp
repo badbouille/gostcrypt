@@ -11,12 +11,60 @@
 #include <ContainerFile.h>
 #include "Core.h"
 #include "FuseFileSystem.h"
-#include "ForkableCore.h"
+#include "RequestSerializer.h"
 
 GostCrypt::Core::CallBackFunction_t GostCrypt::Core::callback_function = nullptr;
 float GostCrypt::Core::callback_superbound_high = 1.0f;
 float GostCrypt::Core::callback_superbound_low = 0.0f;
 bool GostCrypt::Core::callback_enable = true;
+
+const char * GostCrypt::Core::g_prog_path = nullptr;
+
+int GostCrypt::Core::main_api_handler(int argc, char **argv)
+{
+    int ret = 8;
+
+    if (argv == nullptr) {
+        return 1;
+    }
+
+    /* Updating program location */
+    g_prog_path = argv[0];
+
+    if (argv[0] == nullptr || std::string(argv[0]) != "api") {
+        return 0;
+    }
+
+    if (argc < 3 || argc > 4) exit(ret);
+
+    /* Only mount can be called for now */
+    if (std::string(argv[1]) == "mount") {
+        // calling mount command
+        GostCrypt::SecureBuffer pass(64); // TODO: why 64
+        GostCrypt::Core::MountParams_t p;
+
+        pass.getRange(p.password, 0, pass.size());
+        RequestSerializer_api_DeserializeMount(&p, argv[2]);
+
+        // erasing all sensible data
+        GostCrypt::SecureBufferPtr dataptr((uint8_t *)argv[2], strlen(argv[2]));
+        dataptr.erase();
+
+        try {
+            /* Calling directmount, the true mount function */
+            GostCrypt::Core::directmount(&p);
+            ret = 0;
+        } catch (GostCrypt::VolumePasswordException &e) {
+            ret = 2;
+        } catch (GostCrypt::GostCryptException &e) {
+            printf(e.what());
+            ret = 1;
+        }
+        pass.erase();
+    }
+
+    exit(ret);
+}
 
 GostCrypt::DiskEncryptionAlgorithmList GostCrypt::Core::GetEncryptionAlgorithms()
 {
@@ -49,7 +97,7 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
     pid = fork();
 
     if (pid == 0) {
-        ForkableCore_api_SerializeMount(p, &argv[2], &len);
+        RequestSerializer_api_SerializeMount(p, &argv[2], &len);
         execv(g_prog_path, argv);
         exit(127);
     }

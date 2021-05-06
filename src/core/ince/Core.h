@@ -77,6 +77,9 @@ namespace GostCrypt
         // everything static. Only one instance of this class exists
         Core() = delete;
 
+        // Function to catch exec-ed requests
+        static int main_api_handler(int argc, char **argv);
+
         // Getting info
         static DiskEncryptionAlgorithmList GetEncryptionAlgorithms();
         static KDFList GetDerivationFunctions();
@@ -100,6 +103,9 @@ namespace GostCrypt
 
     private:
 
+        // Path of the current program
+        static const char *g_prog_path;
+
         // UI bonuses variables
         static CallBackFunction_t callback_function;
         static float callback_superbound_high;
@@ -115,4 +121,4 @@ namespace GostCrypt
 }
 
 
-#endif //_BLOCKCIPHER_H
+#endif //_CORE_H
