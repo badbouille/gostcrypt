@@ -81,15 +81,16 @@ cleanup
 
 # ECB XOR EXT2
 
-$GC create "${DIR}v_std_ecbxor_ext2" "$MOUNTPOINT" -s1M
+$GC create "${DIR}v_std_ecbxor_ext2" "$MOUNTPOINT" -s2M
 createfolder
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_ext2_b10k" "$MOUNTPOINT" -s1000K -b10K
+# note: around 1.2M is the minimum size for use with lwext4. mkfs.ext4 can create smaller filesystems.
+$GC create "${DIR}v_std_ecbxor_ext2_b10k" "$MOUNTPOINT" -s1200K -b10K
 createfolder
 cleanup
 
-$GC create "${DIR}v_std_ecbxor_ext2_sbp" "$MOUNTPOINT" -s1M -p$PASS_A -b16
+$GC create "${DIR}v_std_ecbxor_ext2_sbp" "$MOUNTPOINT" -s2M -p$PASS_A -b16
 createfolder
 cleanup
 
