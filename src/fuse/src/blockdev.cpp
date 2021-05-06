@@ -47,16 +47,13 @@
 
 #include "Volume.h"
 
-// weird way of giving current volume
-// TODO comment this
-GostCrypt::Volume *already_opened_volume = nullptr;
-
 /**@brief   Image block size.*/
 #define EXT4_BLOCKDEV_BSIZE 512
 
 struct block_dev {
 	struct ext4_blockdev bdev;
 	struct ext4_blockdev_iface bdif;
+    GostCrypt::Volume *volume;
 	unsigned char block_buf[EXT4_BLOCKDEV_BSIZE];
 };
 
@@ -64,7 +61,8 @@ struct block_dev {
 #define FREE_BDEV(p) free(p)
 
 /**********************BLOCKDEV INTERFACE**************************************/
-int blockdev_get(const char *fname, struct ext4_blockdev **pbdev);
+int blockdev_get(const char *fname, struct ext4_blockdev **pbdev) { return LWEXT4_ERRNO(EIO); } // unimplemented in GostCrypt
+int blockdev_get_volume(GostCrypt::Volume *target, struct ext4_blockdev **pbdev);
 
 static int blockdev_open(struct ext4_blockdev *bdev);
 static int blockdev_bread(struct ext4_blockdev *bdev, void *buf, uint64_t blk_id,
@@ -75,12 +73,12 @@ static int blockdev_close(struct ext4_blockdev *bdev);
 
 /******************************************************************************/
 
-int blockdev_get(const char *fname, struct ext4_blockdev **pbdev)
+int blockdev_get_volume(GostCrypt::Volume *target, struct ext4_blockdev **pbdev)
 {
 	struct block_dev *bdev;
 	int64_t block_cnt = 0;
 
-	if (already_opened_volume == nullptr)
+	if (target == nullptr)
 		return LWEXT4_ERRNO(EIO);
 
 	bdev = (struct block_dev *)ALLOC_BDEV();
@@ -89,7 +87,7 @@ int blockdev_get(const char *fname, struct ext4_blockdev **pbdev)
 	}
 	bdev->bdif.ph_bsize = EXT4_BLOCKDEV_BSIZE;
 
-    block_cnt = already_opened_volume->getSize() / EXT4_BLOCKDEV_BSIZE;
+    block_cnt = target->getSize() / EXT4_BLOCKDEV_BSIZE;
 
 	bdev->bdif.ph_bcnt = block_cnt;
 	bdev->bdif.ph_bbuf = bdev->block_buf;
@@ -102,6 +100,8 @@ int blockdev_get(const char *fname, struct ext4_blockdev **pbdev)
 	bdev->bdev.bdif = &bdev->bdif;
 	bdev->bdev.part_offset = 0;
 	bdev->bdev.part_size = block_cnt * EXT4_BLOCKDEV_BSIZE;
+
+    bdev->volume = target;
 
 	*pbdev = (struct ext4_blockdev *)bdev;
 
@@ -126,6 +126,7 @@ static int blockdev_bread(struct ext4_blockdev *bdev, void *buf, uint64_t blk_id
 						 uint32_t blk_cnt)
 {
     GostCrypt::SecureBufferPtr sbuf;
+    struct block_dev *fbdev = (struct block_dev *)bdev;
 
     try
     {
@@ -133,7 +134,7 @@ static int blockdev_bread(struct ext4_blockdev *bdev, void *buf, uint64_t blk_id
         sbuf.set((uint8_t *) buf, bdev->bdif->ph_bsize * blk_cnt);
 
         // reading
-        already_opened_volume->read(sbuf, blk_id * bdev->bdif->ph_bsize);
+        fbdev->volume->read(sbuf, blk_id * bdev->bdif->ph_bsize);
     } catch(GostCrypt::GostCryptException &e)
     {
         // TODO handle more errors, like shortread for example.
@@ -148,6 +149,7 @@ static int blockdev_bwrite(struct ext4_blockdev *bdev, const void *buf,
 						  uint64_t blk_id, uint32_t blk_cnt)
 {
     GostCrypt::SecureBufferPtr sbuf;
+    struct block_dev *fbdev = (struct block_dev *)bdev;
 
     try
     {
@@ -155,7 +157,7 @@ static int blockdev_bwrite(struct ext4_blockdev *bdev, const void *buf,
         sbuf.set((uint8_t *) buf, bdev->bdif->ph_bsize * blk_cnt);
 
         // reading
-        already_opened_volume->write(sbuf, blk_id * bdev->bdif->ph_bsize);
+        fbdev->volume->write(sbuf, blk_id * bdev->bdif->ph_bsize);
     } catch(GostCrypt::GostCryptException &e)
     {
         // TODO handle more errors, like shortread for example.

@@ -10,7 +10,9 @@
 #include <wait.h>
 #include "FuseFileSystemExt2.h"
 
-#include "blockdev.h"
+//#include "blockdev.h"
+// this function should be in blockdev.h, but isn't since blockdev.h is not a GostCrypt file but a fuse-ext4 file.
+extern int blockdev_get_volume(GostCrypt::Volume *target, struct ext4_blockdev **pbdev);
 
 extern "C" {
 #include "ops.h"
@@ -60,11 +62,6 @@ void GostCrypt::FuseFileSystemExt2::create(std::string target) {
     }
 }
 
-// global var containing opened volume
-// Our own io_manager will bind to this
-// fuses2fs will think it's writing to a file but in reality everything will go through this volume
-extern GostCrypt::Volume *already_opened_volume;
-
 extern struct fuse_operations e4f_ops;
 
 extern "C" { /* Adding lwext4 options structure in extern C to be able to link it */
@@ -93,10 +90,7 @@ void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *
         args[i] = params[i];
     }
 
-    // binding parameters
-    already_opened_volume = target;
-
-    if (blockdev_get(mountpoint, &bdev) != LWEXT4_ERRNO(EOK)) {
+    if (blockdev_get_volume(target, &bdev) != LWEXT4_ERRNO(EOK)) {
         throw GOSTCRYPTEXCEPTION("Failed to open the device");
     }
 
