@@ -88,6 +88,9 @@ GostCrypt::FuseFileSystemList GostCrypt::Core::GetFileSystems()
 
 void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
 {
+#ifdef DEBUG
+    return GostCrypt::Core::directmount(p);
+#else
     pid_t pid;
     static char argvT[][256] = { "api", "mount", "", "" };
     static char *argv[] = { argvT[0], argvT[1], nullptr, nullptr, nullptr };
@@ -115,6 +118,7 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
         }
     }
 
+#endif
 }
 
 void GostCrypt::Core::directmount(GostCrypt::Core::MountParams_t *p)
