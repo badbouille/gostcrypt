@@ -76,7 +76,7 @@ $(LIBLWEXT4_A): $(LWEXT4_PATH)/src/* $(LWEXT4_PATH)/include/* $(LWEXT4_BUILD_PAT
 	$(MAKE) -C $(LWEXT4_BUILD_PATH)
 
 $(LWEXT4_BUILD_PATH)/src_objects: $(LIBLWEXT4_A)
-	@mkdir $(LWEXT4_BUILD_PATH)/src_objects
+	@mkdir -p $(LWEXT4_BUILD_PATH)/src_objects
 	@rm -f $(LWEXT4_BUILD_PATH)/src_objects/*
 	cd $(LWEXT4_BUILD_PATH)/src_objects && ar -x $(LIBLWEXT4_A)
 
