@@ -26,7 +26,7 @@ void GostCrypt::FuseFileSystemExt2::create(Volume *target) {
     int fs_type = F_SET_EXT4;
     int r = 1;
 
-    struct ext4_fs fs;
+    struct ext4_fs fs = {0};
     struct ext4_mkfs_info info = {
             .block_size = 1024,
             .journal = true,
