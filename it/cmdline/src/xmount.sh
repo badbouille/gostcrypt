@@ -124,6 +124,9 @@ for volume in $(find "$datafolder" -maxdepth 1 -name "v_*" | head -n -3); do
   # unmounting volume
   $GC umount "$mountpath"
 
+  # Giving time for volumes to process the unmount request
+  sleep 1
+
   # Checking success
   if [ $? -ne 0 ]; then
     echo "Could not unmount $mountpath"
@@ -150,6 +153,9 @@ if [ $? -ne 0 ]; then
   echo "Could not unmount-all"
   exit 5
 fi
+
+# Giving time for volumes to process the unmount request
+sleep 1
 
 # checking that everything is unmounted
 Nmounted=$($GC list | wc -l)
