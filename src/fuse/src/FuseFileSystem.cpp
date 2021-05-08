@@ -34,7 +34,7 @@ extern "C" {
     int fusefs_super_getattr(const char *path, struct stat *statData)
     {
         /* If this call concerns our special file */
-        if (strcmp(path, INFO_FILE) == 0)
+        if (strncmp(path, INFO_FILE, INFO_FILE_PREFIX_LEN) == 0)
         {
             memset(statData, 0, sizeof(*statData));
 
@@ -63,7 +63,7 @@ extern "C" {
     int fusefs_super_open(const char *path, struct fuse_file_info *fi)
     {
         /* If this call concerns our special file */
-        if (strcmp(path, INFO_FILE) == 0)
+        if (strncmp(path, INFO_FILE, INFO_FILE_PREFIX_LEN) == 0)
         {
             /* We only let the user or root open this file */
             if (fuse_get_context()->uid == 0 || fuse_get_context()->uid == mount_uid) {
@@ -71,6 +71,14 @@ extern "C" {
                 memset(fi, 0, sizeof(*fi));
                 fi->direct_io = 1; // no pages, cache, better for a small file
                 fi->fh = 0; // my own handle. Will be used to know I am trying to read from my special file
+
+                /* If the exit file is opened, we register this as the fuse_exit file.
+                 * When released, this file will close the fuse mountpoint gracefully
+                 */
+                if (strcmp(path, INFO_FILE_EXIT) == 0) {
+                    fi->fh = -1;
+                }
+
                 return 0;
             }
             return -EACCES;
@@ -92,7 +100,7 @@ extern "C" {
          *  - Checking path value (equals to INFO_FILE?)
          *  - Checking fh value (only gostcrypt sets it to zero)
          */
-        if ( (path != nullptr && strcmp(path, INFO_FILE) == 0) ||
+        if ( (path != nullptr && strncmp(path, INFO_FILE, INFO_FILE_PREFIX_LEN) == 0) ||
              (path == nullptr && fi->fh == 0) )
         {
             /* We only let the user or root read this file */
@@ -128,13 +136,19 @@ extern "C" {
          *  - Checking path value (equals to INFO_FILE?)
          *  - Checking fh value (only gostcrypt sets it to zero)
          */
-        if ( (path != nullptr && strcmp(path, INFO_FILE) == 0) ||
+        if ( (path != nullptr && strncmp(path, INFO_FILE, INFO_FILE_PREFIX_LEN) == 0) ||
              (path == nullptr && fp->fh == 0) )
         {
             /* We are catching this case to NOT let the real filesystem try to release
              * our special file. Since we did nothing, the filesystem may try to
              * free unallocated memory in the structure fp.
              */
+            if ( (path != nullptr && strcmp(path, INFO_FILE_EXIT) == 0) ||
+                 (path == nullptr && fp->fh == -1) )
+            {
+                /* If the exit file was used, closing fuse gracefully */
+                fuse_exit(fuse_get_context()->fuse);
+            }
             return 0;
         }
         /* If it's not our file, let the real filesystem do its job */

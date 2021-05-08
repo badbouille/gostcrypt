@@ -22,6 +22,8 @@ extern "C" {
 
     /** File containing the structure */
     #define INFO_FILE "/.gostinfo"
+    #define INFO_FILE_EXIT "/.gostinfo.exit"
+    #define INFO_FILE_PREFIX_LEN 10
 
     /** Size of longer fields like names, etc (watch out for overflows) */
     #define VOLUMEINFO_STR_SIZE 256

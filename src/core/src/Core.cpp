@@ -205,40 +205,8 @@ void GostCrypt::Core::umount(std::string mountPoint)
         mountPoint.pop_back();
     }
 
-    /* Calling fusermount to kill the volume gracefully */
-    /* Forking to call fusermount */
-    pid_t pid = fork();
-    int status;
-
-    if ( pid == 0 ) {
-        // calling fusermount
-        static char argvT[][256] = { "/bin/fusermount", "-uz", "" };
-        static char *argv[] = { argvT[0], argvT[1], argvT[2], nullptr };
-
-        if (strlen(mountPoint.c_str()) < 256) {
-            strcpy(argv[2], mountPoint.c_str());
-        }
-
-        /* Executing fusermount program */
-        execv(argv[0], argv);
-
-        /* If fusermount fails, exit with error code */
-        exit(127);
-    }
-
-    /* Waiting for child to mount the raw volume */
-    if (waitpid(pid, &status, 0) == -1 ) {
-        throw GOSTCRYPTEXCEPTION("waitpid failed.");
-    }
-
-    /* Checking return value */
-    if ( WIFEXITED(status) ) {
-        if (WEXITSTATUS(status) != 0) {
-            throw GOSTCRYPTEXCEPTION("fusermount operation failed.");
-        }
-    } else {
-        throw GOSTCRYPTEXCEPTION("Child not exited.");
-    }
+    /* Reading volume info with the .exit suffix will read it and ask for closure of the volume */
+    readVolumeInfo(mountPoint + INFO_FILE_EXIT);
 
 }
 
@@ -355,34 +323,47 @@ GostCrypt::Core::VolumeInfoList GostCrypt::Core::list()
 
         // TODO add constant
         if (mountType == "gostcrypt") {
-            // extract info from folder
-            VolumeInfoFile_t infos;
-            std::ifstream gostinfo(folder + INFO_FILE);
 
-            if(!gostinfo.is_open()) {
-                throw FILENOTFOUNDEXCEPTION(folder + INFO_FILE);
+            // reading infos and adding all entries
+            try {
+                volumes.push_back(readVolumeInfo(folder + INFO_FILE));
+            } catch (FileNotFoundException &e) {
+                VolumeInfo vi;
+                vi.mountPoint = folder;
+                volumes.push_back(vi);
             }
-
-            gostinfo.read((char *)&infos, sizeof(infos));
-
-            if(gostinfo.fail()) { // TODO consider a better exception
-                throw FILENOTFOUNDEXCEPTION(folder + INFO_FILE);
-            }
-
-            // creating entry
-            VolumeInfo vi;
-            vi.file = infos.file;
-            vi.mountPoint = infos.mountPoint;
-            vi.algorithmID = infos.algorithmID;
-            vi.keyDerivationFunctionID = infos.keyDerivationFunctionID;
-            vi.volumeTypeID = infos.volumeTypeID;
-            vi.dataSize = be64toh(infos.dataSize);
-
-            // adding entry
-            volumes.push_back(vi);
-
         }
     }
 
     return volumes;
+}
+
+GostCrypt::Core::VolumeInfo GostCrypt::Core::readVolumeInfo(std::string gostinfofile)
+{
+    // extract info from folder
+    VolumeInfoFile_t infos;
+    std::ifstream gostinfo(gostinfofile);
+
+    if(!gostinfo.is_open()) {
+        throw FILENOTFOUNDEXCEPTION(gostinfofile);
+    }
+
+    gostinfo.read((char *)&infos, sizeof(infos));
+
+    if(gostinfo.fail()) { // TODO consider a better exception
+        throw FILENOTFOUNDEXCEPTION(gostinfofile);
+    }
+
+    // creating entry
+    VolumeInfo vi;
+    vi.file = infos.file;
+    vi.mountPoint = infos.mountPoint;
+    vi.algorithmID = infos.algorithmID;
+    vi.keyDerivationFunctionID = infos.keyDerivationFunctionID;
+    vi.volumeTypeID = infos.volumeTypeID;
+    vi.dataSize = be64toh(infos.dataSize);
+
+    gostinfo.close();
+
+    return vi;
 }

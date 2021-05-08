@@ -116,6 +116,9 @@ namespace GostCrypt
         static void disableCallback() { callback_enable = false; }
         static void enableCallback() { callback_enable = true; }
 
+        // Tool functions
+        static VolumeInfo readVolumeInfo(std::string gostinfofile);
+
     };
 
 }
