@@ -115,8 +115,8 @@ void GraphicInterface::sendCreateVolume(QVariant aContent) {
         return;
     }
 
-    /* Signal is emitted by the final callback */
-    //emit QML_SIGNAL(printCreateVolume, QVariantList())
+    /* TODO Signal is emitted by the final callback */
+    emit QML_SIGNAL(printCreateVolume, QVariantList())
 
 }
 
@@ -157,8 +157,8 @@ void GraphicInterface::sendMountVolume(QVariant aContent)
         return;
     }
 
-    /* Signal is emitted by the final callback */
-    //emit QML_SIGNAL(printMountVolume, QVariantList())
+    /* TODO Signal is emitted by the final callback */
+    emit QML_SIGNAL(printMountVolume, QVariantList())
 }
 
 void GraphicInterface::sendGetMountedVolumes(QVariant aContent)
@@ -210,6 +210,15 @@ void GraphicInterface::sendDismountVolume(QVariant aContent)
         emit QML_SIGNAL(printSendError, r)
         return;
     }
+
+    // must wait a little for the interface to process the changes
+    // TODO this is unsatisfying
+    //      maybe the umount command should wait for the volume to be completely unmounted
+    QTime dieTime = QTime::currentTime().addMSecs(10);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    //
+
     emit QML_SIGNAL(printDismountVolume, QVariantList());
 
 }
