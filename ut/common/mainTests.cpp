@@ -28,5 +28,6 @@ int main(int argc, char **argv) {
     RUN_TEST(test_bufferptr_illegalinit);
     RUN_TEST(test_bufferptr_range);
     RUN_TEST(test_securebufferptr_compare);
+    RUN_TEST(test_shared_rw);
     return UNITY_END();
 }

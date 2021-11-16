@@ -24,4 +24,7 @@ void test_bufferptr_range();
 void test_securebufferptr_compare();
 /*void test_securebufferptr_erase(); */ // erasure function is overriden for a more trusted one, but since both work great there is no test to do here
 
+/* Shared memory tests */
+void test_shared_rw();
+
 #endif //_COMMON_TESTS_H
