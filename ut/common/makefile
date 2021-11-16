@@ -13,6 +13,11 @@ CXXFILES+= mainTests.cpp
 # external components needed
 STATIC_LIBS=common.a unity.a
 
+# linux needs a link to rt for shared memory functions
+ifeq ($(P),linux)
+EXTERNAL_LINK_LIBS+= -lrt
+endif
+
 # actual compilation
 include rules.mk
 

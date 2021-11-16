@@ -93,6 +93,9 @@ namespace GostCrypt {
     BUILD_EXCEPTION(VolumePasswordException, GostCryptException);
     #define VOLUMEPASSWORDEXCEPTION() GostCrypt::VolumePasswordException("Could not open volume. Double check the password ?", __FUNCTION__, __FILE__, __LINE__)
 
+    BUILD_EXCEPTION(MemoryAllocationException, GostCryptException);
+    #define MEMORYALLOCATIONEXCEPTION(size) GostCrypt::MemoryAllocationException("Could not allow memory space of size " + std::to_string(size), __FUNCTION__, __FILE__, __LINE__)
+
 
 }
 
