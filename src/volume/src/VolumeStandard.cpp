@@ -145,7 +145,7 @@ void GostCrypt::VolumeStandard::create(Container *source,
     }
 
     //  ---------------  OPENING FILE  ---------------
-    callback("Opening target file", 0.01);
+    progress.report("Opening target file", 0.01);
     // TODO : error handling / checks / readonly
 
     if (source == nullptr) {
@@ -159,7 +159,7 @@ void GostCrypt::VolumeStandard::create(Container *source,
     container = source;
 
     //  ---------------  FINDING ALGORITHM  ---------------
-    callback("Finding target algorithm", 0.03);
+    progress.report("Finding target algorithm", 0.03);
     DiskEncryptionAlgorithmList algorithmList = GostCrypt::DiskEncryptionAlgorithm::GetAvailableAlgorithms();
     for (auto & algorithmIterator : algorithmList) {
         // Checking ID
@@ -182,7 +182,7 @@ void GostCrypt::VolumeStandard::create(Container *source,
     }
 
     //  ---------------  FINDING KDF  ---------------
-    callback("Finding target KDF", 0.05);
+    progress.report("Finding target KDF", 0.05);
     KDFList kdfList = GostCrypt::KDF::GetAvailableKDFs();
     for (auto & hIterator : kdfList) {
         // Checking ID
@@ -205,7 +205,7 @@ void GostCrypt::VolumeStandard::create(Container *source,
     }
 
     //  ---------------  FILLING AND ENCRYPTING HEADER  ---------------
-    callback("Creating header", 0.07);
+    progress.report("Creating header", 0.07);
 
     header.sectorsize = sectorsize;
     header.dataStartOffset = 2*(STANDARD_HEADER_SALT_AREASIZE+STANDARD_HEADER_SIZE); // normal + hidden
@@ -239,7 +239,7 @@ void GostCrypt::VolumeStandard::create(Container *source,
     setUpVolumeFromHeader(algorithm, pkdf);
 
     //  ---------------  WRITING HEADERS TO DISK  ---------------
-    callback("Writing headers to volume", 0.09);
+    progress.report("Writing headers to volume", 0.09);
 
     // standard header
     container->write(saltPtr, getSaltOffset());
@@ -264,7 +264,7 @@ void GostCrypt::VolumeStandard::create(Container *source,
     for (size_t i = 0; i < header.dataSize; i+=header.sectorsize) {
         // TODO Use rwBuffer instead of randomBuffer
         if ((i / header.sectorsize) % 65536 == 0) // modulo to not flood UI
-            callback("Writing data across volume", 0.10f + 0.80f*(i/(float)header.dataSize));
+            progress.report("Writing data across volume", 0.10f + 0.80f*(i/(float)header.dataSize));
 
         // erasing buffer
         fastprng.Get(randomBufferPtr);
@@ -279,7 +279,7 @@ void GostCrypt::VolumeStandard::create(Container *source,
     randomBuffer.erase();
 
     //  ---------------  WRITING FAKE HEADERS TO VOLUME  ---------------
-    callback("Creating and writing fake headers", 0.90);
+    progress.report("Creating and writing fake headers", 0.90);
 
     // creation and encryption of fake headers
     VolumeStandardHeader::SerializeFake(encryptedHeaderPtr);
@@ -311,14 +311,14 @@ void GostCrypt::VolumeStandard::create(Container *source,
 
     //  ---------------  CLOSING AND REOPENING VOLUME  ---------------
 
-    callback("Closing file and reopening it as a volume", 0.92);
+    progress.report("Closing file and reopening it as a volume", 0.92);
     close();
     open(container, password);
 
     // TODO : check for errors
 
     // volume is now ready to use
-    callback("Done creating volume", 1.0);
+    progress.report("Done creating volume", 1.0);
 }
 
 void GostCrypt::VolumeStandard::setUpVolumeFromHeader(DiskEncryptionAlgorithm *algorithm, KDF *pkdf)

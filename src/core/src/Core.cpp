@@ -13,10 +13,8 @@
 #include "FuseFileSystem.h"
 #include "RequestSerializer.h"
 
-GostCrypt::Core::CallBackFunction_t GostCrypt::Core::callback_function = nullptr;
-float GostCrypt::Core::callback_superbound_high = 1.0f;
-float GostCrypt::Core::callback_superbound_low = 0.0f;
-bool GostCrypt::Core::callback_enable = true;
+/* Defining static variables */
+GostCrypt::Progress GostCrypt::Core::progress;
 
 const char * GostCrypt::Core::g_prog_path = nullptr;
 
@@ -49,6 +47,8 @@ int GostCrypt::Core::main_api_handler(int argc, char **argv)
         // erasing all sensible data
         GostCrypt::SecureBufferPtr dataptr((uint8_t *)argv[2], strlen(argv[2]));
         dataptr.erase();
+
+        //GostCrypt::Core::setCallBack(nullptr);
 
         try {
             /* Calling directmount, the true mount function */
@@ -97,7 +97,7 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
     uint32_t len;
     int ret = 0, status;
 
-    pid = fork();
+    pid = vfork();
 
     if (pid == 0) {
         RequestSerializer_api_SerializeMount(p, &argv[2], &len);
@@ -131,7 +131,7 @@ void GostCrypt::Core::directmount(GostCrypt::Core::MountParams_t *p)
     bool volumeOpened = false;
     float i = 0.0;
 
-    callback("Finding interface", 0.05);
+    progress.report("Finding interface", 0.05);
 
     // finding interface requested
     FuseFileSystemList fileSystemList = GostCrypt::FuseFileSystem::GetFileSystems();
@@ -159,7 +159,7 @@ void GostCrypt::Core::directmount(GostCrypt::Core::MountParams_t *p)
     VolumeList volumeList = GostCrypt::Volume::GetAvailableVolumeTypes();
     for (auto & volumeIterator : volumeList) {
 
-        callback("Trying to open the volume", 0.05f + ((i+1)/volumeList.size())*0.75f);
+        progress.report("Trying to open the volume", 0.05f + ((i+1)/volumeList.size())*0.75f);
 
         // trying to open volume
         if (volumeIterator->open(new ContainerFile(p->volumePath), p->password)) {
@@ -186,11 +186,11 @@ void GostCrypt::Core::directmount(GostCrypt::Core::MountParams_t *p)
 
     // Volume has been opened successfully
     // Starting fuse
-    callback("Creating the FUSE mountpoint", 0.85);
+    progress.report("Creating the FUSE mountpoint", 0.85);
 
     interface->start_fuse(p->mountPoint.c_str(), volume);
 
-    callback("Done mounting", 1.0);
+    progress.report("Done mounting", 1.0);
 }
 
 void GostCrypt::Core::umount(std::string mountPoint)
@@ -231,7 +231,7 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     std::string realfs = p->afterCreationMount.fileSystemID;
 
     // finding interface requested
-    callback("Finding interface", 0.02);
+    progress.report("Finding interface", 0.02);
     FuseFileSystemList fileSystemList = GostCrypt::FuseFileSystem::GetFileSystems();
     for (auto & fileSystemIterator : fileSystemList) {
         // checking name
@@ -252,7 +252,7 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     }
 
     // finding volume type requested
-    callback("Finding volume type", 0.04);
+    progress.report("Finding volume type", 0.04);
     VolumeList volumeList = GostCrypt::Volume::GetAvailableVolumeTypes();
     for (auto & volumeIterator : volumeList) {
         // checking name
@@ -273,11 +273,10 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     }
 
     // volume creation
-    callback("Creating volume", 0.06);
+    progress.report("Creating volume", 0.06);
     try {
-        callback_superbound_high = 0.80f;
-        callback_superbound_low = 0.06f;
-        volume->setCallBack(super_callback);
+        progress.setChildBounds(0.06, 0.80);
+        //volume->setCallBack(super_callback);
         volume->create(new ContainerFile(p->volumePath), p->dataSize, p->algorithmID, p->keyDerivationFunctionID, p->sectorSize, p->password);
     } catch (GostCryptException &e) {
         delete volume;
@@ -287,17 +286,29 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     // filesystem init
 
     // creating filesystem in raw file
-    callback("Creating filesystem", 0.90f);
+    progress.report("Creating filesystem", 0.90f);
     interface->create(volume);
 
     delete interface;
 
     // post-creation mount
-    callback("Mounting volume at target", 0.90f);
-    disableCallback();
+
+    // reporting here is tough and needs a second object
+    progress.report("Mounting volume at target", 0.90f);
+    Progress tmp;
+    tmp.setCallBack(progress.getCallBack());
+    tmp.setChildBounds(0.90, 0.99);
+    progress.removeCallBack();
+    progress.setMaster(&tmp);
+
+    // actually mounting
     mount(&p->afterCreationMount);
-    enableCallback();
-    callback("Done creating", 1.0);
+
+    // resetting progress to normal state
+    progress.setCallBack(tmp.getCallBack());
+    progress.removeMaster();
+
+    progress.report("Done creating", 1.0);
 }
 
 GostCrypt::Core::VolumeInfoList GostCrypt::Core::list()

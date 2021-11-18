@@ -15,6 +15,7 @@
 #include <Buffer.h>
 #include <fstream>
 #include "Container.h"
+#include "Progress.h"
 
 namespace GostCrypt
 {
@@ -43,7 +44,7 @@ namespace GostCrypt
     public:
 
         // ----- INIT -----
-        Volume() : callback_function(nullptr) {};
+        Volume() = default;
         virtual ~Volume() = default;
 
         /**
@@ -184,32 +185,10 @@ namespace GostCrypt
         // Core interface (dynamic display)
 
         /**
-         * @brief type for callback function, to report current status of jobs to the caller during execution
+         * Current object used to report progress by this volume.
+         * Can be altered anytime to add a callback, a master, etc
          */
-        typedef void (*CallBackFunction_t)(const char *, float);
-
-        /**
-         * @brief Setter to add an optional callback function to report progress for long operations (usually create, since most operations are very fast)
-         * @param function The function to call to report progress
-         */
-        void setCallBack(CallBackFunction_t function) { callback_function = function; };
-
-        /**
-         * @brief function called by the implementation to call the given callback if it is present.
-         * @param current The current action being done, as a user-friendly string read by the UI.
-         * @param percent the current progress in percent, between 0 and 1.
-         */
-        void callback(const char *current, float percent) { if(callback_function) callback_function(current, percent); };
-
-    private:
-
-        /**
-         * @brief Current callback. This function will be called everytime needed to report progress of current call.
-         *
-         * Any implementation of this class may call 'callback' method to report progression if available.
-         */
-        CallBackFunction_t callback_function;
-
+        Progress progress;
     };
 
 }
