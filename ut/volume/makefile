@@ -18,6 +18,11 @@ ifeq ($(P),windows)
 EXTERNAL_LINK_LIBS+= -lws2_32
 endif
 
+# linux needs a link to rt for shared memory functions
+ifeq ($(P),linux)
+EXTERNAL_LINK_LIBS+= -lrt
+endif
+
 # actual compilation
 include rules.mk
 
