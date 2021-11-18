@@ -45,8 +45,6 @@ private:
 
 };
 
-    template class SharedWindow<uint32_t>;
-
 
 }
 
