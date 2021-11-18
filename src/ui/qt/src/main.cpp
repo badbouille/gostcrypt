@@ -6,7 +6,7 @@
  * This project is released under the GNU General Public License v3.0.
  */
 
-#include <RequestSerializer.h>
+#include <Core.h>
 #include "GraphicInterface.h"
 
 int main(int argc, char* argv[])

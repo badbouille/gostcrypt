@@ -8,7 +8,7 @@
 
 #include "Commands.h"
 #include <string>
-#include <RequestSerializer.h>
+#include <Core.h>
 
 /* Common values */
 
