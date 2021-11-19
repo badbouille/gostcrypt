@@ -12,6 +12,12 @@
 #include <windows.h>
 #include <fcntl.h>
 
+/* Forward declaration of templates */
+#include "Progress.h"
+
+template class GostCrypt::SharedWindow<uint32_t>;
+template class GostCrypt::SharedWindow<GostCrypt::Progress::ProgressInfo_t>;
+
 #define SHM_PREFIX "gc_shm_"
 
 struct shm_windows_attributes {
