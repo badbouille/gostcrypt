@@ -50,3 +50,9 @@ GostCrypt::GostCryptException::GostCryptException(std::string message,
     output << " " << msg;
     compiledmessage = output.str();
 }
+
+GostCrypt::GostCryptException::GostCryptException(const char* fullMessage, const char* name)
+{
+    compiledmessage = std::string(fullMessage);
+    exceptionName = std::string(name);
+}

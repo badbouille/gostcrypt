@@ -18,7 +18,7 @@
 	class exceptionname : public sourcename { \
 		using sourcename::sourcename; \
         protected: \
-            const std::string exceptionName = #exceptionname; \
+            std::string exceptionName = #exceptionname; \
 	}
 	
 
@@ -34,6 +34,8 @@ namespace GostCrypt {
 
 	    explicit GostCryptException(std::string message, const char* function, const char* filename, uint32_t line);
 
+        explicit GostCryptException(const char* compiledMessage, const char* name);
+
 	    ~GostCryptException() noexcept override= default;
 
 	    const char* what() const noexcept override { return compiledmessage.c_str(); };
@@ -43,7 +45,7 @@ namespace GostCrypt {
 		std::string func;
 		std::string file;
 		std::string compiledmessage;
-        const std::string exceptionName = "GostCryptException";
+        std::string exceptionName = "GostCryptException";
 		uint32_t l;
 		
 	};
