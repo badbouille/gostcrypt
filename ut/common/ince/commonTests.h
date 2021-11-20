@@ -27,4 +27,9 @@ void test_securebufferptr_compare();
 /* Shared memory tests */
 void test_shared_rw();
 
+/* Progress tests */
+void test_progress_callback();
+void test_progress_master();
+void test_progress_shm();
+
 #endif //_COMMON_TESTS_H

@@ -29,5 +29,8 @@ int main(int argc, char **argv) {
     RUN_TEST(test_bufferptr_range);
     RUN_TEST(test_securebufferptr_compare);
     RUN_TEST(test_shared_rw);
+    RUN_TEST(test_progress_callback);
+    RUN_TEST(test_progress_master);
+    RUN_TEST(test_progress_shm);
     return UNITY_END();
 }

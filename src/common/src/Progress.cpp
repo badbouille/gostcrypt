@@ -52,3 +52,25 @@ void GostCrypt::Progress::reportFromChild(const char *m, float p)
         throw INVALIDPARAMETEREXCEPTION("percentage not between 0 and 1 ("+std::to_string(p)+")");
     report(m, p*(child_bound_high-child_bound_low) + child_bound_low);
 }
+
+void GostCrypt::Progress::listenSharedMemory(SharedWindow<ProgressInfo_t> *shm_listen)
+{
+    ProgressInfo_t i;
+    uint32_t n; // used to not loop indefinetely if the child process is insanely fast
+    if(!shm_listen)
+        return; // return if no shm
+    for(n=0; shm_listen->get(&i) == 0 && n < shm_listen->ELEMENT_NUMBER; n++) // reading all entries
+    {
+        switch (i.type)
+        {
+            case ProgressInfo::PROGRESS:
+                report(i.msg, i.progress);
+                break;
+            case ProgressInfo::EXCEPTION:
+                /* Rebuilding exception from deserialized infos */
+                throw GostCryptException(i.msg, i.name);
+            default:
+                throw INVALIDPARAMETEREXCEPTION("Wrong deserialized value when reading info from shared window.");
+        }
+    }
+}
