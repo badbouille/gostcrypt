@@ -35,6 +35,10 @@ int GostCrypt::Core::main_api_handler(int argc, char **argv)
 
     if (argc < 3 || argc > 4) exit(ret);
 
+    /* Binding progress shm */
+    SharedWindow<Progress::ProgressInfo_t> shm_send(getpid());
+    progress.setSharedMemory(&shm_send);
+
     /* Only mount can be called for now */
     if (std::string(argv[1]) == "mount") {
         // calling mount command
@@ -48,17 +52,13 @@ int GostCrypt::Core::main_api_handler(int argc, char **argv)
         GostCrypt::SecureBufferPtr dataptr((uint8_t *)argv[2], strlen(argv[2]));
         dataptr.erase();
 
-        //GostCrypt::Core::setCallBack(nullptr);
-
         try {
             /* Calling directmount, the true mount function */
             GostCrypt::Core::directmount(&p);
             ret = 0;
-        } catch (GostCrypt::VolumePasswordException &e) {
-            ret = 2;
         } catch (GostCrypt::GostCryptException &e) {
-            printf(e.what());
             ret = 1;
+            progress.reportException(e);
         }
         pass.erase();
     }
@@ -105,16 +105,24 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
         exit(127);
     }
 
-    ret = waitpid(pid, &status, 0);
+    /* Binding progress shm to child's pid */
+    SharedWindow<Progress::ProgressInfo_t> shm_listen(pid);
 
+    /* While child is running */
+    while((ret = waitpid(pid, &status, WNOHANG)) == 0) {
+        /* Getting notifications */
+        progress.listenSharedMemory(&shm_listen);
+    }
+
+    /* Getting final unread notifications (maybe an exception?) */
+    progress.listenSharedMemory(&shm_listen);
+
+    /* Child is dead, analysing */
     if ((ret == -1) || (WIFEXITED(status) == false)) {
         throw GOSTCRYPTEXCEPTION("forked process failed to execute");
     } else {
-        if (WEXITSTATUS(status) == 2) {
-            // Password error OR volume corrupted
-            throw VOLUMEPASSWORDEXCEPTION();
-        } else if (WEXITSTATUS(status) != 0) { // TODO handle more exceptions !! user can not know the bullshit he did
-            throw GOSTCRYPTEXCEPTION("Unknown exception in forked process");
+        if (WEXITSTATUS(status) == 0) {
+            progress.report("Done mounting", 1.0);
         }
     }
 
@@ -189,8 +197,6 @@ void GostCrypt::Core::directmount(GostCrypt::Core::MountParams_t *p)
     progress.report("Creating the FUSE mountpoint", 0.85);
 
     interface->start_fuse(p->mountPoint.c_str(), volume);
-
-    progress.report("Done mounting", 1.0);
 }
 
 void GostCrypt::Core::umount(std::string mountPoint)
@@ -296,7 +302,7 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     // reporting here is tough and needs a second object
     progress.report("Mounting volume at target", 0.90f);
     Progress tmp;
-    tmp.setCallBack(progress.getCallBack());
+    tmp.setCallBack(progress.getCallBack(), progress.getCallBackCtx());
     tmp.setChildBounds(0.90, 0.99);
     progress.removeCallBack();
     progress.setMaster(&tmp);
@@ -305,7 +311,7 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     mount(&p->afterCreationMount);
 
     // resetting progress to normal state
-    progress.setCallBack(tmp.getCallBack());
+    progress.setCallBack(tmp.getCallBack(), tmp.getCallBackCtx());
     progress.removeMaster();
 
     progress.report("Done creating", 1.0);

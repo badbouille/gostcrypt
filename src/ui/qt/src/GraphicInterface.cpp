@@ -127,6 +127,9 @@ void GraphicInterface::sendMountVolume(QVariant aContent)
 
     GostCrypt::Core::MountParams_t arguments;
     GostCrypt::SecureBuffer pass(64);
+    uint32_t id;
+
+    id = GI_KEY(aContent, "id").toUInt();
 
     arguments.mountPoint = "";
     arguments.password = GostCrypt::SecureBufferPtr(pass.get(), pass.size());
@@ -146,17 +149,21 @@ void GraphicInterface::sendMountVolume(QVariant aContent)
 
     try
     {
+        GostCrypt::Core::progress.setCallBack(uicallback, reinterpret_cast<void *>(id));
         GostCrypt::Core::mount(&arguments);
         arguments.password.erase();
     } catch (GostCrypt::GostCryptException &e) {
-        QVariantList r;
-        r << e.name();
-        r << e.what();
-        emit QML_SIGNAL(printSendError, r)
+        if(std::string(e.name()) == "VolumePasswordException") {
+            emit current_instance->volumePasswordIncorrect();
+        } else {
+            QVariantList r;
+            r << e.name();
+            r << e.what();
+            emit QML_SIGNAL(printSendError, r)
+        }
         return;
     }
 
-    /* TODO Signal is emitted by the final callback */
     emit QML_SIGNAL(printMountVolume, QVariantList())
 }
 
@@ -592,48 +599,13 @@ void GraphicInterface::exit()
     emit exited();
 }
 
-void ForkableCore_uicallback_multiple(const char *message, float percent, uint32_t id) {
-    (void)message;
+void GraphicInterface::uicallback(void *ctx, const char *msg, float progress)
+{
+    (void)msg;
     QVariantMap progressData;
-    progressData.insert("id", id);
-    progressData.insert("progress", percent);
+    void *id[1];
+    id[0] = ctx; // workaround to not have to instanciate context and just extact a uint32_t.
+    progressData.insert("id", *((uint32_t*)id));
+    progressData.insert("progress", progress);
     emit current_instance->sprintProgressUpdate(progressData);
-}
-
-int ForkableCore_mountcallback(uint32_t status, uint32_t id) {
-    (void)id;
-    switch (status) {
-        case 2:
-            emit current_instance->volumePasswordIncorrect();
-            break;
-        case 0:
-            emit current_instance->sprintMountVolume(QVariant());
-            break;
-        default:
-            QVariantList r;
-            r << "Unknown unsynchronised exception"; // TODO : thats bad but workaround would be damn expensive
-            r << "Unknown unsynchronised exception";
-            emit current_instance->sprintSendError(r);
-            break;
-    }
-    return status;
-}
-
-int ForkableCore_createcallback(uint32_t status, uint32_t id) {
-    (void)id;
-    switch (status) {
-        case 2:
-            emit current_instance->volumePasswordIncorrect();
-            break;
-        case 0:
-            emit current_instance->sprintCreateVolume(QVariant());
-            break;
-        default:
-            QVariantList r;
-            r << "Unknown unsynchronised exception"; // TODO : thats bad but workaround would be damn expensive
-            r << "Unknown unsynchronised exception";
-            emit current_instance->sprintSendError(r);
-            break;
-    }
-    return status;
 }

@@ -111,6 +111,8 @@ class GraphicInterface : public UserInterface
      */
     static QString formatSize(quint64 sizeInByte, bool withFontColor = true);
 
+    static void uicallback(void *ctx, const char *msg, float progress);
+
  private slots:  // NOLINT
 
     /* SIGNAUX QML -------> QML_CORE */
