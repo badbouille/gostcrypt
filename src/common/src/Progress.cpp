@@ -18,7 +18,7 @@ void GostCrypt::Progress::report(const char *m, float p)
     if(master)
         master->reportFromChild(m, p);
     if(f_report)
-        f_report(m, p);
+        f_report(f_report_ctx, m, p);
     if(shm) {
         /* Building message */
         ProgressInfo_t i;

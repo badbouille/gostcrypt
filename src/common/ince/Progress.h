@@ -37,11 +37,12 @@ namespace GostCrypt
         /**
          * @brief type for report function, to report current status of jobs to the caller during execution
          */
-        typedef void (*ReportFunction_t)(const char *, float);
+        typedef void (*ReportFunction_t)(void *, const char *, float);
 
         // Constructors
         Progress() { master = nullptr;
             f_report = nullptr;
+            f_report_ctx = nullptr;
             shm = nullptr;
             callback_enable = true;
             child_bound_high = 1.0f;
@@ -54,8 +55,9 @@ namespace GostCrypt
         /**
          * Method used to set the 'report function', which is called by this class to report the current progress.
          * @param f the function to call everytime progress is reported
+         * @param ctx the context of this call for the user
          */
-        void setCallBack(ReportFunction_t f) { f_report = f; };
+        void setCallBack(ReportFunction_t f, void *ctx) { f_report = f; f_report_ctx = ctx; };
 
         /**
          * Method to get the current report function
@@ -64,9 +66,15 @@ namespace GostCrypt
         ReportFunction_t getCallBack() { return f_report; };
 
         /**
+         * Method to get the current report function's context
+         * @return the context always passed to this report function
+         */
+        void * getCallBackCtx() { return f_report_ctx; };
+
+        /**
          * Method used to completely remove the callback function
          */
-        void removeCallBack() { f_report = nullptr; };
+        void removeCallBack() { f_report = nullptr; f_report_ctx = nullptr; };
 
         /* Master mode */
 
@@ -181,6 +189,11 @@ namespace GostCrypt
          * Attribute containing the report function called in ::report
          */
         ReportFunction_t f_report;
+
+        /**
+         * Attribute containing a value passed to the report function, as a context for the user
+         */
+         void *f_report_ctx;
 
         /**
          * Attribute containing the master class to report to in ::report

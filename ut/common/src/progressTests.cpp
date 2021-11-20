@@ -15,11 +15,16 @@
 using namespace GostCrypt;
 
 float g_TP_expected_value;
+uint32_t g_TP_expected_ctx;
 std::string g_TP_expected_msg;
 enum {TP_NOTCALLED, TP_WRONGCALLED, TP_OK} g_TP_testResult;
 
-void test_progress_testfunction(const char *m, float p) {
+void test_progress_testfunction(void *ctx, const char *m, float p) {
     g_TP_testResult = TP_OK;
+
+    if(ctx != nullptr) {
+        ((uint32_t*)ctx)[0] += 1;
+    }
 
     if(std::string(m) != g_TP_expected_msg) {
         g_TP_testResult = TP_WRONGCALLED;
@@ -35,17 +40,19 @@ void test_progress_testfunction(const char *m, float p) {
 
 void test_progress_callback() {
     Progress p;
+    uint32_t context = 27;
 
     g_TP_expected_value = 0.1f;
     g_TP_expected_msg = "no message";
 
-    p.setCallBack(test_progress_testfunction);
+    p.setCallBack(test_progress_testfunction, &context);
 
     // default test
     g_TP_testResult = TP_NOTCALLED;
     g_TP_expected_value = 0.2f;
     p.report("no message", 0.2f);
     TEST_ASSERT_EQUAL_UINT32_MESSAGE(TP_OK, g_TP_testResult, "Callback was not called in default mode");
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(28, context, "Callback did not update context");
 
     // disabled test
     g_TP_testResult = TP_NOTCALLED;
@@ -53,6 +60,7 @@ void test_progress_callback() {
     p.disableCallback();
     p.report("no message", 0.3f);
     TEST_ASSERT_EQUAL_UINT32_MESSAGE(TP_NOTCALLED, g_TP_testResult, "Callback was called when disabled");
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(28, context, "Callback updated context but shouldn't");
 
     // reenabled test
     g_TP_testResult = TP_NOTCALLED;
@@ -60,6 +68,7 @@ void test_progress_callback() {
     p.enableCallback();
     p.report("no message", 0.4f);
     TEST_ASSERT_EQUAL_UINT32_MESSAGE(TP_OK, g_TP_testResult, "Callback was not called when enabled again");
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(29, context, "Callback did not update context (2)");
 
     // remove test
     g_TP_testResult = TP_NOTCALLED;
@@ -67,6 +76,7 @@ void test_progress_callback() {
     p.removeCallBack();
     p.report("no message", 0.5f);
     TEST_ASSERT_EQUAL_UINT32_MESSAGE(TP_NOTCALLED, g_TP_testResult, "Callback was called after being removed");
+    TEST_ASSERT_EQUAL_UINT32_MESSAGE(29, context, "Callback updated context but shouldn't (2)");
 
 }
 
@@ -77,7 +87,7 @@ void test_progress_master() {
     g_TP_expected_value = 0.1f;
     g_TP_expected_msg = "no message";
 
-    p.setCallBack(test_progress_testfunction);
+    p.setCallBack(test_progress_testfunction, nullptr);
 
     // default test
     g_TP_testResult = TP_NOTCALLED;
@@ -121,7 +131,7 @@ void test_progress_shm () {
     g_TP_expected_value = 0.1f;
     g_TP_expected_msg = "no message";
 
-    p_listen.setCallBack(test_progress_testfunction);
+    p_listen.setCallBack(test_progress_testfunction, nullptr);
     p_send.setSharedMemory(&shm_listen);
 
     // failure test
