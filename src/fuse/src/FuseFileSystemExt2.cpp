@@ -52,7 +52,7 @@ struct fuse_lwext4_options fuse_lwext4_options;
 
 void GostCrypt::FuseFileSystemExt2::start_fuse(const char * mountpoint, Volume *target) {
     struct ext4_blockdev *bdev;
-#ifdef DEBUG
+#ifdef TARGET_DEBUG
     #define ARG_NUM 5
     char params[ARG_NUM][256] = {"gostcrypt", "", "-oallow_other", "-f", "-s"};
 #else

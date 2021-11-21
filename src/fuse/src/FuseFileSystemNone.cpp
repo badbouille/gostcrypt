@@ -188,7 +188,7 @@ int fusefs_none_write(const char *path,
 
 void GostCrypt::FuseFileSystemNone::start_fuse(const char * mountpoint, Volume *target) {
 
-#ifdef DEBUG
+#ifdef TARGET_DEBUG
 #define ARG_NUM 5
     char params[ARG_NUM][256] = {"gostcrypt", "", "-oallow_other", "-f", "-s"};
 #else
