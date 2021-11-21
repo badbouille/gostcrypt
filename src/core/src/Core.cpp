@@ -29,27 +29,27 @@ int GostCrypt::Core::main_api_handler(int argc, char **argv)
     /* Updating program location */
     g_prog_path = argv[0];
 
-    if (argv[0] == nullptr || std::string(argv[0]) != "api") {
+    if (argc < 2 && argv[1] == nullptr || std::string(argv[1]) != "api") {
         return 0;
     }
 
-    if (argc < 3 || argc > 4) exit(ret);
+    if (argc < 4 || argc > 5) exit(ret);
 
     /* Binding progress shm */
     SharedWindow<Progress::ProgressInfo_t> shm_send(getpid());
     progress.setSharedMemory(&shm_send);
 
     /* Only mount and create can be called for now */
-    if (std::string(argv[1]) == "mount") {
+    if (std::string(argv[2]) == "mount") {
         // calling mount command
         GostCrypt::SecureBuffer pass(64); // TODO: why 64
         GostCrypt::Core::MountParams_t p;
 
         pass.getRange(p.password, 0, pass.size());
-        RequestSerializer_api_DeserializeMount(&p, argv[2]);
+        RequestSerializer_api_DeserializeMount(&p, argv[3]);
 
         // erasing all sensible data
-        GostCrypt::SecureBufferPtr dataptr((uint8_t *)argv[2], strlen(argv[2]));
+        GostCrypt::SecureBufferPtr dataptr((uint8_t *)argv[3], strlen(argv[3]));
         dataptr.erase();
 
         try {
@@ -61,17 +61,17 @@ int GostCrypt::Core::main_api_handler(int argc, char **argv)
             progress.reportException(e);
         }
         pass.erase();
-    } else if (std::string(argv[1]) == "create") {
+    } else if (std::string(argv[2]) == "create") {
         // calling create command
         GostCrypt::SecureBuffer pass(64); // TODO: why 64
         GostCrypt::Core::CreateParams_t p;
 
         pass.getRange(p.password, 0, pass.size());
         pass.getRange(p.afterCreationMount.password, 0, pass.size());
-        RequestSerializer_api_DeserializeCreate(&p, argv[2]);
+        RequestSerializer_api_DeserializeCreate(&p, argv[3]);
 
         // erasing all sensible data
-        GostCrypt::SecureBufferPtr dataptr((uint8_t *)argv[2], strlen(argv[2]));
+        GostCrypt::SecureBufferPtr dataptr((uint8_t *)argv[3], strlen(argv[3]));
         dataptr.erase();
 
         try {
@@ -114,15 +114,17 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
     GostCrypt::Core::directmount(p);
 #else
     pid_t pid;
-    static char argvT[][256] = { "api", "mount", "", "" };
-    static char *argv[] = { argvT[0], argvT[1], nullptr, nullptr, nullptr };
+    static char argvT[][256] = { "", "api", "mount", "", "" };
+    static char *argv[] = { argvT[0], argvT[1], argvT[2], nullptr, nullptr };
     uint32_t len;
     int ret = 0, status;
 
-    pid = vfork();
+    strncpy(argvT[0], g_prog_path, 256); // TODO dirty as hell
+
+    pid = fork();
 
     if (pid == 0) {
-        RequestSerializer_api_SerializeMount(p, &argv[2], &len);
+        RequestSerializer_api_SerializeMount(p, &argv[3], &len);
         execv(g_prog_path, argv);
         exit(127);
     }
@@ -139,12 +141,15 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
     /* Getting final unread notifications (maybe an exception?) */
     progress.listenSharedMemory(&shm_listen);
 
+    /* Deleting allowed area for params */
+    delete argv[3];
+
     /* Child is dead, analysing */
     if ((ret == -1) || (WIFEXITED(status) == false)) {
         throw GOSTCRYPTEXCEPTION("forked process failed to execute");
     } else {
         if (WEXITSTATUS(status) == 0) {
-            progress.report("Done mounting", 1.0);
+            progress.report("Done mounting", 1.0); // TODO move this
         }
     }
 
@@ -154,18 +159,24 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
 void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
 {
 #ifdef TARGET_DEBUG
+    char *test;
+    uint32_t len;
+    RequestSerializer_api_SerializeCreate(p, &test, &len);
+    printf("Struct length: %d", len);
     GostCrypt::Core::directcreate(p);
 #else
     pid_t pid;
-    static char argvT[][256] = { "api", "create", "", "" };
-    static char *argv[] = { argvT[0], argvT[1], nullptr, nullptr, nullptr };
+    static char argvT[][256] = { "", "api", "create", "", "" };
+    static char *argv[] = { argvT[0], argvT[1], argvT[2], nullptr, nullptr };
     uint32_t len;
     int ret = 0, status;
 
-    pid = vfork();
+    strncpy(argvT[0], g_prog_path, 256); // TODO dirty as hell
+
+    pid = fork();
 
     if (pid == 0) {
-        RequestSerializer_api_SerializeCreate(p, &argv[2], &len);
+        RequestSerializer_api_SerializeCreate(p, &argv[3], &len);
         execv(g_prog_path, argv);
         exit(127);
     }
@@ -182,13 +193,12 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     /* Getting final unread notifications (maybe an exception?) */
     progress.listenSharedMemory(&shm_listen);
 
+    /* Deleting allowed area for params */
+    delete argv[3];
+
     /* Child is dead, analysing */
     if ((ret == -1) || (WIFEXITED(status) == false)) {
         throw GOSTCRYPTEXCEPTION("forked process failed to execute");
-    } else {
-        if (WEXITSTATUS(status) == 0) {
-            progress.report("Done mounting", 1.0);
-        }
     }
 
 #endif
@@ -347,8 +357,9 @@ void GostCrypt::Core::directcreate(GostCrypt::Core::CreateParams_t *p)
     progress.report("Creating volume", 0.06);
     try {
         progress.setChildBounds(0.06, 0.80);
-        //volume->setCallBack(super_callback);
+        volume->progress.setMaster(&progress);
         volume->create(new ContainerFile(p->volumePath), p->dataSize, p->algorithmID, p->keyDerivationFunctionID, p->sectorSize, p->password);
+        volume->progress.removeMaster();
     } catch (GostCryptException &e) {
         delete volume;
         throw;
@@ -357,7 +368,7 @@ void GostCrypt::Core::directcreate(GostCrypt::Core::CreateParams_t *p)
     // filesystem init
 
     // creating filesystem in raw file
-    progress.report("Creating filesystem", 0.90f);
+    progress.report("Creating filesystem", 0.85f);
     interface->create(volume);
 
     delete interface;
