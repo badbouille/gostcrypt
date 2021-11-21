@@ -57,6 +57,9 @@ void GraphicInterface::sendCreateVolume(QVariant aContent) {
 
     GostCrypt::Core::CreateParams_t arguments;
     GostCrypt::SecureBuffer pass(64);
+    uint32_t id;
+
+    id = GI_KEY(aContent, "id").toUInt();
 
     /* Default init */
     arguments.afterCreationMount.password = GostCrypt::SecureBufferPtr(pass.get(), pass.size());
@@ -104,6 +107,7 @@ void GraphicInterface::sendCreateVolume(QVariant aContent) {
 
     try
     {
+        GostCrypt::Core::progress.setCallBack(uicallback, reinterpret_cast<void *>(id));
         GostCrypt::Core::create(&arguments);
         arguments.password.erase();
     } catch (GostCrypt::GostCryptException &e) {
@@ -114,7 +118,6 @@ void GraphicInterface::sendCreateVolume(QVariant aContent) {
         return;
     }
 
-    /* TODO Signal is emitted by the final callback */
     emit QML_SIGNAL(printCreateVolume, QVariantList())
 
 }

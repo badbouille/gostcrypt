@@ -39,7 +39,7 @@ int GostCrypt::Core::main_api_handler(int argc, char **argv)
     SharedWindow<Progress::ProgressInfo_t> shm_send(getpid());
     progress.setSharedMemory(&shm_send);
 
-    /* Only mount can be called for now */
+    /* Only mount and create can be called for now */
     if (std::string(argv[1]) == "mount") {
         // calling mount command
         GostCrypt::SecureBuffer pass(64); // TODO: why 64
@@ -55,6 +55,28 @@ int GostCrypt::Core::main_api_handler(int argc, char **argv)
         try {
             /* Calling directmount, the true mount function */
             GostCrypt::Core::directmount(&p);
+            ret = 0;
+        } catch (GostCrypt::GostCryptException &e) {
+            ret = 1;
+            progress.reportException(e);
+        }
+        pass.erase();
+    } else if (std::string(argv[1]) == "create") {
+        // calling create command
+        GostCrypt::SecureBuffer pass(64); // TODO: why 64
+        GostCrypt::Core::CreateParams_t p;
+
+        pass.getRange(p.password, 0, pass.size());
+        pass.getRange(p.afterCreationMount.password, 0, pass.size());
+        RequestSerializer_api_DeserializeCreate(&p, argv[2]);
+
+        // erasing all sensible data
+        GostCrypt::SecureBufferPtr dataptr((uint8_t *)argv[2], strlen(argv[2]));
+        dataptr.erase();
+
+        try {
+            /* Calling directmount, the true mount function */
+            GostCrypt::Core::directcreate(&p);
             ret = 0;
         } catch (GostCrypt::GostCryptException &e) {
             ret = 1;
@@ -101,6 +123,49 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
 
     if (pid == 0) {
         RequestSerializer_api_SerializeMount(p, &argv[2], &len);
+        execv(g_prog_path, argv);
+        exit(127);
+    }
+
+    /* Binding progress shm to child's pid */
+    SharedWindow<Progress::ProgressInfo_t> shm_listen(pid);
+
+    /* While child is running */
+    while((ret = waitpid(pid, &status, WNOHANG)) == 0) {
+        /* Getting notifications */
+        progress.listenSharedMemory(&shm_listen);
+    }
+
+    /* Getting final unread notifications (maybe an exception?) */
+    progress.listenSharedMemory(&shm_listen);
+
+    /* Child is dead, analysing */
+    if ((ret == -1) || (WIFEXITED(status) == false)) {
+        throw GOSTCRYPTEXCEPTION("forked process failed to execute");
+    } else {
+        if (WEXITSTATUS(status) == 0) {
+            progress.report("Done mounting", 1.0);
+        }
+    }
+
+#endif
+}
+
+void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
+{
+#ifdef TARGET_DEBUG
+    GostCrypt::Core::directcreate(p);
+#else
+    pid_t pid;
+    static char argvT[][256] = { "api", "create", "", "" };
+    static char *argv[] = { argvT[0], argvT[1], nullptr, nullptr, nullptr };
+    uint32_t len;
+    int ret = 0, status;
+
+    pid = vfork();
+
+    if (pid == 0) {
+        RequestSerializer_api_SerializeCreate(p, &argv[2], &len);
         execv(g_prog_path, argv);
         exit(127);
     }
@@ -225,7 +290,7 @@ void GostCrypt::Core::umountAll()
     }
 }
 
-void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
+void GostCrypt::Core::directcreate(GostCrypt::Core::CreateParams_t *p)
 {
     // TODO check input
 

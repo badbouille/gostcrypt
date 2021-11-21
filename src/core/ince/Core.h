@@ -88,6 +88,7 @@ namespace GostCrypt
         static void umount(std::string mountPoint);
         static void umountAll();
         static void create(CreateParams_t *p);
+        static void directcreate(CreateParams_t *p); /* Allowed only in detached process */
         static VolumeInfoList list();
 
         // Volume management
