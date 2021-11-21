@@ -49,7 +49,8 @@ HEADERS += \
     inc/TranslationApp.h \
     inc/GraphicInterface.h \
     inc/SecureTextField.h \
-    inc/UserInterface.h
+    inc/UserInterface.h \
+    inc/QThreads.h
 
 SOURCES += \
     src/main.cpp \
@@ -57,7 +58,8 @@ SOURCES += \
     src/TranslationApp.cpp \
     src/GraphicInterface.cpp \
     src/SecureTextField.cpp \
-    src/UserInterface.cpp
+    src/UserInterface.cpp \
+    src/QThreads.cpp
 
 LIBS += \
         $${STATIC_LIBSD}/core.a \

@@ -9,6 +9,7 @@
 #include <Core.h>
 #include "GraphicInterface.h"
 #include "commonDefines.h"
+#include "QThreads.h"
 
 GraphicInterface *current_instance;
 
@@ -55,70 +56,60 @@ void GraphicInterface::sendCreateVolume(QVariant aContent) {
     qDebug() << "Calling CreateVolume";
 #endif
 
-    GostCrypt::Core::CreateParams_t arguments;
-    GostCrypt::SecureBuffer pass(64);
+    GostCrypt::Core::CreateParams_t *arguments = new GostCrypt::Core::CreateParams_t;
+    GostCrypt::SecureBuffer *pass = new GostCrypt::SecureBuffer(64);
     uint32_t id;
 
     id = GI_KEY(aContent, "id").toUInt();
 
     /* Default init */
-    arguments.afterCreationMount.password = GostCrypt::SecureBufferPtr(pass.get(), pass.size());
-    arguments.afterCreationMount.volumePath = "";
-    arguments.afterCreationMount.mountPoint = "";
-    arguments.afterCreationMount.fileSystemID = DEFAULT_FILESYSTEMID;
+    arguments->afterCreationMount.password = GostCrypt::SecureBufferPtr(pass->get(), pass->size());
+    arguments->afterCreationMount.volumePath = "";
+    arguments->afterCreationMount.mountPoint = "";
+    arguments->afterCreationMount.fileSystemID = DEFAULT_FILESYSTEMID;
 
-    arguments.password = GostCrypt::SecureBufferPtr(pass.get(), pass.size());
-    arguments.volumePath = "";
+    arguments->password = GostCrypt::SecureBufferPtr(pass->get(), pass->size());
+    arguments->volumePath = "";
 
-    arguments.dataSize = DEFAULT_VOLUMESIZE;
-    arguments.sectorSize = DEFAULT_SECTORSIZE;
+    arguments->dataSize = DEFAULT_VOLUMESIZE;
+    arguments->sectorSize = DEFAULT_SECTORSIZE;
 
-    arguments.volumeTypeID = DEFAULT_VOLUMETYPE;
-    arguments.algorithmID = DEFAULT_ALGORITHM;
-    arguments.keyDerivationFunctionID = DEFAULT_KDF;
+    arguments->volumeTypeID = DEFAULT_VOLUMETYPE;
+    arguments->algorithmID = DEFAULT_ALGORITHM;
+    arguments->keyDerivationFunctionID = DEFAULT_KDF;
 
     /****************** PARSING PARAMETERS ********************/
 
     // type
-    arguments.volumeTypeID = GI_KEY(aContent, "type").toString().toStdString();
+    arguments->volumeTypeID = GI_KEY(aContent, "type").toString().toStdString();
 
     // path
-    arguments.volumePath = GI_KEY(aContent, "path").toString().toStdString();
-    arguments.afterCreationMount.volumePath = arguments.volumePath;
+    arguments->volumePath = GI_KEY(aContent, "path").toString().toStdString();
+    arguments->afterCreationMount.volumePath = arguments->volumePath;
 
     // mountpoint
-    arguments.afterCreationMount.mountPoint = GI_KEY(aContent, "mountpoint").toString().toStdString();
+    arguments->afterCreationMount.mountPoint = GI_KEY(aContent, "mountpoint").toString().toStdString();
 
     // size
-    arguments.dataSize = GI_KEY(aContent, "size").toULongLong();
+    arguments->dataSize = GI_KEY(aContent, "size").toULongLong();
 
     // algos
-    arguments.algorithmID = GI_KEY(aContent, "algorithm").toString().toStdString();
-    arguments.keyDerivationFunctionID = GI_KEY(aContent, "hash").toString().toStdString();
-    arguments.afterCreationMount.fileSystemID = GI_KEY(aContent, "filesystem").toString().toStdString();
+    arguments->algorithmID = GI_KEY(aContent, "algorithm").toString().toStdString();
+    arguments->keyDerivationFunctionID = GI_KEY(aContent, "hash").toString().toStdString();
+    arguments->afterCreationMount.fileSystemID = GI_KEY(aContent, "filesystem").toString().toStdString();
 
     // password
     QByteArray *a = new QByteArray(GI_KEY(aContent,"password").toString().toUtf8()); //Setting the outer volume password
     GostCrypt::SecureBufferPtr passptr((const uint8_t *)a->data(), a->length());
-    arguments.password.copyFrom(passptr);
-    //arguments.afterCreationMount.password.copyFrom(passptr);
+    arguments->password.copyFrom(passptr);
+    //arguments->afterCreationMount.password.copyFrom(passptr);
 
     /************** REQUEST *****************/
 
-    try
-    {
-        GostCrypt::Core::progress.setCallBack(uicallback, reinterpret_cast<void *>(id));
-        GostCrypt::Core::create(&arguments);
-        arguments.password.erase();
-    } catch (GostCrypt::GostCryptException &e) {
-        QVariantList r;
-        r << e.name();
-        r << e.what();
-        emit QML_SIGNAL(printSendError, r)
-        return;
-    }
+    GostCrypt::Core::progress.setCallBack(uicallback, reinterpret_cast<void *>(id));
 
-    emit QML_SIGNAL(printCreateVolume, QVariantList())
+    QThread *t = new GostCrypt::CreateThread(arguments, pass);
+    t->start();
 
 }
 
@@ -128,46 +119,32 @@ void GraphicInterface::sendMountVolume(QVariant aContent)
     qDebug() << "Calling MountVolume";
 #endif
 
-    GostCrypt::Core::MountParams_t arguments;
-    GostCrypt::SecureBuffer pass(64);
+    GostCrypt::Core::MountParams_t *arguments = new GostCrypt::Core::MountParams_t;
+    GostCrypt::SecureBuffer *pass = new GostCrypt::SecureBuffer(64);
     uint32_t id;
 
     id = GI_KEY(aContent, "id").toUInt();
 
-    arguments.mountPoint = "";
-    arguments.password = GostCrypt::SecureBufferPtr(pass.get(), pass.size());
-    arguments.fileSystemID = DEFAULT_FILESYSTEMID;
-    arguments.volumePath = "";
+    arguments->mountPoint = "";
+    arguments->password = GostCrypt::SecureBufferPtr(pass->get(), pass->size());
+    arguments->fileSystemID = DEFAULT_FILESYSTEMID;
+    arguments->volumePath = "";
 
     QString canonicalPath = GI_KEY(aContent, "path").toUrl().path();
-    arguments.volumePath = canonicalPath.toStdString();
+    arguments->volumePath = canonicalPath.toStdString();
 
     QString mountpointPath = GI_KEY(aContent, "mountpoint").toUrl().path();
-    arguments.mountPoint = mountpointPath.toStdString();
+    arguments->mountPoint = mountpointPath.toStdString();
 
     QByteArray *a = new QByteArray(GI_KEY(aContent,"password").toString().toUtf8()); //Setting the outer volume password
     GostCrypt::SecureBufferPtr passptr((uint8_t *)a->data(), a->length());
-    arguments.password.copyFrom(passptr);
+    arguments->password.copyFrom(passptr);
     passptr.erase();
 
-    try
-    {
-        GostCrypt::Core::progress.setCallBack(uicallback, reinterpret_cast<void *>(id));
-        GostCrypt::Core::mount(&arguments);
-        arguments.password.erase();
-    } catch (GostCrypt::GostCryptException &e) {
-        if(std::string(e.name()) == "VolumePasswordException") {
-            emit current_instance->volumePasswordIncorrect();
-        } else {
-            QVariantList r;
-            r << e.name();
-            r << e.what();
-            emit QML_SIGNAL(printSendError, r)
-        }
-        return;
-    }
+    GostCrypt::Core::progress.setCallBack(uicallback, reinterpret_cast<void *>(id));
 
-    emit QML_SIGNAL(printMountVolume, QVariantList())
+    QThread *t = new GostCrypt::MountThread(arguments, pass);
+    t->start();
 }
 
 void GraphicInterface::sendGetMountedVolumes(QVariant aContent)
