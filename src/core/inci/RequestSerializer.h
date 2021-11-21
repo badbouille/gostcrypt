@@ -14,4 +14,7 @@
 int RequestSerializer_api_SerializeMount(const GostCrypt::Core::MountParams_t *p, char **d, uint32_t *len);
 int RequestSerializer_api_DeserializeMount(GostCrypt::Core::MountParams_t *p, const char *d);
 
+int RequestSerializer_api_SerializeCreate(const GostCrypt::Core::CreateParams_t *p, char **d, uint32_t *len);
+int RequestSerializer_api_DeserializeCreate(GostCrypt::Core::CreateParams_t *p, const char *d);
+
 #endif //GOSTCRYPT_REQUESTSERIALIZER_H
