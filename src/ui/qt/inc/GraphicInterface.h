@@ -111,6 +111,12 @@ class GraphicInterface : public UserInterface
      */
     static QString formatSize(quint64 sizeInByte, bool withFontColor = true);
 
+    /**
+     * Function passed to the GostCrypt Core to report back any progress
+     * @param ctx ID of the notification to update
+     * @param msg message to display (unused)
+     * @param progress progress between 0 and 1 to display-
+     */
     static void uicallback(void *ctx, const char *msg, float progress);
 
  private slots:  // NOLINT
