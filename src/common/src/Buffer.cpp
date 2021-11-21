@@ -41,7 +41,7 @@ void BufferPtr::getRange(BufferPtr &dest, size_t offset, size_t size)
 {
     if (offset + size > dataSize)
     {
-        throw INVALIDPARAMETEREXCEPTION("offset+size > DataSize");
+        throw INVALIDPARAMETEREXCEPTION("offset ("+std::to_string(offset)+") + size ("+std::to_string(size)+") > DataSize ("+std::to_string(dataSize)+")");
     }
     if (!dataPtrMutable)
     {
@@ -54,7 +54,7 @@ void BufferPtr::getRange(BufferPtr &dest, size_t offset, size_t size) const
 {
     if (offset + size > dataSize)
     {
-        throw INVALIDPARAMETEREXCEPTION("offset+size > DataSize");
+        throw INVALIDPARAMETEREXCEPTION("offset ("+std::to_string(offset)+") + size ("+std::to_string(size)+") > DataSize ("+std::to_string(dataSize)+")");
     }
     dest.set(dataPtrReadonly + offset, size);
 }
@@ -258,7 +258,7 @@ void Buffer<T>::getRange(BufferPtr& dest, size_t offset, size_t size)
 {
     if (offset + size > Usersize)
     {
-        throw INVALIDPARAMETEREXCEPTION("offset+size > Usersize");
+        throw INVALIDPARAMETEREXCEPTION("offset ("+std::to_string(offset)+") + size ("+std::to_string(size)+") > Usersize ("+std::to_string(Usersize)+")");
     }
     return Data->getRange(dest, offset, size);
 }
@@ -268,7 +268,7 @@ void Buffer<T>::getRange(BufferPtr& dest,size_t offset, size_t size) const
 {
     if (offset + size > Usersize)
     {
-        throw INVALIDPARAMETEREXCEPTION("offset+size > Usersize");
+        throw INVALIDPARAMETEREXCEPTION("offset ("+std::to_string(offset)+") + size ("+std::to_string(size)+") > Usersize ("+std::to_string(Usersize)+")");
     }
     return Data->getRange(dest, offset, size);
 }
