@@ -19,7 +19,7 @@ jobs:
         run: sudo apt update
       - name: 'Install libfuse-dev libacl1-dev'
         # This job installs the required libraries to build the core (FUSE + lwext4)
-        run: sudo apt install libfuse-dev libacl1-dev
+        run: sudo apt install libfuse-dev libacl1-dev cmake
       - name: 'Install Qt5 libs and modules'
         # This job installs the required libraries to build the Qt interface (Qt5 qml quick labs ++)
         run: sudo apt install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qtdeclarative5-dev qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings
