@@ -22,7 +22,7 @@ jobs:
         run: sudo apt install libfuse-dev libacl1-dev
       - name: 'Install Qt5 libs and modules'
         # This job installs the required libraries to build the Qt interface (Qt5 qml quick labs ++)
-        run: sudo apt install qt5-default qtdeclarative5-dev qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings
+        run: sudo apt install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools qtdeclarative5-dev qml-module-qtquick2 qml-module-qtquick-controls qml-module-qtquick-controls2 qml-module-qtquick-layouts qml-module-qtquick-dialogs qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings
       - name: 'Install mingw-w64'
         # This job installs the required libraries to build for Windows (Not needed for linux builds)
         run: sudo apt install mingw-w64
