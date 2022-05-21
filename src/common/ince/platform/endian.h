@@ -26,4 +26,4 @@
 #define be64toh(u64_val) ((1==htonl(1)) ? (u64_val) : (((uint64_t)ntohl((u64_val) & 0xFFFFFFFFUL)) << 32) | ntohl((uint32_t)((u64_val) >> 32)))
 #endif
 
-#endif // _MEMORY_H_
+#endif // _ENDIAN_H_
