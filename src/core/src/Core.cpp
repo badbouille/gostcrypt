@@ -7,7 +7,8 @@
  */
 
 #include <iostream>
-#include <wait.h>
+#include "platform/exec.h"
+#include "platform/endian.h"
 #include <ContainerFile.h>
 #include "Core.h"
 #include "FuseFileSystem.h"
@@ -36,7 +37,7 @@ int GostCrypt::Core::main_api_handler(int argc, char **argv)
     if (argc < 4 || argc > 5) exit(ret);
 
     /* Binding progress shm */
-    SharedWindow<Progress::ProgressInfo_t> shm_send(getpid());
+    SharedWindow<Progress::ProgressInfo_t> shm_send(process_getpid(nullptr));
     progress.setSharedMemory(&shm_send);
 
     /* Only mount and create can be called for now */
@@ -113,7 +114,7 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
 #ifdef TARGET_DEBUG
     GostCrypt::Core::directmount(p);
 #else
-    pid_t pid;
+    void * pid;
     static char argvT[][256] = { "", "api", "mount", "", "" };
     static char *argv[] = { argvT[0], argvT[1], argvT[2], nullptr, nullptr };
     uint32_t len;
@@ -121,19 +122,15 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
 
     strncpy(argvT[0], g_prog_path, 256); // TODO dirty as hell
 
-    pid = fork();
+    RequestSerializer_api_SerializeMount(p, &argv[3], &len);
 
-    if (pid == 0) {
-        RequestSerializer_api_SerializeMount(p, &argv[3], &len);
-        execv(g_prog_path, argv);
-        exit(127);
-    }
+    pid = process_exec(g_prog_path, argv);
 
     /* Binding progress shm to child's pid */
-    SharedWindow<Progress::ProgressInfo_t> shm_listen(pid);
+    SharedWindow<Progress::ProgressInfo_t> shm_listen(process_getpid(pid));
 
     /* While child is running */
-    while((ret = waitpid(pid, &status, WNOHANG)) == 0) {
+    while((ret = process_waitpid(&pid, &status)) == 0) {
         /* Getting notifications */
         progress.listenSharedMemory(&shm_listen);
     }
@@ -145,12 +142,10 @@ void GostCrypt::Core::mount(GostCrypt::Core::MountParams_t *p)
     delete argv[3];
 
     /* Child is dead, analysing */
-    if ((ret == -1) || (WIFEXITED(status) == false)) {
-        throw GOSTCRYPTEXCEPTION("forked process failed to execute");
+    if ((ret != -1) && (status == 0)) {
+        progress.report("Done mounting", 1.0); // TODO move this
     } else {
-        if (WEXITSTATUS(status) == 0) {
-            progress.report("Done mounting", 1.0); // TODO move this
-        }
+        throw GOSTCRYPTEXCEPTION("forked process failed to execute");
     }
 
 #endif
@@ -165,7 +160,7 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     printf("Struct length: %d", len);
     GostCrypt::Core::directcreate(p);
 #else
-    pid_t pid;
+    void * pid;
     static char argvT[][256] = { "", "api", "create", "", "" };
     static char *argv[] = { argvT[0], argvT[1], argvT[2], nullptr, nullptr };
     uint32_t len;
@@ -173,19 +168,15 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
 
     strncpy(argvT[0], g_prog_path, 256); // TODO dirty as hell
 
-    pid = fork();
+    RequestSerializer_api_SerializeCreate(p, &argv[3], &len);
 
-    if (pid == 0) {
-        RequestSerializer_api_SerializeCreate(p, &argv[3], &len);
-        execv(g_prog_path, argv);
-        exit(127);
-    }
+    pid = process_exec(g_prog_path, argv);
 
     /* Binding progress shm to child's pid */
-    SharedWindow<Progress::ProgressInfo_t> shm_listen(pid);
+    SharedWindow<Progress::ProgressInfo_t> shm_listen(process_getpid(pid));
 
     /* While child is running */
-    while((ret = waitpid(pid, &status, WNOHANG)) == 0) {
+    while((ret = process_waitpid(&pid, &status)) == 0) {
         /* Getting notifications */
         progress.listenSharedMemory(&shm_listen);
     }
@@ -197,7 +188,9 @@ void GostCrypt::Core::create(GostCrypt::Core::CreateParams_t *p)
     delete argv[3];
 
     /* Child is dead, analysing */
-    if ((ret == -1) || (WIFEXITED(status) == false)) {
+    if ((ret != -1) && (status == 0)) {
+        progress.report("Done creating", 1.0); // TODO move this
+    } else {
         throw GOSTCRYPTEXCEPTION("forked process failed to execute");
     }
 
@@ -210,7 +203,7 @@ void GostCrypt::Core::directmount(GostCrypt::Core::MountParams_t *p)
 
     // Pointer on final Volume object
     GostCrypt::Volume *volume = nullptr;
-    GostCrypt::FuseFileSystem *interface = nullptr;
+    GostCrypt::FuseFileSystem *fuseinterface = nullptr;
     bool volumeOpened = false;
     float i = 0.0;
 
@@ -221,19 +214,19 @@ void GostCrypt::Core::directmount(GostCrypt::Core::MountParams_t *p)
     for (auto & fileSystemIterator : fileSystemList) {
         // checking name
         if (fileSystemIterator->getID() == p->fileSystemID) {
-            interface = fileSystemIterator;
+            fuseinterface = fileSystemIterator;
         }
     }
 
     // cleaning unused structures
     for (auto & fileSystemIterator : fileSystemList) {
-        if (interface != fileSystemIterator) {
+        if (fuseinterface != fileSystemIterator) {
             delete fileSystemIterator;
         }
     }
 
-    if (interface == nullptr) {
-        throw INVALIDPARAMETEREXCEPTION("Could not find the requested interface (filesystem).");
+    if (fuseinterface == nullptr) {
+        throw INVALIDPARAMETEREXCEPTION("Could not find the requested fuseinterface (filesystem).");
     }
 
     // TODO : try catch
@@ -271,7 +264,7 @@ void GostCrypt::Core::directmount(GostCrypt::Core::MountParams_t *p)
     // Starting fuse
     progress.report("Creating the FUSE mountpoint", 0.85);
 
-    interface->start_fuse(p->mountPoint.c_str(), volume);
+    fuseinterface->start_fuse(p->mountPoint.c_str(), volume);
 }
 
 void GostCrypt::Core::umount(std::string mountPoint)
@@ -306,7 +299,7 @@ void GostCrypt::Core::directcreate(GostCrypt::Core::CreateParams_t *p)
 
     // Pointer on final Volume object
     GostCrypt::Volume *volume = nullptr;
-    GostCrypt::FuseFileSystem *interface = nullptr;
+    GostCrypt::FuseFileSystem *fuseinterface = nullptr;
     bool volumeOpened = false;
 
     std::string realfs = p->afterCreationMount.fileSystemID;
@@ -317,19 +310,19 @@ void GostCrypt::Core::directcreate(GostCrypt::Core::CreateParams_t *p)
     for (auto & fileSystemIterator : fileSystemList) {
         // checking name
         if (fileSystemIterator->getID() == p->afterCreationMount.fileSystemID) {
-            interface = fileSystemIterator;
+            fuseinterface = fileSystemIterator;
         }
     }
 
     // cleaning unused structures
     for (auto & fileSystemIterator : fileSystemList) {
-        if (interface != fileSystemIterator) {
+        if (fuseinterface != fileSystemIterator) {
             delete fileSystemIterator;
         }
     }
 
-    if (interface == nullptr) {
-        throw INVALIDPARAMETEREXCEPTION("Could not find the requested interface (filesystem).");
+    if (fuseinterface == nullptr) {
+        throw INVALIDPARAMETEREXCEPTION("Could not find the requested fuseinterface (filesystem).");
     }
 
     // finding volume type requested
@@ -369,9 +362,9 @@ void GostCrypt::Core::directcreate(GostCrypt::Core::CreateParams_t *p)
 
     // creating filesystem in raw file
     progress.report("Creating filesystem", 0.85f);
-    interface->create(volume);
+    fuseinterface->create(volume);
 
-    delete interface;
+    delete fuseinterface;
 
     // post-creation mount
 
