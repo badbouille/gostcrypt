@@ -19,6 +19,7 @@ DEFINES += FUSE_USE_VERSION=29 \
 
 unix {
     DEFINES += GST_UNIX
+    DEFINES += PLATFORM_LINUX
     linux {
         DEFINES += GST_LINUX
     }
@@ -31,6 +32,10 @@ unix {
     solaris {
         DEFINES += GST_SOLARIS
     }
+}
+
+win32|win64 {
+    DEFINES += PLATFORM_WINDOWS
 }
 
 DEFINES += QT_DEPRECATED_WARNINGS QT_NO_FOREACH
