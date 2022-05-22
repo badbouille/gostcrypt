@@ -16,6 +16,7 @@
 #include <fstream>
 #include <unistd.h>
 #include <fuse.h>
+#include "platform/usermode.h"
 
 // fuse superfunctions
 extern "C" {
@@ -160,11 +161,11 @@ namespace GostCrypt
          * @param volume the volume mounted. Only infos like name, id, etc will be extracted from it.
          * @param mountpoint The mountpoint of this filesystem.
          */
-        void setupSuperFuse(uid_t uid, gid_t gid, Volume *volume, const char *mountpoint);
+        void setupSuperFuse(fuse_uid_t uid, fuse_gid_t gid, Volume *volume, const char *mountpoint);
 
     };
 
 }
 
 
-#endif //_BLOCKCIPHER_H
+#endif //_FUSEFILESYSTEM_H

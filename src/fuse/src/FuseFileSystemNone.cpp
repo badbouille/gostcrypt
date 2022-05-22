@@ -7,7 +7,7 @@
  */
 
 #include <Volume.h>
-#include <zconf.h>
+#include "sys/stat.h"
 #include <iostream>
 #include "../ince/FuseFileSystemNone.h"
 
@@ -42,15 +42,12 @@ int fusefs_none_access(const char *path, int mask)
     return 0;
 }
 
-int fusefs_none_getattr(const char *path, struct stat *statData)
+int fusefs_none_getattr(const char *path, struct fuse_stat *statData)
 {
     memset(statData, 0, sizeof(*statData));
 
     statData->st_uid = interface->getUID();
     statData->st_gid = interface->getGID();
-    statData->st_atime = time(NULL);
-    statData->st_ctime = time(NULL);
-    statData->st_mtime = time(NULL);
 
     if (strcmp(path, "/") == 0) {
         statData->st_mode = S_IFDIR | 0500;
@@ -65,7 +62,7 @@ int fusefs_none_getattr(const char *path, struct stat *statData)
         {
             statData->st_mode = S_IFREG | 0600;
             statData->st_nlink = 1;
-            statData->st_size = mountedVolume->getSize();
+            statData->st_size = (fuse_off_t)mountedVolume->getSize();
         }
         else
         {

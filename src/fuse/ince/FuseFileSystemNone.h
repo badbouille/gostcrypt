@@ -10,6 +10,7 @@
 #define _FUSEFILESYSTEMNONE_H
 
 #include <Volume.h>
+#include "platform/usermode.h"
 #include "FuseFileSystem.h"
 
 namespace GostCrypt
@@ -34,12 +35,12 @@ namespace GostCrypt
         void start_fuse(const char * mountpoint, Volume *target);
 
         // tool
-        uid_t getUID() const { return userID; };
-        uid_t getGID() const { return groupID; };
+        fuse_uid_t getUID() const { return userID; };
+        fuse_gid_t getGID() const { return groupID; };
 
     private:
-        uid_t userID;
-        gid_t groupID;
+        fuse_uid_t userID;
+        fuse_gid_t groupID;
 
     };
 

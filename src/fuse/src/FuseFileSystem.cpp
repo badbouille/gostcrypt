@@ -8,8 +8,9 @@
 
 #include <Volume.h>
 #include <iostream>
-#include <zconf.h>
-#include <wait.h>
+#include <sys/stat.h>
+#include "platform/fullpath.h"
+#include "platform/endian.h"
 #include "FuseFileSystem.h"
 #include "FuseFileSystemNone.h"
 #include "FuseFileSystemExt2.h"
@@ -23,15 +24,15 @@ extern "C" {
     struct fuse_operations new_op;
     struct fuse_operations real_op;
 
-    uid_t mount_uid;
-    gid_t mount_gid;
+    fuse_uid_t mount_uid;
+    fuse_gid_t mount_gid;
 
     VolumeInfoFile_t fileinfo;
 
     /* Overrides default getattr callback
      * When our 'special file' (i.e. .gostfile is called, it will always return a nice result to the user
      */
-    int fusefs_super_getattr(const char *path, struct stat *statData)
+    int fusefs_super_getattr(const char *path, struct fuse_stat *statData)
     {
         /* If this call concerns our special file */
         if (strncmp(path, INFO_FILE, INFO_FILE_PREFIX_LEN) == 0)
@@ -41,9 +42,6 @@ extern "C" {
             /* Returning standard info */
             statData->st_uid = mount_uid;
             statData->st_gid = mount_gid;
-            statData->st_atime = time(NULL);
-            statData->st_ctime = time(NULL);
-            statData->st_mtime = time(NULL);
 
             /* Our file is readonly, obviously */
             statData->st_mode = S_IFREG | 0400;
@@ -187,7 +185,7 @@ GostCrypt::FuseFileSystemList GostCrypt::FuseFileSystem::GetFileSystems()
     return l;
 }
 
-void GostCrypt::FuseFileSystem::setupSuperFuse(uid_t uid, gid_t gid, GostCrypt::Volume *volume, const char *mountpoint)
+void GostCrypt::FuseFileSystem::setupSuperFuse(fuse_uid_t uid, fuse_gid_t gid, GostCrypt::Volume *volume, const char *mountpoint)
 {
     mount_uid = uid;
     mount_gid = gid;
@@ -196,12 +194,12 @@ void GostCrypt::FuseFileSystem::setupSuperFuse(uid_t uid, gid_t gid, GostCrypt::
 
     // NOTE: use GetFullPath on windows
     char absmountpoint[PATH_MAX];
-    if (realpath(mountpoint, absmountpoint) != absmountpoint)
+    if (fullpath_getpath(mountpoint, absmountpoint, PATH_MAX) != 0)
         throw FILENOTFOUNDEXCEPTION(std::string(mountpoint));
 
     // NOTE: use GetFullPath on windows
     char abssource[PATH_MAX];
-    if (realpath(volume->getVolumeSource().c_str(), abssource) != abssource)
+    if (fullpath_getpath(volume->getVolumeSource().c_str(), abssource, PATH_MAX) != 0)
         throw FILENOTFOUNDEXCEPTION(volume->getVolumeSource());
 
     // TODO goto error in else

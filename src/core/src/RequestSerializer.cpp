@@ -6,7 +6,7 @@
  * This project is released under the GNU General Public License v3.0.
  */
 
-#include <wait.h>
+#include "platform/endian.h"
 #include <iostream>
 #include "RequestSerializer.h"
 #include "Buffer.h"

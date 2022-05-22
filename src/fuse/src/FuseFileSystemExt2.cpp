@@ -7,7 +7,7 @@
  */
 
 #include <Volume.h>
-#include <wait.h>
+#include "platform/usermode.h"
 #include <ext4_mkfs.h>
 #include "FuseFileSystemExt2.h"
 
