@@ -9,6 +9,11 @@
 #include "ops.h"
 #include "lwext4.h"
 
+// undefining ftruncate for this file because it is defined in a .h and breaks the structure
+#ifdef ftruncate
+#undef ftruncate
+#endif
+
 struct fuse_operations e4f_ops = {
         .getattr = op_getattr,
         .readlink = op_readlink,
