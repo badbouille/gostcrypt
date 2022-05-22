@@ -1,5 +1,5 @@
 /**
- * @file memory.h
+ * @file endian.h
  * @author badbouille
  * @date 07/03/2021
  *
