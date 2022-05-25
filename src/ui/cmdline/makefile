@@ -1,10 +1,11 @@
 # sub Makefile
 
 # inclusions
-INCLUDES:= inc ../../common/ince ../../crypto/ince ../../volume/ince ../../fuse/ince ../../core/ince ..
+INCLUDES:= inc ../../common/ince ../../crypto/ince ../../volume/ince ../../fuse/ince ../../core/ince .. src/argtable3
 
 # Objects needed
 CXXFILES:= $(shell find src -name '*.cpp')
+CFILES:= src/argtable3/argtable3.c
 
 # external components needed (order is important)
 STATIC_LIBS=core.a fuse.a volume.a crypto.a common.a

@@ -9,7 +9,7 @@
 #ifndef _COMMANDS_H
 #define _COMMANDS_H
 
-#include <argp.h>
+#include <argtable3.h>
 #include "commonDefines.h"
 
 /* Commands */
