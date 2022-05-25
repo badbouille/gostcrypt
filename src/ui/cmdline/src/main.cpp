@@ -12,17 +12,17 @@
 
 /* Common values */
 
-const char *argp_program_version = PROGRAM_NAME " " PROGRAM_VERSION;
-const char *argp_program_bug_address = PROGRAM_BUG_ADDRESS;
+const char *program_name_version = PROGRAM_NAME " " PROGRAM_VERSION;
+const char *program_bug_address = PROGRAM_BUG_ADDRESS;
 
 /* Program documentation. */
-static char doc[] = "Command to mount an encrypted file on a virtual folder";
+static char doc[] = "Command-line tool to manage encrypted containers.";
 
-/* A description of the arguments we accept. */
-static char args_doc[] = "<mount|create|umount|list>";
-
-/* argp custom params */
-static struct argp argp = { nullptr, nullptr, args_doc, doc };
+void show_main_help() {
+    printf("%s\n", program_name_version);
+    printf("%s\n", doc);
+    printf("Usage: gc_cmdline <mount|create|umount|list> [--help] [...]\n");
+}
 
 int main(int argc, char **argv) {
     std::string cmd = "";
@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
     }
 
     if (argc < 2) {
-        argp_help(&argp, stdout, ARGP_HELP_STD_USAGE, argv[0]);
+        show_main_help();
         return 0;
     }
 
@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
         return cmd_list(argc - 1, argv + 1);
     }
 
-    argp_help(&argp, stdout, ARGP_HELP_STD_USAGE, argv[0]);
+    show_main_help();
     return 1;
 }
 

@@ -6,7 +6,7 @@
  * This project is released under the GNU General Public License v3.0.
  */
 
-#include <argp.h>
+#include <argtable3.h>
 #include <iostream>
 #include "Commands.h"
 #include "Buffer.h"
@@ -16,71 +16,58 @@ using namespace GostCrypt;
 
 /* ---------------------------- Umount command ---------------------------- */
 
-/* Program documentation. */
-static char doc_umount[] = "Command to unmount a previously mounted volume to close it.";
-
-/* A description of the arguments we accept. */
-static char args_doc_umount[] = "FOLDER";
-
-/* Options */
-static struct argp_option umount_options[] = {
-        {"all", 'a', nullptr, 0, "Unmount all volumes. Do not give a folder name when using this option." },
-        {nullptr }
-};
-
 struct UmountOptions_s {
     std::string mountpoint;
     bool all;
 };
 
-/* Custom parser */
-static error_t parse_opt_umount (int key, char *arg, struct argp_state *state) {
-    /* Get the input argument from argp_parse, which we
-       know is a pointer to our arguments structure. */
-    struct UmountOptions_s *arguments = (struct UmountOptions_s *)state->input;
-
-    switch (key)
-    {
-        case 'a':
-            arguments->all = true;
-            break;
-        case ARGP_KEY_NO_ARGS:
-            if (!(arguments->all)) {
-                argp_usage(state);
-            }
-            break;
-        case ARGP_KEY_ARG:
-            if (state->arg_num == 0 && !(arguments->all)) {
-                arguments->mountpoint = std::string(arg);
-                break;
-            }
-            /* Too many arguments. */
-            argp_usage(state);
-            break;
-        case ARGP_KEY_END:
-            if (state->arg_num < 1 && !(arguments->all)) {
-                /* Not enough arguments. */
-                argp_usage(state);
-            }
-            break;
-        default:
-            return ARGP_ERR_UNKNOWN;
-    }
-    return 0;
-}
-
-/* argp custom params */
-static struct argp argp_umount = { umount_options, parse_opt_umount, args_doc_umount, doc_umount };
-
 /* Real command */
 int cmd_umount(int argc, char **argv) {
     struct UmountOptions_s opts;
     SecureBuffer pass(64);
+    int nerrors;
+
+    struct arg_lit *help, *all;
+    struct arg_file *folder;
+    struct arg_end *end;
+    void *argtable[] = {
+            help     = arg_litn("h", "help", 0, 1, "display this help and exit"),
+            all      = arg_litn("a", "all", 0, 1, "Unmount all volumes. Do not give a folder name when using this option."),
+            folder   = arg_filen(NULL, NULL, "<mountpoint>", 0, 1, "Folder to umount"),
+            end      = arg_end(20),
+    };
 
     opts.mountpoint = "";
     opts.all = false;
 
-    argp_parse (&argp_umount, argc, argv, 0, 0, &opts);
+    nerrors = arg_parse(argc, argv, argtable);
+
+    if (help->count > 0)
+    {
+        printf("Usage: %s", PROGRAM_NAME);
+        arg_print_syntax(stdout, argtable, "\n");
+        printf("Command to unmount a previously mounted volume to close it.\n\n");
+        arg_print_glossary(stdout, argtable, "  %-25s %s\n");
+        return 0;
+    }
+
+    /* If the parser returned any errors then display them and exit */
+    if (nerrors > 0)
+    {
+        /* Display the error details contained in the arg_end struct.*/
+        arg_print_errors(stdout, end, PROGRAM_NAME);
+        printf("Try 'gc_cmdline %s --help' for more information.\n", argv[0]);
+        return 1;
+    }
+
+    if (all->count > 0) {
+        opts.all = true;
+    } else if (folder->count > 0) {
+        opts.mountpoint = std::string(folder->filename[0]);
+    } else {
+        printf("GostCrypt: missing option <mountpoint> or '--all'");
+        printf("Try 'gc_cmdline %s --help' for more information.\n", argv[0]);
+    }
 
     std::cout << "Unmounting folder: " << opts.mountpoint << std::endl;
 

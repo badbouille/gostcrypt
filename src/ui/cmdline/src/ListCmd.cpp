@@ -6,7 +6,6 @@
  * This project is released under the GNU General Public License v3.0.
  */
 
-#include <argp.h>
 #include <iostream>
 #include <vector>
 #include "Commands.h"
@@ -17,50 +16,36 @@ using namespace GostCrypt;
 
 /* ---------------------------- List command ---------------------------- */
 
-/* Program documentation. */
-static char doc_list[] = "Command to list different options supported by GostCrypt";
+void print_info(std::string &name, std::string &desc) {
+    int desclen = 80;
+    size_t end = 0;
+    size_t start = 0;
+    std::vector<std::string> lines;
 
-/* A description of the arguments we accept. */
-static char args_doc_list[] = "<algorithms|kdfs|types|filesystems>";
-
-/* Options */
-
-#define MAX_OPTION_NUMBER 50
-static struct argp_option list_options[MAX_OPTION_NUMBER] = {
-        {nullptr }
-};
-
-/* Custom parser */
-static error_t parse_opt_list (int key, char *arg, struct argp_state *state) {
-    /* Get the input argument from argp_parse, which we
-       know is a pointer to our arguments structure. */
-    std::string *arguments = (std::string *)state->input;
-
-    switch (key)
-    {
-        case ARGP_KEY_ARG:
-            if (state->arg_num == 0) {
-                *arguments = std::string(arg);
+    do {
+        end = desc.rfind("\n", start + desclen);
+        if (end > start && end != std::string::npos) {
+            lines.push_back(desc.substr(start, end-start));
+        } else {
+            end = desc.find(" ", start + desclen);
+            if (end == std::string::npos) {
+                lines.push_back(desc.substr(start));
                 break;
+            } else {
+                lines.push_back(desc.substr(start, end-start));
             }
-            /* Too many arguments. */
-            argp_usage(state);
-            break;
-        case ARGP_KEY_NO_ARGS:
-        case ARGP_KEY_END:
-            if (state->arg_num < 1) {
-                /* No arguments means listing volumes */
-                *arguments = std::string("mounted");
-            }
-            break;
-        default:
-            return ARGP_ERR_UNKNOWN;
-    }
-    return 0;
-}
+        }
+        start = end + 1;
+    } while (true);
 
-/* argp custom params */
-static struct argp argp_list = { list_options, parse_opt_list, args_doc_list, doc_list };
+    for(auto &l : lines) {
+        if (l == lines.front()) {
+            printf("%-25s %s\n", name.c_str(), l.c_str());
+        } else {
+            printf("%-25s %s\n", "", l.c_str());
+        }
+    }
+}
 
 std::string formatSize(size_t s) {
     /*if (s > TB) {
@@ -85,115 +70,85 @@ std::string formatSize(size_t s) {
 /* Real command */
 int cmd_list(int argc, char **argv) {
     std::string item;
-    uint32_t index = 0;
+    int nerrors;
 
-    item = "";
+    struct arg_lit *help;
+    struct arg_str *category;
+    struct arg_end *end;
+    void *argtable[] = {
+            help     = arg_litn("h", "help", 0, 1, "display this help and exit"),
+            category = arg_strn(NULL, NULL, "<(mounted)|algorithms|kdfs|types|filesystems>", 0, 1, "type to list"),
+            end      = arg_end(20),
+    };
 
-    argp_parse (&argp_list, argc, argv, 0, 0, &item);
+    // default values
+    item = "mounted";
+
+    nerrors = arg_parse(argc, argv, argtable);
+
+    if (help->count > 0)
+    {
+        printf("Usage: %s", PROGRAM_NAME);
+        arg_print_syntax(stdout, argtable, "\n");
+        printf("Command to list different options and algorithms supported by Gostcrypt\n\n");
+        arg_print_glossary(stdout, argtable, "  %-25s %s\n");
+        return 0;
+    }
+
+    /* If the parser returned any errors then display them and exit */
+    if (nerrors > 0)
+    {
+        /* Display the error details contained in the arg_end struct.*/
+        arg_print_errors(stdout, end, PROGRAM_NAME);
+        printf("Try 'gc_cmdline %s --help' for more information.\n", argv[0]);
+        return 1;
+    }
+
+    if (category->count > 0) {
+        item = std::string(category->sval[0]);
+    }
 
     if (item == "algorithms") {
         DiskEncryptionAlgorithmList dealist = Core::GetEncryptionAlgorithms();
-        // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
-        std::vector<std::string> names;
-        std::vector<std::string> descs;
         for (auto dea : dealist) {
-            names.push_back(dea->GetID());
-            descs.push_back("[" + dea->GetName() + "]\n" + dea->GetDescription());
-
-            // impossible to compute a list this long.
-            // list can be longer but current limit is already very high
-            if(index >= MAX_OPTION_NUMBER) {
-                abort();
-            }
-
-            list_options[index].name = names.back().c_str();
-            list_options[index].key = 0;
-            list_options[index].arg = 0;
-            list_options[index].flags = OPTION_DOC;
-            list_options[index].doc = descs.back().c_str();
-            index++;
-
+            std::string name = dea->GetID();
+            std::string desc = "[" + dea->GetName() + "]\n" + dea->GetDescription();
+            print_info(name, desc);
             delete dea;
         }
-        argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
         return 0;
     }
 
     if (item == "kdfs") {
         KDFList kdflist = Core::GetDerivationFunctions();
-        // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
-        std::vector<std::string> names;
-        std::vector<std::string> descs;
         for (auto kdf : kdflist) {
-            names.push_back(kdf->GetID());
-            descs.push_back("[" + kdf->GetName() + "]\n" + kdf->GetDescription());
-
-            if(index >= MAX_OPTION_NUMBER) {
-                abort();
-            }
-
-            list_options[index].name = names.back().c_str();
-            list_options[index].key = 0;
-            list_options[index].arg = 0;
-            list_options[index].flags = OPTION_DOC;
-            list_options[index].doc = descs.back().c_str();
-            index++;
-
+            std::string name = kdf->GetID();
+            std::string desc = "[" + kdf->GetName() + "]\n" + kdf->GetDescription();
+            print_info(name, desc);
             delete kdf;
         }
-        argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
         return 0;
     }
 
     if (item == "types") {
         VolumeList vlist = Core::GetVolumeTypes();
-        // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
-        std::vector<std::string> names;
-        std::vector<std::string> descs;
         for (auto v : vlist) { // TODO display error!
-            names.push_back(v->GetID());
-            descs.push_back("[" + v->GetName() + "]\n" + v->GetDescription());
-
-            if(index >= MAX_OPTION_NUMBER) {
-                abort();
-            }
-
-            list_options[index].name = names.back().c_str();
-            list_options[index].key = 0;
-            list_options[index].arg = 0;
-            list_options[index].flags = OPTION_DOC;
-            list_options[index].doc = descs.back().c_str();
-            index++;
-
+            std::string name = v->GetID();
+            std::string desc = "[" + v->GetName() + "]\n" + v->GetDescription();
+            print_info(name, desc);
             delete v;
         }
-        argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
         return 0;
     }
 
     if (item == "filesystems") {
         FuseFileSystemList fslist = Core::GetFileSystems();
-        // Using vector<string> to store temporary strings, so c_str() stays valid after object deletion
-        std::vector<std::string> names;
-        std::vector<std::string> descs;
         for (auto fs : fslist) {
-            names.push_back(fs->getID());
-            descs.push_back("[" + fs->getName() + "]\n" + fs->getDescription());
-
-            if(index >= MAX_OPTION_NUMBER) {
-                abort();
-            }
-
-            list_options[index].name = names.back().c_str();
-            list_options[index].key = 0;
-            list_options[index].arg = 0;
-            list_options[index].flags = OPTION_DOC;
-            list_options[index].doc = descs.back().c_str();
-            index++;
-
+            std::string name = fs->getID();
+            std::string desc = "[" + fs->getName() + "]\n" + fs->getDescription();
+            print_info(name, desc);
             delete fs;
         }
-        argp_help(&argp_list, stdout, ARGP_HELP_LONG, argv[0]);
         return 0;
     }
 
@@ -206,6 +161,9 @@ int cmd_list(int argc, char **argv) {
         return 0;
     }
 
-    argp_help(&argp_list, stdout, ARGP_HELP_STD_USAGE, argv[0]);
+    printf("Usage: %s", PROGRAM_NAME);
+    arg_print_syntax(stdout, argtable, "\n");
+    printf("Command to list different options and algorithms supported by Gostcrypt\n\n");
+    arg_print_glossary(stdout, argtable, "  %-25s %s\n");
     return 1;
 }

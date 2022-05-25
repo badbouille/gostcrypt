@@ -6,7 +6,7 @@
  * This project is released under the GNU General Public License v3.0.
  */
 
-#include <argp.h>
+#include <argtable3.h>
 #include <iostream>
 #include "Commands.h"
 #include "Buffer.h"
@@ -16,80 +16,71 @@ using namespace GostCrypt;
 
 /* ---------------------------- Mount command ---------------------------- */
 
-/* Program documentation. */
-static char doc_mount[] = "Command to mount an encrypted file on a virtual folder";
-
-/* A description of the arguments we accept. */
-static char args_doc_mount[] = "VOLUME FOLDER";
-
-/* Options */
-static struct argp_option mount_options[] = {
-        {"password", 'p', "<pass>", 0, "Manually enter password (deprecated)" },
-        {"filesystem", 'f', "<fs>", 0, "Filesystem to use when mounting this volume. Type 'gostcrypt list filesystems' for list of supported filesystems" },
-        {nullptr }
-};
-
-/* Custom parser */
-static error_t parse_opt_mount (int key, char *arg, struct argp_state *state) {
-    /* Get the input argument from argp_parse, which we
-       know is a pointer to our arguments structure. */
-    Core::MountParams_t *arguments = (Core::MountParams_t *)state->input;
-    int tmp;
-
-    switch (key)
-    {
-        case 'p':
-            tmp = strlen(arg);
-            if (tmp > 64) { // Checking against buffer size
-                return 1;
-            }
-            strcpy((char *)arguments->password.get(), arg);
-            arguments->password.set(arguments->password.get(), tmp); // Usually very illegal but here we know the buffer is big enough
-            break;
-        case 'f':
-            arguments->fileSystemID = arg;
-            break;
-        case ARGP_KEY_NO_ARGS:
-            argp_usage (state);
-            break;
-        case ARGP_KEY_ARG:
-            if (state->arg_num == 0) {
-                arguments->volumePath = std::string(arg);
-                break;
-            }
-            if (state->arg_num == 1) {
-                arguments->mountPoint = std::string(arg);
-                break;
-            }
-            /* Too many arguments. */
-            argp_usage(state);
-            break;
-        case ARGP_KEY_END:
-            if (state->arg_num < 2) {
-                /* Not enough arguments. */
-                argp_usage(state);
-            }
-            break;
-        default:
-            return ARGP_ERR_UNKNOWN;
-    }
-    return 0;
-}
-
-/* argp custom params */
-static struct argp argp_mount = { mount_options, parse_opt_mount, args_doc_mount, doc_mount };
-
 /* Real command */
 int cmd_mount(int argc, char **argv) {
     Core::MountParams_t arguments;
-    SecureBuffer pass(64);
+    SecureBuffer password(64);
+    int nerrors;
+
+    struct arg_lit *help;
+    struct arg_str *pass, *fs;
+    struct arg_file *folder, *file;
+    struct arg_end *end;
+    void *argtable[] = {
+            help     = arg_litn("h", "help", 0, 1, "display this help and exit"),
+            pass     = arg_strn("p", "password", "<pass>", 0, 1, "Manually enter password (deprecated)"),
+            fs       = arg_strn("f", "filesystem", "<fs>", 0, 1, "Filesystem to use when mounting this volume. Type 'gostcrypt list filesystems' for list of supported filesystems"),
+            file     = arg_filen(NULL, NULL, "<volume>", 1, 1, "Volume to mount"),
+            folder   = arg_filen(NULL, NULL, "<mountpoint>", 1, 1, "Folder where to mount it"),
+            end      = arg_end(20),
+    };
 
     arguments.mountPoint = "";
-    arguments.password = SecureBufferPtr(pass.get(), 0);
+    arguments.password = SecureBufferPtr(password.get(), 0);
     arguments.fileSystemID = DEFAULT_FILESYSTEMID;
     arguments.volumePath = "";
 
-    argp_parse (&argp_mount, argc, argv, 0, 0, &arguments);
+    nerrors = arg_parse(argc, argv, argtable);
+
+    if (help->count > 0)
+    {
+        printf("Usage: %s", PROGRAM_NAME);
+        arg_print_syntax(stdout, argtable, "\n");
+        printf("Command to mount an encrypted container on a virtual folder.\n\n");
+        arg_print_glossary(stdout, argtable, "  %-25s %s\n");
+        return 0;
+    }
+
+    /* If the parser returned any errors then display them and exit */
+    if (nerrors > 0)
+    {
+        /* Display the error details contained in the arg_end struct.*/
+        arg_print_errors(stdout, end, PROGRAM_NAME);
+        printf("Try 'gc_cmdline %s --help' for more information.\n", argv[0]);
+        return 1;
+    }
+
+    if (fs->count > 0) {
+        arguments.fileSystemID = std::string(fs->sval[0]);
+    }
+
+    if (pass->count > 0) {
+        size_t tmp = strlen(pass->sval[0]);
+        if (tmp > 64) { // Checking against buffer size
+            printf("Password too big for current buffer."); // TODO 64 chars is WEAK
+            printf("Try 'gc_cmdline %s --help' for more information.\n", argv[0]);
+            return 1;
+        }
+        strcpy((char *)arguments.password.get(), pass->sval[0]);
+        // Usually very illegal but here we know the buffer is big enough
+        arguments.password.set(arguments.password.get(), tmp);
+        // TODO delete password from argv
+    } else {
+        // TODO ask password here
+    }
+
+    arguments.volumePath = file->filename[0];
+    arguments.mountPoint = folder->filename[0];
 
     std::cout << "Mounting volume:" << std::endl;
     std::cout << "Volume Path: " << arguments.volumePath << std::endl;
